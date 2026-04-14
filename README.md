@@ -7,11 +7,11 @@
 ## 📊 Perancangan Sistem (DFD)
 
 ### DFD Level 0
-![DFD Level 0](DFD level 0_revisi 1.png)
+![DFD Level 0](DFD_level_0_revisi 1.png)
 *Diagram Konteks yang menunjukkan aliran data global.*
 
 ### DFD Level 1
-![DFD Level 1](path/ke/gambar/dfd1.png)
+![DFD Level 1](DFD_1.jpg)
 *Detail proses bisnis dan integrasi database.*
 
 ---
