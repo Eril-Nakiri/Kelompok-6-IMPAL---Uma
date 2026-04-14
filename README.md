@@ -7,7 +7,7 @@
 ## 📊 Perancangan Sistem (DFD)
 
 ### DFD Level 0
-![DFD Level 0](path/ke/gambar/dfd0.png)
+![DFD Level 0](DFD level 0_revisi 1.png)
 *Diagram Konteks yang menunjukkan aliran data global.*
 
 ### DFD Level 1
