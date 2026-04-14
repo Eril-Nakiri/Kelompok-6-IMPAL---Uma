@@ -1,0 +1,11 @@
+SOURCE Initialize.sql;
+SOURCE roles.sql;
+SOURCE users.sql;
+SOURCE tournaments.sql;
+SOURCE teams.sql;
+SOURCE team_members.sql;
+SOURCE matches.sql;
+SOURCE match_rounds.sql;
+SOURCE player_match_stats.sql;
+SOURCE round_player_stats.sql;
+SOURCE news.sql;
