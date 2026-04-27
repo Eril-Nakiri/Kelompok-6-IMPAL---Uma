@@ -7,9 +7,43 @@ import { Link } from "react-router-dom";
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = () => {
-        console.log("LOGIN:", username, password);
-    };
+    const handleLogin = async () => {
+    try{
+
+    const res = await fetch(
+        "/api/login",
+        {
+            method:"POST",
+            headers:{
+            "Content-Type":"application/json",
+            "Accept":"application/json"
+            },
+            body: JSON.stringify({
+            username,
+            password
+            })
+        }
+    );
+
+    const data = await res.json();
+
+    if(data.success){
+        alert("Login berhasil");
+
+        // nanti redirect dashboard
+        window.location.href="/dashboard";
+    }
+    else{
+        alert("Username/password salah");
+    }
+
+    }
+    catch(error){
+        console.error(error);
+        alert("Server error");
+    }
+
+}
 
     return (
         <div>

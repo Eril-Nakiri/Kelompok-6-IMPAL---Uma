@@ -1,4 +1,4 @@
-INSERT INTO Users (username, password, email, id_role) VALUES
+INSERT INTO users (username, password, email, id_role) VALUES
 -- admin & staff
 ('superadmin','pass','admin@mail.com',1),
 ('eo_jakarta','pass','eo@mail.com',3),
