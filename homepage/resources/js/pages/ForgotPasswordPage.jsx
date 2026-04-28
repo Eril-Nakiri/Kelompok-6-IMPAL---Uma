@@ -1,27 +1,36 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import AuthCard from "../components/AuthCard";
+import { Link } from "react-router-dom";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
+    const [email, setEmail] = useState("");
 
-  const handleReset = () => {
-    console.log("RESET PASSWORD:", email);
-  };
+    const handleReset = () => {
+        console.log("RESET PASSWORD:", email);
+    };
 
-  return (
-    <div>
-      <Navbar />
-      <AuthCard title="Forgot Password">
+    return (
+        <>
+        <Navbar />
 
-        <input
-          placeholder="Enter your email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="page-wrapper">
 
-        <button onClick={handleReset}>SEND RESET LINK</button>
+            <AuthCard title="Forgot Password">
 
-      </AuthCard>
-    </div>
-  );
+            <input
+                className="login-input"
+                placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <button className="btn-login" onClick={handleReset}>
+                SEND RESET LINK
+            </button>
+
+            </AuthCard>
+
+        </div>
+        </>
+    );
 }

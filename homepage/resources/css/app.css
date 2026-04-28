@@ -1,125 +1,276 @@
-/* =========================
-GLOBAL
-========================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+    background: #1e293b;
+    border-bottom: 1px solid rgba(255, 70, 84, 0.3);
+
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
 
-body{
-font-family:Arial,sans-serif;
-background:#081224;
-color:white;
+.navbar-inner {
+    width: 100%;
+    max-width: 1200px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 15px 20px;
 }
 
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 
-/* =========================
-NAVBAR
-========================= */
-
-.navbar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:20px 40px;
-background:#1b2942;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-z-index:1000;
+    flex-shrink: 0;
 }
 
+.logo {
+    font-weight: bold;
+    font-size: 22px;
+    color: white;
+    text-decoration: none;
 
-/* isi halaman supaya tidak ketiban navbar */
-.page-content{
-padding-top:110px;
-padding-left:40px;
-padding-right:40px;
+    flex-shrink: 0;
 }
 
+.search {
+    width: 160px;
+    padding: 7px 12px;
+    border-radius: 6px;
 
-/* =========================
-LOGIN PAGE
-========================= */
+    border: 1px solid #2a3344;
+    background: #0b0f17;
+    color: white;
 
-.login-container{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+    flex-shrink: 0;
 }
 
-.login-card{
-width:400px;
-background:#ffffff;
-color:black;
-padding:40px;
-border-radius:18px;
-box-shadow:0 6px 25px rgba(0,0,0,0.12);
+.menu {
+    display: flex;
+    gap: 20px;
 }
 
-.login-card h1{
-text-align:center;
-margin-bottom:30px;
+.menu a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 14px;
+    transition: 0.2s;
 }
 
-.login-input{
-width:100%;
-padding:14px;
-margin-bottom:16px;
-border:1px solid #ccc;
-border-radius:8px;
-font-size:16px;
+.menu a:hover {
+    color: #ff4654;
 }
 
-.login-input:focus{
-outline:none;
-border-color:#4f46e5;
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 80px;
+    background: radial-gradient(circle at top, #0f1624, #0a0f1c);
 }
 
-.login-actions{
-display:flex;
-justify-content:space-between;
-margin-bottom:20px;
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+
+    background: #111823;
+    border: 1px solid rgba(255, 70, 84, 0.25);
+    border-radius: 14px;
+    padding: 40px;
+
+    box-shadow: 0 0 25px rgba(255, 70, 84, 0.2);
+
+    display: flex;
+    flex-direction: column;
 }
 
-.btn-small{
-text-decoration:none;
-font-size:14px;
-color:#4f46e5;
+.auth-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
 }
 
-.btn-login{
-width:100%;
-padding:14px;
-border:none;
-border-radius:8px;
-background:#4f46e5;
-color:white;
-cursor:pointer;
+.page-content {
+    padding-top: 90px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
-.btn-login:hover{
-background:#3730a3;
+.page-wrapper {
+  padding-top: 80px;
 }
 
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-/* =========================
-RESPONSIVE
-========================= */
-
-@media(max-width:500px){
-
-.login-card{
-width:90%;
-padding:30px;
+    background: radial-gradient(circle at top, #0f1624, #0a0f1c);
+    padding-top: 80px;
 }
 
-.login-actions{
-flex-direction:column;
-gap:12px;
-align-items:center;
+.login-card {
+    width: 420px;
+    background: #111823;
+    border: 1px solid rgba(255, 70, 84, 0.25);
+    border-radius: 14px;
+    padding: 40px;
+
+    box-shadow: 0 0 25px rgba(255, 70, 84, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
+.login-input {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #2a3344;
+    background: #0b0f17;
+    color: white;
+}
+
+.login-input:focus {
+    border-color: #ff4654;
+    box-shadow: 0 0 10px rgba(255, 70, 84, 0.3);
+}
+
+.login-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.btn-small {
+    font-size: 13px;
+    color: #ff4654;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    text-decoration: underline;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #ff4654;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-login:hover {
+    background: #ff2e43;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.username {
+    font-size: 14px;
+    color: white;
+}
+
+.logout-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ff4654;
+    background: transparent;
+    color: #ff4654;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #ff4654;
+    color: white;
+}
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-trigger {
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.user-trigger:hover {
+    background: rgba(255, 70, 84, 0.15);
+}
+
+.user-section {
+    position: relative;
+    flex-shrink: 0;
+    color: white;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+
+    top: 45px;
+    width: 180px;
+
+    background: #0b0f17;
+    border: 1px solid rgba(255, 70, 84, 0.3);
+    border-radius: 10px;
+
+    padding: 8px;
+    z-index: 999;
+
+    transform: translateX(-5px);
+}
+
+.dropdown-item {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 70, 84, 0.15);
+}
+
+.dropdown-item.logout {
+    color: #ff4654;
+}
+
+.dropdown-item.logout:hover {
+    background: #ff4654;
+    color: white;
 }

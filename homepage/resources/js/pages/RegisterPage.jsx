@@ -27,7 +27,6 @@ export default function RegisterPage() {
         if (data.success) {
             alert("Register berhasil");
 
-            // auto login setelah register
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
 
@@ -42,28 +41,39 @@ export default function RegisterPage() {
     };
 
     return (
-        <div>
+        <>
         <Navbar />
 
-        <AuthCard title="Register">
+        <div className="page-wrapper">
+
+            <AuthCard title="Register">
+
             <input
-            placeholder="username"
-            onChange={(e) => setUsername(e.target.value)}
+                className="login-input"
+                placeholder="username"
+                onChange={(e) => setUsername(e.target.value)}
             />
 
             <input
-            placeholder="email"
-            onChange={(e) => setEmail(e.target.value)}
+                className="login-input"
+                placeholder="email"
+                onChange={(e) => setEmail(e.target.value)}
             />
 
             <input
-            type="password"
-            placeholder="password"
-            onChange={(e) => setPassword(e.target.value)}
+                className="login-input"
+                type="password"
+                placeholder="password"
+                onChange={(e) => setPassword(e.target.value)}
             />
 
-            <button onClick={handleRegister}>SIGN UP</button>
-        </AuthCard>
+            <button className="btn-login" onClick={handleRegister}>
+                SIGN UP
+            </button>
+
+            </AuthCard>
+
         </div>
+        </>
     );
 }

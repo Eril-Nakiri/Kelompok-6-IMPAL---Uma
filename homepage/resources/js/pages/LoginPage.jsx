@@ -26,7 +26,6 @@ export default function LoginPage() {
         if (data.success) {
             alert("Login berhasil");
 
-            // simpan auth ke browser
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
 
@@ -41,37 +40,43 @@ export default function LoginPage() {
     };
 
     return (
-        <div>
+        <>
         <Navbar />
 
-        <AuthCard title="META.portal">
+        <div className="page-wrapper">
+
+            <AuthCard title="META.portal">
+
             <input
-            className="login-input"
-            placeholder="username"
-            onChange={(e) => setUsername(e.target.value)}
+                className="login-input"
+                placeholder="username"
+                onChange={(e) => setUsername(e.target.value)}
             />
 
             <input
-            className="login-input"
-            type="password"
-            placeholder="password"
-            onChange={(e) => setPassword(e.target.value)}
+                className="login-input"
+                type="password"
+                placeholder="password"
+                onChange={(e) => setPassword(e.target.value)}
             />
 
             <div className="login-actions">
-            <Link to="/forgot-password" className="btn-small">
+                <Link to="/forgot-password" className="btn-small">
                 Forgot Password
-            </Link>
+                </Link>
 
-            <Link to="/register" className="btn-small">
-                Sign up
-            </Link>
+                <Link to="/register" className="btn-small">
+                Sign Up
+                </Link>
             </div>
 
             <button className="btn-login" onClick={handleLogin}>
-            LOGIN
+                LOGIN
             </button>
-        </AuthCard>
+
+            </AuthCard>
+
         </div>
+        </>
     );
 }
