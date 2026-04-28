@@ -28,9 +28,9 @@ Rancangan UI aplikasi yang berfokus pada pengalaman pengguna.
 ---
 
 ## 🛠️ Stack Teknologi
-- **Frontend:** Next.js / Java Swing
-- **Backend:** Node.js / Java 
-- **Database:** PostgreSQL / MySQL
+- **Frontend:** React.js dengan Vite
+- **Backend:** Laravel (REST API)
+- **Database:** PostgreSQL
 
 ---
 
