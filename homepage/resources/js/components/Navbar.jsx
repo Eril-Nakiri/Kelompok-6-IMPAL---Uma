@@ -1,15 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-    // ambil user saat pertama render
     useEffect(() => {
         syncUser();
     }, []);
 
-    // fungsi untuk ambil user dari localStorage
     const syncUser = () => {
         const storedUser = localStorage.getItem("user");
 
@@ -20,18 +19,14 @@ export default function Navbar() {
         }
     };
 
-    // biar navbar auto update kalau localStorage berubah
-    useEffect(() => {
-        const handleStorageChange = () => {
-        syncUser();
-        };
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
 
-        window.addEventListener("storage", handleStorageChange);
+        setUser(null);
 
-        return () => {
-        window.removeEventListener("storage", handleStorageChange);
-        };
-    }, []);
+        navigate("/login");
+    };
 
     return (
         <div className="navbar">
@@ -55,17 +50,21 @@ export default function Navbar() {
 
             {/* USER SECTION */}
             <div className="user-section">
+
             {user ? (
-                <div className="user-box">
-                <span className="user-icon">👤</span>
-                <span>{user.username}</span>
+                <div className="user-box" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                <span>👤 {user.username}</span>
+
+                <button onClick={handleLogout} style={{ cursor: "pointer" }}>
+                    Logout
+                </button>
                 </div>
             ) : (
                 <Link to="/login" className="user-box">
-                <span className="user-icon">👤</span>
-                <span>Login</span>
+                <span>👤 Login</span>
                 </Link>
             )}
+
             </div>
 
         </div>

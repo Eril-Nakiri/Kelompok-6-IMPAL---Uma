@@ -1,9 +1,4 @@
-import "../css/App.css";
-import "../css/index.css";
-
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
@@ -13,34 +8,48 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AboutPage from "./pages/AboutPage";
 import StatsPage from "./pages/StatsPage";
 
-function App() {
-return (
-    <BrowserRouter>
-    <Routes>
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
-        {/* PUBLIC */}
+function App() {
+    return (
+        <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        {/* MAIN APP */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/stats" element={<StatsPage />} />
+        <Route
+            path="/dashboard"
+            element={
+            <ProtectedRoute>
+                <Dashboard />
+            </ProtectedRoute>
+            }
+        />
 
-        {/* fallback */}
-        <Route path="*" element={<Dashboard />} />
+        <Route
+            path="/about"
+            element={
+            <ProtectedRoute>
+                <AboutPage />
+            </ProtectedRoute>
+            }
+        />
 
-    </Routes>
-    </BrowserRouter>
-);
+        <Route
+            path="/stats"
+            element={
+            <ProtectedRoute>
+                <StatsPage />
+            </ProtectedRoute>
+            }
+        />
+
+        <Route path="*" element={<Home />} />
+
+        </Routes>
+    );
 }
 
-ReactDOM.createRoot(
-    document.getElementById("root")
-).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
-);
+export default App;
