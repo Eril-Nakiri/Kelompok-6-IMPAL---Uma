@@ -8,12 +8,10 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
-        try {
-        const res = await fetch("/api/login", {
+        const res = await fetch("http://127.0.0.1:8000/api/login", {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
             },
             body: JSON.stringify({
             username,
@@ -24,20 +22,15 @@ export default function LoginPage() {
         const data = await res.json();
 
         if (data.success) {
-            alert("Login berhasil");
-
+            // simpan login
             localStorage.setItem("user", JSON.stringify(data.user));
-            localStorage.setItem("token", data.token);
 
+            // pindah ke dashboard
             window.location.href = "/dashboard";
         } else {
-            alert("Username atau password salah");
+            alert("Login gagal");
         }
-        } catch (error) {
-        console.error(error);
-        alert("Server error");
-        }
-    };
+};
 
     return (
         <>

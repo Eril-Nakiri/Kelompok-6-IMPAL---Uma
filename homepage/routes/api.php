@@ -23,6 +23,7 @@ Route::get('/dashboard', function () {
 
 
 /* LOGIN */
-Route::post('/login',
-    [AuthController::class,'login']
-);
+Route::post('/login',[AuthController::class,'login']);
+
+/* REGISTER */
+Route::post('/register', [AuthController::class, 'register']);
