@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 
 /* TEST API */
@@ -27,3 +28,6 @@ Route::post('/login',[AuthController::class,'login']);
 
 /* REGISTER */
 Route::post('/register', [AuthController::class, 'register']);
+
+/* USER SEARCH */
+Route::get('/users/search', [UserController::class, 'search']);
