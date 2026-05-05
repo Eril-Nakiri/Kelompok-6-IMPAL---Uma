@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StatsController;
 
 
 /* TEST API */
@@ -31,3 +32,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 /* USER SEARCH */
 Route::get('/users/search', [UserController::class, 'search']);
+
+/* STATS */
+Route::get('/stats', [StatsController::class, 'getStats']);
+Route::get('/stats/filters', [StatsController::class, 'getFilters']);

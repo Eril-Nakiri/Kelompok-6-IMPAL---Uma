@@ -11,7 +11,6 @@ class UserController extends Controller
     {
         $query = $request->query('query');
 
-        // TANPA VALIDASI DULU BIAR DEBUG MUDAH
         if (!$query) {
             return response()->json([
                 'data' => []

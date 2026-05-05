@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
@@ -21,8 +21,30 @@ export default function StatsPage() {
     };
 
     const handleApply = () => {
-        console.log("FILTER APPLIED:", filters);
+        const params = new URLSearchParams(filters).toString();
+        fetch(`http://127.0.0.1:8000/api/stats?${params}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("STATS:", data);
+                setStats(data.data || []);
+            })
+            .catch(err => console.error(err));
     };
+
+    const [stats, setStats] = useState([]);
+    const [agents, setAgents] = useState([]);
+    const [maps, setMaps] = useState([]);
+    useEffect(() => {
+        fetch("http://127.0.0.1:8000/api/stats/filters")
+            .then(res => res.json())
+            .then(data => {
+                console.log("FILTER DATA:", data);
+                setAgents(data.agents || []);
+                setMaps(data.maps || []);
+            });
+    }, []);
+
+    console.log("STATS:", stats);
 
     return (
         <>
@@ -70,14 +92,24 @@ export default function StatsPage() {
                     <div className="filter-group">
                         <label>AGENT</label>
                         <select name="agent" onChange={handleChange}>
-                            <option>All</option>
+                            <option value="All">All</option>
+                            {agents.map((agent, index) => (
+                                <option key={index} value={agent}>
+                                    {agent}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
                     <div className="filter-group">
                         <label>MAP</label>
                         <select name="map" onChange={handleChange}>
-                            <option>All</option>
+                            <option value="All">All</option>
+                            {maps.map((map, index) => (
+                                <option key={index} value={map}>
+                                    {map}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -99,37 +131,34 @@ export default function StatsPage() {
             <div className="table-box">
 
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>Team</th>
-                            <th>Rounds</th>
-                            <th>KD</th>
-                            <th>ACS</th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Agent</th>
+                        <th>Kills</th>
+                        <th>Deaths</th>
+                        <th>Assists</th>
+                        <th>KD</th>
+                        <th>ACS</th>
+                    </tr>
 
                     <tbody>
-                        {/* Dummy Data */}
-                        <tr>
-                            <td>felixgunawan</td>
-                            <td>TEAM A</td>
-                            <td>422</td>
-                            <td>1.33</td>
-                            <td>244.5</td>
-                            <td>1.40</td>
-                        </tr>
-
-                        <tr>
-                            <td>ditya</td>
-                            <td>TEAM B</td>
-                            <td>300</td>
-                            <td>1.20</td>
-                            <td>210.1</td>
-                            <td>1.32</td>
-                        </tr>
-
+                        {stats.length > 0 ? (
+                            stats.map((row, index) => (
+                                <tr key={index}>
+                                    <td>User {row.id_user}</td>
+                                    <td>{row.agent_used}</td>
+                                    <td>{row.kills}</td>
+                                    <td>{row.deaths}</td>
+                                    <td>{row.assists}</td>
+                                    <td>{row.kd}</td>
+                                    <td>{row.acs}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7">No Data</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
