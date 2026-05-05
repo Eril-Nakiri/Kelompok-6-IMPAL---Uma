@@ -30,7 +30,7 @@ export default function LoginPage() {
         } else {
             alert("Login gagal");
         }
-};
+    };
 
     return (
         <>

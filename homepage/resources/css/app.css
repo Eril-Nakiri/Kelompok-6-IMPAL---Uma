@@ -1,7 +1,6 @@
 .navbar {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
 
     background: #1e293b;
@@ -132,8 +131,12 @@
     padding-right: 40px;
 }
 
+.page-container {
+    padding-top: 70px;
+}
+
 .page-wrapper {
-  padding-top: 80px;
+    padding-top: 80px;
 }
 
 .login-container {

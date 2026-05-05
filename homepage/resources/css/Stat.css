@@ -1,0 +1,86 @@
+.stats-container {
+    height: calc(100vh - 70px); /* tinggi layar dikurangi navbar */
+    overflow: hidden; /* hilangkan scroll utama */
+    display: flex;
+    flex-direction: column;
+}
+
+/* FILTER BOX */
+.filter-box {
+    background: #d3d3d3;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+
+    flex-shrink: 0; /* tidak ikut mengecil */
+}
+
+.filter-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: black;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    background: #888;
+    color: white;
+}
+
+/* BUTTON */
+.apply-btn {
+    margin-top: 15px;
+    background: red;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+/* TABLE */
+.table-box {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+
+    flex: 1; /* ambil sisa ruang */
+    overflow-y: auto; /* scroll hanya di tabel */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #333;
+}
+
+tr:nth-child(even) {
+    background: #2a2a2a;
+}
+
+tr:hover {
+    background: #444;
+}

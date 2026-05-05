@@ -21,15 +21,12 @@ export default function Navbar() {
 
     // SEARCH API (DEBUG VERSION)
     useEffect(() => {
-        console.log("QUERY:", query);
 
         const delay = setTimeout(() => {
-            if (query.length >= 1) {
+            if (query.length >= 2) {
                 fetch(`http://127.0.0.1:8000/api/users/search?query=${query}`)
                     .then(res => res.json())
                     .then(data => {
-                        console.log("API RESULT FULL:", data);
-                        console.log("DATA ARRAY:", data.data);
 
                         if (data && Array.isArray(data.data)) {
                             setResults(data.data);
