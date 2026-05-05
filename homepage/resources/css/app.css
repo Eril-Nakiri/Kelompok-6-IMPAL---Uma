@@ -52,6 +52,32 @@
     flex-shrink: 0;
 }
 
+.search-dropdown {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    z-index: 999;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.search-item:hover {
+    background: #f5f5f5;
+}
+
+.email {
+    font-size: 12px;
+    color: gray;
+}
+
 .menu {
     display: flex;
     gap: 20px;
