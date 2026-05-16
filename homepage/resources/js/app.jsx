@@ -3,13 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import "../css/app.css";
 import "../css/index.css";
 
-import Home from "./pages/HomePage";
-import Dashboard from "./pages/Dashboard";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import AboutPage from "./pages/AboutPage";
-import StatsPage from "./pages/StatsPage";
+import Home from "./pages/HomePage.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import StatsPage from "./pages/StatsPage.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
