@@ -7,69 +7,70 @@ export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const API_URL = import.meta.env.VITE_API_URL || "";
+
     const handleLogin = async () => {
-        const res = await fetch("http://127.0.0.1:8000/api/login", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-            username,
-            password,
-            }),
-        });
+        try {
+            const res = await fetch(`${API_URL}/api/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (data.success) {
-            // simpan login
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            // pindah ke dashboard
-            window.location.href = "/dashboard";
-        } else {
-            alert("Login gagal");
+            if (data.success) {
+                localStorage.setItem("user", JSON.stringify(data.user));
+                window.location.href = "/dashboard";
+            } else {
+                alert(data.message || "Login gagal");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Server error / koneksi gagal");
         }
     };
 
     return (
         <>
-        <Navbar />
+            <Navbar />
 
-        <div className="page-wrapper">
+            <div className="page-wrapper">
+                <AuthCard title="META.portal">
+                    <input
+                        className="login-input"
+                        placeholder="username"
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
 
-            <AuthCard title="META.portal">
+                    <input
+                        className="login-input"
+                        type="password"
+                        placeholder="password"
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-            <input
-                className="login-input"
-                placeholder="username"
-                onChange={(e) => setUsername(e.target.value)}
-            />
+                    <div className="login-actions">
+                        <Link to="/forgot-password" className="btn-small">
+                            Forgot Password
+                        </Link>
 
-            <input
-                className="login-input"
-                type="password"
-                placeholder="password"
-                onChange={(e) => setPassword(e.target.value)}
-            />
+                        <Link to="/register" className="btn-small">
+                            Sign Up
+                        </Link>
+                    </div>
 
-            <div className="login-actions">
-                <Link to="/forgot-password" className="btn-small">
-                Forgot Password
-                </Link>
-
-                <Link to="/register" className="btn-small">
-                Sign Up
-                </Link>
+                    <button className="btn-login" onClick={handleLogin}>
+                        LOGIN
+                    </button>
+                </AuthCard>
             </div>
-
-            <button className="btn-login" onClick={handleLogin}>
-                LOGIN
-            </button>
-
-            </AuthCard>
-
-        </div>
         </>
     );
 }

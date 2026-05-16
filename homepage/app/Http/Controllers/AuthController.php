@@ -9,6 +9,11 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
         $user = UserAccount::where('username', $request->username)
             ->where('password', $request->password)
             ->first();
@@ -28,35 +33,30 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // validasi sederhana (biar tidak asal masuk)
-        if(!$request->username || !$request->password){
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        $exists = UserAccount::where('username', $request->username)->first();
+
+        if ($exists) {
             return response()->json([
-                "success"=>false,
-                "message"=>"Username & password wajib"
-            ],400);
+                "success" => false,
+                "message" => "Username sudah digunakan"
+            ], 409);
         }
 
-        // cek username sudah ada atau belum
-        $exists = UserAccount::where('username',$request->username)->first();
-
-        if($exists){
-            return response()->json([
-                "success"=>false,
-                "message"=>"Username sudah digunakan"
-            ],409);
-        }
-
-        // insert user baru
         $user = UserAccount::create([
-            "username"=>$request->username,
-            "password"=>$request->password,
-            "email"=>$request->email,
-            "id_role"=>2 // default user biasa
+            "username" => $request->username,
+            "password" => $request->password,
+            "email" => $request->email,
+            "id_role" => 2
         ]);
 
         return response()->json([
-            "success"=>true,
-            "user"=>$user
+            "success" => true,
+            "user" => $user
         ]);
     }
 }
