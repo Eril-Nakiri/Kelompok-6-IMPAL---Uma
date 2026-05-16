@@ -6,7 +6,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/dashboard")
+        fetch("https://kelompok-6-impal-uma-production.up.railway.app")
         .then((res) => res.json())
         .then((result) => {
             setData(result);
