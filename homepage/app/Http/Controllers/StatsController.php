@@ -11,16 +11,38 @@ class StatsController extends Controller
     {
         $query = DB::table('player_match_stats');
 
-        // FILTER AGENT
-        if ($request->agent && $request->agent !== 'All') {
+        // 1. FILTER AGENT (Hanya memfilter jika user memilih agent spesifik, bukan 'All')
+        if ($request->filled('agent') && $request->agent !== 'All') {
             $query->where('agent_used', $request->agent);
         }
 
-        // FILTER MIN KILLS (opsional)
-        if ($request->minKills) {
-            $query->where('kills', '>=', $request->minKills);
+        // 2. FILTER MAP (Abaikan jika 'All' atau kosong)
+        if ($request->filled('map') && $request->map !== 'All') {
+            // Jika di table database Anda ada kolom map, aktifkan baris bawah ini:
+            // $query->where('map_name', $request->map);
         }
 
+        // 3. FILTER REGION (Abaikan jika 'All' atau kosong)
+        if ($request->filled('region') && $request->region !== 'All') {
+            // $query->where('region', $request->region);
+        }
+
+        // 4. FILTER EVENT SERIES (Abaikan jika 'All' atau kosong)
+        if ($request->filled('eventSeries') && $request->eventSeries !== 'All') {
+            // $query->where('event_series', $request->eventSeries);
+        }
+
+        // 5. FILTER MIN ROUNDS (Hanya filter jika ada angka inputan dari user)
+        if ($request->filled('minRounds')) {
+            // $query->where('rounds_played', '>=', $request->minRounds);
+        }
+
+        // 6. FILTER MIN RATING / MIN OOP RATING
+        if ($request->filled('minRating')) {
+            // $query->where('rating', '>=', $request->minRating);
+        }
+
+        // Ambil data maksimal 50 baris teratas
         $data = $query->limit(50)->get();
 
         return response()->json([
@@ -30,8 +52,7 @@ class StatsController extends Controller
 
     public function getFilters()
     {
-        // Menyediakan daftar seluruh Agent Valorant lengkap secara hardcoded di backend
-        // agar dropdown terisi penuh dari Astra hingga agent terbaru
+        // Menyediakan daftar nama Agent lengkap
         $agents = [
             "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
             "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
@@ -39,9 +60,9 @@ class StatsController extends Controller
             "Skye", "Sova", "Tejo", "Viper", "Yoru"
         ];
 
-        // Jika Anda juga butuh filter MAP di masa mendatang, bisa ditambahkan di sini:
+        // Menyediakan daftar Map lengkap
         $maps = [
-            "Ascent", "Bind", "Breeze", "Abyss", "Fracture",
+            "Abyss", "Ascent", "Bind", "Breeze", "District", "Fracture",
             "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
         ];
 
