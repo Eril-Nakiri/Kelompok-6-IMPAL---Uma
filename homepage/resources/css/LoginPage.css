@@ -20,7 +20,7 @@
 /* Card Utama yang Membagi Dua Sisi */
 .split-login-card {
     display: flex;
-    max-w: 950px;
+    max-width: 950px;
     width: 100%;
     min-height: 500px;
     border-radius: 24px;
