@@ -59,4 +59,30 @@ class AuthController extends Controller
             "user" => $user
         ]);
     }
-}
+
+    public function verifyForgotAccount(Request $request)
+        {
+            $request->validate([
+                'username' => 'required|string',
+                'email' => 'required|email'
+            ]);
+
+            // Mencari akun yang username DAN email-nya cocok sekaligus
+            $user = UserAccount::where('username', $request->username)
+                ->where('email', $request->email)
+                ->first();
+
+            if ($user) {
+                return response()->json([
+                    "success" => true,
+                    "message" => "Akun terverifikasi. Silakan lakukan reset password.",
+                    "user_id" => $user->id // Mengembalikan ID untuk proses update password selanjutnya jika diperlukan
+                ]);
+            }
+
+            return response()->json([
+                "success" => false,
+                "message" => "Kombinasi Username dan Email tidak ditemukan di database!"
+            ], 404);
+        }
+    }

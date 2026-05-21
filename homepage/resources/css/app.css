@@ -1,3 +1,12 @@
+:root {
+    --bg-main: #030C11;
+    --bg-card: #0C1E29;
+    --cyber-muted: #1B3444;
+    --steel-blue: #496277;
+    --neon-cyan: #00E1D9;
+    --neon-blue: #00A3FF;
+}
+
 .navbar {
     position: fixed;
     top: 0;
@@ -657,4 +666,48 @@
 
 .toggle-password-btn:hover {
     color: #38bdf8; /* Berubah warna biru saat kursor diarahkan */
+}
+
+/* ==========================================================================
+   KOMPONEN CAPTCHA UNTUK FORGOT PASSWORD PAGE
+   ========================================================================== */
+
+.captcha-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+/* Kotak kode captcha acak */
+.captcha-box {
+    background-color: #1b3444; /* Muted Cyber Blue */
+    color: #00e1d9; /* Electric Cyan */
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    user-select: none;
+    font-style: italic;
+    text-decoration: line-through; /* Efek coretan khas captcha */
+    border: 1px solid #00e1d9;
+    box-shadow: 0 0 10px rgba(0, 225, 217, 0.2);
+}
+
+/* Tombol refresh kode captcha */
+.btn-refresh-captcha {
+    background: none;
+    border: 1px solid #496277;
+    color: #cbd5e1;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-refresh-captcha:hover {
+    border-color: #00e1d9;
+    color: #00e1d9;
 }
