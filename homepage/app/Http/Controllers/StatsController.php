@@ -30,14 +30,24 @@ class StatsController extends Controller
 
     public function getFilters()
     {
-        $agents = DB::table('player_match_stats')
-            ->select('agent_used')
-            ->distinct()
-            ->orderBy('agent_used')
-            ->pluck('agent_used');
+        // Menyediakan daftar seluruh Agent Valorant lengkap secara hardcoded di backend
+        // agar dropdown terisi penuh dari Astra hingga agent terbaru
+        $agents = [
+            "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
+            "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
+            "Killjoy", "Neon", "Omen", "Phoenix", "Raze", "Reyna", "Sage",
+            "Skye", "Sova", "Tejo", "Viper", "Yoru"
+        ];
+
+        // Jika Anda juga butuh filter MAP di masa mendatang, bisa ditambahkan di sini:
+        $maps = [
+            "Ascent", "Bind", "Breeze", "Abyss", "Fracture",
+            "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
+        ];
 
         return response()->json([
-            'agents' => $agents
+            'agents' => $agents,
+            'maps' => $maps
         ]);
     }
 }

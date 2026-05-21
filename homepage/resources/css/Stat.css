@@ -1,11 +1,11 @@
 /* ==========================================================================
-   CSS LEADERBOARD STATISTICS (VLR.GG CYBER THEME)
+    CSS LEADERBOARD STATISTICS (VLR.GG CYBER THEME)
    ========================================================================== */
 
 .stats-page-container {
-    background-color: #030C11; /* Deepest Void Dark Blue */
+    background-color: #030C11;
     min-height: 100vh;
-    padding-top: 90px; /* Jarak aman dari fixed navbar */
+    padding-top: 90px;
     padding-bottom: 50px;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
@@ -22,13 +22,13 @@
     font-weight: 700;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    border-left: 4px solid #00E1D9; /* Electric Cyan line divider */
+    border-left: 4px solid #00E1D9;
     padding-left: 12px;
 }
 
 /* HORIZONTAL TOOLBAR FILTERS (Mirip VLR.GG) */
 .filter-toolbar {
-    background-color: #0C1E29; /* Card Cyber background */
+    background-color: #0C1E29;
     border: 1px solid #142E3F;
     border-radius: 8px;
     padding: 15px 20px;
@@ -138,7 +138,7 @@
 }
 
 .vlr-table-row:hover {
-    background-color: #122a3a; /* Efek highlight transparan sewaktu dihover mouse */
+    background-color: #122a3a;
 }
 
 .vlr-style-table td {
@@ -178,12 +178,12 @@
 }
 
 .kd-highlight {
-    color: #22c55e; /* Green highlight for kill/death ratio representation */
+    color: #22c55e;
     font-weight: 600;
 }
 
 .acs-glow {
-    color: #ffb800; /* Amber Gold accent for master score combat rating */
+    color: #ffb800;
     font-weight: 700;
 }
 

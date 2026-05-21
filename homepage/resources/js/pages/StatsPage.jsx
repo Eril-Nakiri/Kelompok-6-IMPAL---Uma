@@ -3,6 +3,14 @@ import { useState, useEffect } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
+    // 1. Daftar lengkap Agent Valorant terbaru hingga saat ini
+    const valorantAgents = [
+        "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
+        "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
+        "Killjoy", "Neon", "Omen", "Phoenix", "Raze", "Reyna", "Sage",
+        "Skye", "Sova", "Tejo", "Viper", "Yoru"
+    ];
+
     const [filters, setFilters] = useState({
         eventSeries: "All",
         region: "All",
@@ -14,7 +22,6 @@ export default function StatsPage() {
     });
 
     const [stats, setStats] = useState([]);
-    const [agents, setAgents] = useState([]);
     const [maps, setMaps] = useState([]);
 
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -26,32 +33,25 @@ export default function StatsPage() {
         });
     };
 
-    // Fungsi Fetching Data Tabel Stats
     const fetchStatsData = () => {
         const params = new URLSearchParams(filters).toString();
         fetch(`${API_URL}/api/stats?${params}`)
             .then(res => res.json())
             .then(data => {
-                console.log("STATS DATA:", data);
-                // Menyesuaikan jika response Laravel dibungkus data atau langsung array
                 setStats(data.data || data || []);
             })
             .catch(err => console.error("Error fetching stats:", err));
     };
 
-    // Pemicu Fetching awal saat halaman dimuat pertama kali
     useEffect(() => {
-        // 1. Ambil Data Isian Opsi Filter
+        // Mengambil data filter map dari backend saja, agent menggunakan array di atas
         fetch(`${API_URL}/api/stats/filters`)
             .then(res => res.json())
             .then(data => {
-                console.log("FILTER DATA:", data);
-                setAgents(data.agents || []);
                 setMaps(data.maps || []);
             })
             .catch(err => console.error("Error fetching filters:", err));
 
-        // 2. Langsung isi tabel otomatis saat masuk halaman
         fetchStatsData();
     }, []);
 
@@ -66,8 +66,8 @@ export default function StatsPage() {
                 <div className="stats-content-wrapper">
                     <h2 className="stats-page-title">PLAYER STATISTICS LEADERBOARD</h2>
 
-                    {/* FILTER SECTION (HORIZONTAL BAR SEPERTI VLR.GG) */}
                     <div className="filter-toolbar">
+                        {/* Filter Event Series */}
                         <div className="filter-item">
                             <label>Event Series</label>
                             <select name="eventSeries" value={filters.eventSeries} onChange={handleChange}>
@@ -75,6 +75,7 @@ export default function StatsPage() {
                             </select>
                         </div>
 
+                        {/* Filter Region */}
                         <div className="filter-item">
                             <label>Region</label>
                             <select name="region" value={filters.region} onChange={handleChange}>
@@ -82,6 +83,7 @@ export default function StatsPage() {
                             </select>
                         </div>
 
+                        {/* Filter Min Rounds */}
                         <div className="filter-item short-input">
                             <label>Min Rnds</label>
                             <input
@@ -93,6 +95,7 @@ export default function StatsPage() {
                             />
                         </div>
 
+                        {/* Filter Min Rating */}
                         <div className="filter-item short-input">
                             <label>Min Rating</label>
                             <input
@@ -105,11 +108,12 @@ export default function StatsPage() {
                             />
                         </div>
 
+                        {/* DROPDOWN AGENT VALORANT LENGKAP */}
                         <div className="filter-item">
                             <label>Agent</label>
                             <select name="agent" value={filters.agent} onChange={handleChange}>
                                 <option value="All">All Agents</option>
-                                {agents.map((agent, index) => (
+                                {valorantAgents.map((agent, index) => (
                                     <option key={index} value={agent}>
                                         {agent}
                                     </option>
@@ -117,6 +121,7 @@ export default function StatsPage() {
                             </select>
                         </div>
 
+                        {/* Filter Map */}
                         <div className="filter-item">
                             <label>Map</label>
                             <select name="map" value={filters.map} onChange={handleChange}>
@@ -129,6 +134,7 @@ export default function StatsPage() {
                             </select>
                         </div>
 
+                        {/* Filter Timespan */}
                         <div className="filter-item">
                             <label>Timespan</label>
                             <select name="timespan" value={filters.timespan} onChange={handleChange}>
@@ -141,7 +147,7 @@ export default function StatsPage() {
                         </button>
                     </div>
 
-                    {/* TABLE SECTION */}
+                    {/* TABLE DATA */}
                     <div className="stats-table-card">
                         <table className="vlr-style-table">
                             <thead>
