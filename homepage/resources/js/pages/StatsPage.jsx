@@ -13,6 +13,12 @@ export default function StatsPage() {
         timespan: "Past 60 Days"
     });
 
+    const [stats, setStats] = useState([]);
+    const [agents, setAgents] = useState([]);
+    const [maps, setMaps] = useState([]);
+
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
     const handleChange = (e) => {
         setFilters({
             ...filters,
@@ -20,152 +26,168 @@ export default function StatsPage() {
         });
     };
 
-    const handleApply = () => {
+    // Fungsi Fetching Data Tabel Stats
+    const fetchStatsData = () => {
         const params = new URLSearchParams(filters).toString();
-        fetch(`http://127.0.0.1:8000/api/stats?${params}`)
+        fetch(`${API_URL}/api/stats?${params}`)
             .then(res => res.json())
             .then(data => {
-                console.log("STATS:", data);
-                setStats(data.data || []);
+                console.log("STATS DATA:", data);
+                // Menyesuaikan jika response Laravel dibungkus data atau langsung array
+                setStats(data.data || data || []);
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error("Error fetching stats:", err));
     };
 
-    const [stats, setStats] = useState([]);
-    const [agents, setAgents] = useState([]);
-    const [maps, setMaps] = useState([]);
+    // Pemicu Fetching awal saat halaman dimuat pertama kali
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/stats/filters")
+        // 1. Ambil Data Isian Opsi Filter
+        fetch(`${API_URL}/api/stats/filters`)
             .then(res => res.json())
             .then(data => {
                 console.log("FILTER DATA:", data);
                 setAgents(data.agents || []);
                 setMaps(data.maps || []);
-            });
+            })
+            .catch(err => console.error("Error fetching filters:", err));
+
+        // 2. Langsung isi tabel otomatis saat masuk halaman
+        fetchStatsData();
     }, []);
 
-    console.log("STATS:", stats);
+    const handleApply = () => {
+        fetchStatsData();
+    };
 
     return (
         <>
-        <Navbar />
-        <div className="page-container">
-        <div className="stats-container">
+            <Navbar />
+            <div className="stats-page-container">
+                <div className="stats-content-wrapper">
+                    <h2 className="stats-page-title">PLAYER STATISTICS LEADERBOARD</h2>
 
-            {/* FILTER SECTION */}
-            <div className="filter-box">
+                    {/* FILTER SECTION (HORIZONTAL BAR SEPERTI VLR.GG) */}
+                    <div className="filter-toolbar">
+                        <div className="filter-item">
+                            <label>Event Series</label>
+                            <select name="eventSeries" value={filters.eventSeries} onChange={handleChange}>
+                                <option value="All">All</option>
+                            </select>
+                        </div>
 
-                <div className="filter-group">
-                    <label>Event Series</label>
-                    <select name="eventSeries" onChange={handleChange}>
-                        <option>All</option>
-                    </select>
-                </div>
+                        <div className="filter-item">
+                            <label>Region</label>
+                            <select name="region" value={filters.region} onChange={handleChange}>
+                                <option value="All">All</option>
+                            </select>
+                        </div>
 
-                <div className="filter-row">
-                    <div className="filter-group">
-                        <label>Region</label>
-                        <select name="region" onChange={handleChange}>
-                            <option>All</option>
-                        </select>
+                        <div className="filter-item short-input">
+                            <label>Min Rnds</label>
+                            <input
+                                name="minRounds"
+                                type="number"
+                                placeholder="0"
+                                value={filters.minRounds}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="filter-item short-input">
+                            <label>Min Rating</label>
+                            <input
+                                name="minRating"
+                                type="number"
+                                step="0.1"
+                                placeholder="0.0"
+                                value={filters.minRating}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="filter-item">
+                            <label>Agent</label>
+                            <select name="agent" value={filters.agent} onChange={handleChange}>
+                                <option value="All">All Agents</option>
+                                {agents.map((agent, index) => (
+                                    <option key={index} value={agent}>
+                                        {agent}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="filter-item">
+                            <label>Map</label>
+                            <select name="map" value={filters.map} onChange={handleChange}>
+                                <option value="All">All Maps</option>
+                                {maps.map((map, index) => (
+                                    <option key={index} value={map}>
+                                        {map}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="filter-item">
+                            <label>Timespan</label>
+                            <select name="timespan" value={filters.timespan} onChange={handleChange}>
+                                <option value="Past 60 Days">Past 60 Days</option>
+                            </select>
+                        </div>
+
+                        <button className="btn-apply-filters" onClick={handleApply}>
+                            APPLY FILTER
+                        </button>
                     </div>
 
-                    <div className="filter-group">
-                        <label>MIN # RNDS</label>
-                        <input
-                            name="minRounds"
-                            type="number"
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="filter-group">
-                        <label>MIN OOP RATING</label>
-                        <input
-                            name="minRating"
-                            type="number"
-                            step="0.1"
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="filter-group">
-                        <label>AGENT</label>
-                        <select name="agent" onChange={handleChange}>
-                            <option value="All">All</option>
-                            {agents.map((agent, index) => (
-                                <option key={index} value={agent}>
-                                    {agent}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="filter-group">
-                        <label>MAP</label>
-                        <select name="map" onChange={handleChange}>
-                            <option value="All">All</option>
-                            {maps.map((map, index) => (
-                                <option key={index} value={map}>
-                                    {map}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="filter-group">
-                        <label>TIMESPAN</label>
-                        <select name="timespan" onChange={handleChange}>
-                            <option>Past 60 Days</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button className="apply-btn" onClick={handleApply}>
-                    Apply
-                </button>
-
-            </div>
-
-            {/* TABLE SECTION */}
-            <div className="table-box">
-
-                <table>
-                    <tr>
-                        <th>User</th>
-                        <th>Agent</th>
-                        <th>Kills</th>
-                        <th>Deaths</th>
-                        <th>Assists</th>
-                        <th>KD</th>
-                        <th>ACS</th>
-                    </tr>
-
-                    <tbody>
-                        {stats.length > 0 ? (
-                            stats.map((row, index) => (
-                                <tr key={index}>
-                                    <td>User {row.id_user}</td>
-                                    <td>{row.agent_used}</td>
-                                    <td>{row.kills}</td>
-                                    <td>{row.deaths}</td>
-                                    <td>{row.assists}</td>
-                                    <td>{row.kd}</td>
-                                    <td>{row.acs}</td>
+                    {/* TABLE SECTION */}
+                    <div className="stats-table-card">
+                        <table className="vlr-style-table">
+                            <thead>
+                                <tr>
+                                    <th style={{ textAlign: "left", paddingLeft: "20px" }}>Player</th>
+                                    <th>Agent</th>
+                                    <th>Kills</th>
+                                    <th>Deaths</th>
+                                    <th>Assists</th>
+                                    <th>K/D Ratio</th>
+                                    <th>ACS</th>
                                 </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7">No Data</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                                {stats.length > 0 ? (
+                                    stats.map((row, index) => (
+                                        <tr key={index} className="vlr-table-row">
+                                            <td className="player-cell" style={{ textAlign: "left", paddingLeft: "20px" }}>
+                                                <span className="rank-number">{index + 1}.</span>
+                                                <span className="player-name">User {row.id_user}</span>
+                                            </td>
+                                            <td>
+                                                <span className="agent-badge">{row.agent_used || "Unknown"}</span>
+                                            </td>
+                                            <td className="stat-number">{row.kills}</td>
+                                            <td className="stat-number text-muted">{row.deaths}</td>
+                                            <td className="stat-number text-muted">{row.assists}</td>
+                                            <td className="stat-number kd-highlight">
+                                                {parseFloat(row.kd).toFixed(2)}
+                                            </td>
+                                            <td className="stat-number acs-glow">{row.acs}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="7" className="no-data-cell">
+                                            📡 No statistical data found matching your query.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
             </div>
-
-        </div>
-        </div>
         </>
     );
 }
