@@ -10,6 +10,32 @@ export default function RegisterPage() {
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     const handleRegister = async () => {
+        // --- ALGORITMA VALIDASI CLIENT-SIDE ---
+
+        // 1. Pastikan semua input terisi
+        if (!username || !email || !password) {
+            alert("Semua kolom input wajib diisi!");
+            return;
+        }
+
+        // 2. Validasi Password dengan Regex:
+        // ^(?=.*[A-Z])       -> Harus ada setidaknya 1 huruf kapital
+        // ^(?=.*\d)          -> Harus ada setidaknya 1 angka
+        // ^(?=.*[!@#$%^&*])  -> Harus ada setidaknya 1 simbol
+        // .{8,}              -> Minimal 8 karakter
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
+        if (!passwordRegex.test(password)) {
+            alert(
+                "Password tidak memenuhi syarat!\n" +
+                "- Minimal 8 karakter\n" +
+                "- Setidaknya mengandung 1 angka\n" +
+                "- Setidaknya mengandung 1 huruf kapital\n" +
+                "- Setidaknya mengandung 1 simbol (misal: !, @, #, $, %, etc.)"
+            );
+            return;
+        }
+
         try {
             const res = await fetch(`${API_URL}/api/register`, {
                 method: "POST",
@@ -28,12 +54,11 @@ export default function RegisterPage() {
 
             if (data.success) {
                 alert("Register berhasil");
-
                 localStorage.setItem("user", JSON.stringify(data.user));
                 localStorage.setItem("token", data.token);
-
                 window.location.href = "/dashboard";
             } else {
+                // Menangkap pesan error dari database/Laravel (misal: username/email sudah terdaftar)
                 alert(data.message || "Register gagal");
             }
         } catch (error) {
@@ -44,16 +69,11 @@ export default function RegisterPage() {
 
     return (
         <div className="login-page-container">
-            {/* Navbar tetap di paling atas */}
             <Navbar />
-
-            {/* Wrapper Utama untuk Konten Tengah */}
             <div className="page-wrapper">
-
-                {/* Main Card Wrapper (Split Layout) */}
                 <div className="split-login-card">
 
-                    {/* Sisi Kiri: Form Register (Glassmorphism) */}
+                    {/* Sisi Kiri: Form Register */}
                     <div className="login-form-side">
                         <h1 className="brand-title">META.PORTAL</h1>
 
@@ -77,13 +97,12 @@ export default function RegisterPage() {
                             <input
                                 className="login-input"
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Password (Min. 8 char, 1 Capital, 1 Number, 1 Symbol)"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
 
-                        {/* Tautan kembali ke halaman login */}
                         <div className="login-actions-register">
                             <Link to="/login" className="btn-link">
                                 Already have an account? Sign In
@@ -97,7 +116,7 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    {/* Sisi Kanan: Gambar Banner Esports Unsplash */}
+                    {/* Sisi Kanan: Banner */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"
