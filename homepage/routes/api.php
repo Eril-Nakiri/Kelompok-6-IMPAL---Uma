@@ -25,10 +25,14 @@ Route::get('/dashboard', function () {
 
 
 /* LOGIN */
-Route::post('/login',[AuthController::class,'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
 /* REGISTER */
 Route::post('/register', [AuthController::class, 'register']);
+
+/* FORGOT PASSWORD VERIFICATION */
+// Menghubungkan endpoint POST ke fungsi verifyForgotAccount di AuthController
+Route::post('/forgot-password-verify', [AuthController::class, 'verifyForgotAccount']);
 
 /* USER SEARCH */
 Route::get('/users/search', [UserController::class, 'search']);
