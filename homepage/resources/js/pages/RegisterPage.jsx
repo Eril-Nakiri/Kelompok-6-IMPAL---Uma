@@ -7,22 +7,18 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    // State baru untuk mengatur visibilitas password (true = kelihatan, false = disembunyikan)
+    const [showPassword, setShowPassword] = useState(false);
+
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     const handleRegister = async () => {
         // --- ALGORITMA VALIDASI CLIENT-SIDE ---
-
-        // 1. Pastikan semua input terisi
         if (!username || !email || !password) {
             alert("Semua kolom input wajib diisi!");
             return;
         }
 
-        // 2. Validasi Password dengan Regex:
-        // ^(?=.*[A-Z])       -> Harus ada setidaknya 1 huruf kapital
-        // ^(?=.*\d)          -> Harus ada setidaknya 1 angka
-        // ^(?=.*[!@#$%^&*])  -> Harus ada setidaknya 1 simbol
-        // .{8,}              -> Minimal 8 karakter
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
         if (!passwordRegex.test(password)) {
@@ -58,7 +54,6 @@ export default function RegisterPage() {
                 localStorage.setItem("token", data.token);
                 window.location.href = "/dashboard";
             } else {
-                // Menangkap pesan error dari database/Laravel (misal: username/email sudah terdaftar)
                 alert(data.message || "Register gagal");
             }
         } catch (error) {
@@ -94,13 +89,25 @@ export default function RegisterPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
 
-                            <input
-                                className="login-input"
-                                type="password"
-                                placeholder="Password (Min. 8 char, 1 Capital, 1 Number, 1 Symbol)"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            {/* Wadah khusus dengan tombol mata */}
+                            <div className="password-input-container">
+                                <input
+                                    className="login-input"
+                                    // Tipe input berubah dinamis tergantung state showPassword
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Password (Min. 8 char, 1 Capital, 1 Number, 1 Symbol)"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-btn"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+                                >
+                                    {showPassword ? "🙈" : "👁️"}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="login-actions-register">
