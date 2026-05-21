@@ -31,8 +31,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 /* FORGOT PASSWORD VERIFICATION */
-// Menghubungkan endpoint POST ke fungsi verifyForgotAccount di AuthController
 Route::post('/forgot-password-verify', [AuthController::class, 'verifyForgotAccount']);
+// Tambahkan baris ini:
+Route::post('/forgot-password-update', [AuthController::class, 'updateForgotPassword']);
 
 /* USER SEARCH */
 Route::get('/users/search', [UserController::class, 'search']);

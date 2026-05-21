@@ -85,4 +85,31 @@ class AuthController extends Controller
                 "message" => "Kombinasi Username dan Email tidak ditemukan di database!"
             ], 404);
         }
+
+        public function updateForgotPassword(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'password' => 'required|string'
+        ]);
+
+        // Mencari user berdasarkan ID yang dikirim dari tahap verifikasi sebelumnya
+        $user = UserAccount::find($request->user_id);
+
+        if (!$user) {
+            return response()->json([
+                "success" => false,
+                "message" => "User tidak ditemukan!"
+            ], 404);
+        }
+
+        // Update password baru ke database
+        $user->password = $request->password; // Disarankan nantinya pakai bcrypt($request->password) jika tabelnya mendukung hashing
+        $user->save();
+
+        return response()->json([
+            "success" => true,
+            "message" => "Password Anda berhasil diperbarui. Silakan login kembali!"
+        ]);
+    }
     }

@@ -3,72 +3,127 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 
 export default function ForgotPasswordPage() {
+    // --- STATE STEPPING ---
+    const [step, setStep] = useState(1); // Step 1: Verifikasi data & Captcha, Step 2: Form Password Baru
+    const [userId, setUserId] = useState(null); // Menyimpan ID user dari backend setelah sukses Step 1
+
+    // --- STATE STEP 1 (VERIFIKASI) ---
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [captchaInput, setCaptchaInput] = useState("");
     const [generatedCaptcha, setGeneratedCaptcha] = useState("");
 
+    // --- STATE STEP 2 (NEW PASSWORD) ---
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
     const API_URL = import.meta.env.VITE_API_URL || "";
 
-    // Algoritma Pembuat Kode Captcha Alfanumerik Acak (5 Karakter)
+    // Algoritma Generator Captcha
     const generateNewCaptcha = () => {
-        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; // Menghilangkan karakter mirip seperti O, 0, I, l
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
         let result = "";
         for (let i = 0; i < 5; i++) {
             result += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         setGeneratedCaptcha(result);
-        setCaptchaInput(""); // Reset inputan user setelah captcha diubah
+        setCaptchaInput("");
     };
 
-    // Generate captcha otomatis saat pertama kali halaman dimuat
     useEffect(() => {
         generateNewCaptcha();
     }, []);
 
-    const handleResetProcess = async () => {
-        // 1. Validasi Input Kosong Sisi Client
+    // --- PROSES TAHAP 1: VERIFIKASI AKUN ---
+    const handleVerifyAccount = async () => {
         if (!username || !email || !captchaInput) {
-            alert("Harap isi semua kolom input termasuk kode verifikasi Captcha!");
+            alert("Harap isi semua kolom input termasuk kode Captcha!");
             return;
         }
 
-        // 2. ALGORITMA VERIFIKASI CAPTCHA (Bukan Bot)
-        // Kita bandingkan secara Case-Sensitive (sensitif huruf besar/kecil)
         if (captchaInput !== generatedCaptcha) {
-            alert("Verifikasi Gagal! Kode Captcha yang Anda masukkan salah.");
-            generateNewCaptcha(); // Segarkan captcha baru jika salah demi keamanan
+            alert("Verifikasi Gagal! Kode Captcha salah.");
+            generateNewCaptcha();
             return;
         }
 
         try {
-            // 3. VALIDASI DATABASE (Kombinasi Username + Email)
             const res = await fetch(`${API_URL}/api/forgot-password-verify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
+                body: JSON.stringify({ username, email }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                alert("Akun Terverifikasi! Silakan buat password baru Anda.");
+                setUserId(data.user_id); // Ambil ID user dari backend
+                setStep(2); // Pindah otomatis ke form password baru (Step 2)
+            } else {
+                alert(data.message || "Data akun tidak cocok.");
+                generateNewCaptcha();
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Terjadi kesalahan pada server.");
+            generateNewCaptcha();
+        }
+    };
+
+    // --- PROSES TAHAP 2: UPDATE PASSWORD BARU ---
+    const handleUpdatePassword = async () => {
+        if (!newPassword || !confirmPassword) {
+            alert("Kedua kolom password wajib diisi!");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert("Konfirmasi password tidak cocok! Pastikan keduanya sama.");
+            return;
+        }
+
+        // Algoritma Validasi Kekuatan Password (Kriteria Kemarin)
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        if (!passwordRegex.test(newPassword)) {
+            alert(
+                "Password baru tidak memenuhi kriteria keamanan!\n" +
+                "- Minimal 8 karakter\n" +
+                "- Setidaknya mengandung 1 angka\n" +
+                "- Setidaknya mengandung 1 huruf kapital\n" +
+                "- Setidaknya mengandung 1 simbol (!, @, #, $, dll.)"
+            );
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/forgot-password-update`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
                 body: JSON.stringify({
-                    username,
-                    email,
+                    user_id: userId,
+                    password: newPassword
                 }),
             });
 
             const data = await res.json();
 
             if (res.ok && data.success) {
-                alert(`Sukses: ${data.message}\n(Lanjutkan ke logika sistem pengubahan password Anda)`);
-                // Di sini Anda bisa mengarahkan user ke halaman ganti password baru jika diperlukan, contoh:
-                // window.location.href = `/reset-password-form?id=${data.user_id}`;
+                alert(data.message);
+                window.location.href = "/login"; // Alihkan langsung ke login jika sukses sesungguhnya
             } else {
-                alert(data.message || "Data tidak cocok.");
-                generateNewCaptcha(); // Segarkan captcha setiap kali ada kegagalan request
+                alert(data.message || "Gagal memperbarui password.");
             }
         } catch (error) {
             console.error(error);
-            alert("Terjadi kesalahan pada server / jaringan gagal.");
-            generateNewCaptcha();
+            alert("Terjadi kesalahan sistem saat memperbarui password.");
         }
     };
 
@@ -79,67 +134,114 @@ export default function ForgotPasswordPage() {
             <div className="page-wrapper">
                 <div className="split-login-card">
 
-                    {/* Sisi Kiri: Form Forgot Password dengan Captcha (Glassmorphism) */}
+                    {/* Sisi Kiri Form Konten Dinamis */}
                     <div className="login-form-side">
                         <h1 className="brand-title">META.PORTAL</h1>
 
-                        <div className="input-group">
-                            <input
-                                className="login-input"
-                                type="text"
-                                placeholder="Enter your Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
+                        {step === 1 ? (
+                            /* ================= TAMPILAN STEP 1: VERIFIKASI ================= */
+                            <div className="input-group">
+                                <p style={{ color: "#00E1D9", fontSize: "0.95rem", marginBottom: "15px" }}>
+                                    Step 1: Account & Security Verification
+                                </p>
 
-                            <input
-                                className="login-input"
-                                type="email"
-                                placeholder="Enter your Registered Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
+                                <input
+                                    className="login-input"
+                                    type="text"
+                                    placeholder="Enter your Username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
 
-                            {/* Section Captcha Anti-Bot */}
-                            <label style={{ color: "#cbd5e1", fontSize: "0.85rem", marginTop: "10px" }}>
-                                Security Verification (Case-Sensitive):
-                            </label>
-                            <div className="captcha-container">
-                                <div className="captcha-box">{generatedCaptcha}</div>
-                                <button
-                                    type="button"
-                                    className="btn-refresh-captcha"
-                                    onClick={generateNewCaptcha}
-                                    title="Ganti Kode Baru"
-                                >
-                                    🔄
-                                </button>
+                                <input
+                                    className="login-input"
+                                    type="email"
+                                    placeholder="Enter your Registered Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+
+                                <label style={{ color: "#cbd5e1", fontSize: "0.85rem", marginTop: "10px" }}>
+                                    Security Verification (Case-Sensitive):
+                                </label>
+                                <div className="captcha-container">
+                                    <div className="captcha-box">{generatedCaptcha}</div>
+                                    <button
+                                        type="button"
+                                        className="btn-refresh-captcha"
+                                        onClick={generateNewCaptcha}
+                                    >
+                                        🔄
+                                    </button>
+                                </div>
+
+                                <input
+                                    className="login-input"
+                                    type="text"
+                                    placeholder="Type the captcha code above"
+                                    value={captchaInput}
+                                    onChange={(e) => setCaptchaInput(e.target.value)}
+                                    style={{ marginTop: "5px" }}
+                                />
+
+                                <div className="button-wrapper" style={{ marginTop: "20px" }}>
+                                    <button className="btn-login" onClick={handleVerifyAccount}>
+                                        VERIFY ACCOUNT
+                                    </button>
+                                </div>
                             </div>
+                        ) : (
+                            /* ================= TAMPILAN STEP 2: INPUT PASSWORD BARU ================= */
+                            <div className="input-group">
+                                <p style={{ color: "#00E1D9", fontSize: "0.95rem", marginBottom: "15px" }}>
+                                    Step 2: Create Your New Secure Password
+                                </p>
 
-                            <input
-                                className="login-input"
-                                type="text"
-                                placeholder="Type the captcha code above"
-                                value={captchaInput}
-                                onChange={(e) => setCaptchaInput(e.target.value)}
-                                style={{ marginTop: "5px" }}
-                            />
-                        </div>
+                                {/* Input Password Baru dengan Fitur Mata */}
+                                <div className="password-input-container">
+                                    <input
+                                        className="login-input"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="New Password (Min. 8 char, Capital, Num, Symbol)"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="toggle-password-btn"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? "🙈" : "👁️"}
+                                    </button>
+                                </div>
+
+                                {/* Input Konfirmasi Password Baru */}
+                                <div className="password-input-container" style={{ marginTop: "10px" }}>
+                                    <input
+                                        className="login-input"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Confirm New Password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="button-wrapper" style={{ marginTop: "25px" }}>
+                                    <button className="btn-login" onClick={handleUpdatePassword}>
+                                        RESET PASSWORD
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="login-actions-register">
                             <Link to="/login" className="btn-link">
-                                Remember your password? Sign In
+                                Back to Sign In
                             </Link>
-                        </div>
-
-                        <div className="button-wrapper">
-                            <button className="btn-login" onClick={handleResetProcess}>
-                                VERIFY ACCOUNT
-                            </button>
                         </div>
                     </div>
 
-                    {/* Sisi Kanan: Cyber Esports Banner Gambar Unsplash */}
+                    {/* Sisi Kanan: Cyber Banner Esports */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"
