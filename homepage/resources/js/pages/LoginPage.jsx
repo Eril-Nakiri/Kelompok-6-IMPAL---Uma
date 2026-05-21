@@ -3,14 +3,21 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 
-// Baris import CSS lokal dipindahkan ke App.css global agar tidak memicu error build di Vite
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    // State baru untuk mengatur visibilitas password (true = kelihatan, false = disembunyikan)
+    const [showPassword, setShowPassword] = useState(false);
+
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     const handleLogin = async () => {
+        if (!username || !password) {
+            alert("Username dan Password wajib diisi!");
+            return;
+        }
+
         try {
             const res = await fetch(`${API_URL}/api/login`, {
                 method: "POST",
@@ -62,13 +69,25 @@ export default function LoginPage() {
                                 onChange={(e) => setUsername(e.target.value)}
                             />
 
-                            <input
-                                className="login-input"
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            {/* Wadah khusus dengan tombol mata bergaya absolut */}
+                            <div className="password-input-container">
+                                <input
+                                    className="login-input"
+                                    // Tipe input berubah dinamis tergantung state showPassword
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-btn"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+                                >
+                                    {showPassword ? "🙈" : "👁️"}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="login-actions">
