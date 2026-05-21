@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserAccount;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
     public function login(Request $request)
     {
