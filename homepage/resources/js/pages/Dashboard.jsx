@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
-    const [mainEvents, setMainEvents] = useState([
+    // --- MOCK DATA: Nanti diganti dengan fetch API dari Laravel ---
+    const mainEvents = [
         {
             id: 1,
             title: "VALORANT Champions 2024",
@@ -11,7 +12,7 @@ export default function Dashboard() {
             type: "Offline",
             dates: "Aug 1 - 25, 2024",
             status: "Completed",
-            logo: "🏆"
+            logo: "🏆" // Bisa diganti <img> tag nantinya
         },
         {
             id: 2,
@@ -43,48 +44,21 @@ export default function Dashboard() {
             status: "Completed",
             logo: "🌎"
         }
-    ]);
+    ];
 
-    const [upcomingEvents, setUpcomingEvents] = useState([
+    const upcomingEvents = [
         { id: 1, title: "VALORANT Radiant Asia Invitational", date: "Nov 21" },
         { id: 2, title: "Red Bull Home Ground #5 - APAC", date: "Oct 19" },
-    ]);
+    ];
 
-    const [recentEvents, setRecentEvents] = useState([
+    const recentEvents = [
         { id: 1, title: "VCT 2024: Ascension Pacific", winner: "Sin Prisa Gaming" },
         { id: 2, title: "Red Bull Home Ground #5", winner: "T1" },
-    ]);
-
-    // State untuk memantau koneksi API Laravel di Railway
-    const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");
-    const [isApiReady, setIsApiReady] = useState(false);
-
-    // 2. Menggunakan useEffect untuk hit API backend begitu halaman pertama kali dimuat
-    useEffect(() => {
-        fetch("https://kelompok-6-impal-uma-production.up.railway.app")
-            .then((res) => res.json())
-            .then((result) => {
-                // Jika berhasil terhubung, simpan statusnya
-                setBackendStatus(`Berhasil Terhubung: ${result.app} (v${result.version}) - Status: ${result.status}`);
-                setIsApiReady(true);
-            })
-            .catch((err) => {
-                console.error(err);
-                setBackendStatus("Gagal menyambungkan ke API Laravel Railway.");
-                setIsApiReady(false);
-            });
-    }, []);
+    ];
 
     return (
         <div className="min-h-screen bg-[#f3f3f3] font-sans text-[#333]">
             <Navbar />
-
-            {/* BANNER STATUS API BACKEND */}
-            <div className={`text-center py-2 text-xs font-semibold tracking-wide border-b ${
-                isApiReady ? "bg-green-100 text-green-800 border-green-200" : "bg-amber-100 text-amber-800 border-amber-200"
-            }`}>
-                📡 {backendStatus}
-            </div>
 
             {/* SUB-NAVBAR (TABS MENU) */}
             <div className="bg-white border-b border-gray-300 shadow-sm text-xs md:text-sm">
@@ -102,7 +76,7 @@ export default function Dashboard() {
             {/* MAIN CONTENT CONTAINER */}
             <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
 
-                {/* KIRI: DAFTAR EVENTS UTAMA (70%) */}
+                {/* KIRI: DAFTAR EVENTS UTAMA (70% WIDHT) */}
                 <div className="w-full md:w-[70%]">
                     <div className="flex justify-between items-center mb-4">
                         <h1 className="text-2xl font-bold">Events</h1>
@@ -120,11 +94,14 @@ export default function Dashboard() {
                     <div className="flex flex-col gap-3">
                         {mainEvents.map((ev) => (
                             <div key={ev.id} className="bg-white border border-gray-200 rounded hover:shadow-md transition-shadow flex overflow-hidden">
+                                {/* Logo Area */}
                                 <div className="w-24 bg-gray-50 flex items-center justify-center text-4xl border-r border-gray-100">
                                     {ev.logo}
                                 </div>
 
+                                {/* Info Area */}
                                 <div className="flex-1 p-4 relative">
+                                    {/* Status Badge */}
                                     <div className="absolute top-4 right-4">
                                         <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded font-semibold">
                                             {ev.status}
@@ -149,14 +126,16 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* KANAN: SIDEBAR (30%) */}
+                {/* KANAN: SIDEBAR (30% WIDTH) */}
                 <div className="w-full md:w-[30%]">
+
+                    {/* Sidebar Tabs */}
                     <div className="flex mb-4 text-sm font-bold text-gray-400 border-b border-gray-300">
                         <span className="text-red-600 border-b-2 border-red-600 pb-2 px-2 cursor-pointer">featured</span>
                         <span className="hover:text-black pb-2 px-2 cursor-pointer">all</span>
                     </div>
 
-                    {/* Upcoming Events */}
+                    {/* Upcoming Events Module */}
                     <div className="mb-6">
                         <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
                             Upcoming Valorant Events
@@ -174,7 +153,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Recent Events */}
+                    {/* Recent Events Module */}
                     <div>
                         <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
                             Recent Valorant Events
