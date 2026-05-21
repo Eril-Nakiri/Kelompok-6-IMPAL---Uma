@@ -1,7 +1,8 @@
+import AuthCard from "../components/AuthCard";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import AuthCard from "../components/AuthCard";
 import { Link } from "react-router-dom";
+import "./LoginPage.css"; // Pastikan Anda mengimpor file CSS-nya di sini
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -38,39 +39,66 @@ export default function LoginPage() {
     };
 
     return (
-        <>
+        <div className="login-page-container">
+            {/* Navbar tetap di paling atas */}
             <Navbar />
 
+            {/* Wrapper Utama untuk Konten Tengah */}
             <div className="page-wrapper">
-                <AuthCard title="META.portal">
-                    <input
-                        className="login-input"
-                        placeholder="username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
 
-                    <input
-                        className="login-input"
-                        type="password"
-                        placeholder="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                {/* Main Card Wrapper (Split Layout) */}
+                <div className="split-login-card">
 
-                    <div className="login-actions">
-                        <Link to="/forgot-password" className="btn-small">
-                            Forgot Password
-                        </Link>
+                    {/* Sisi Kiri: Form Login (Glassmorphism) */}
+                    <div className="login-form-side">
+                        <h1 className="brand-title">META.PORTAL</h1>
 
-                        <Link to="/register" className="btn-small">
-                            Sign Up
-                        </Link>
+                        <div className="input-group">
+                            <input
+                                className="login-input"
+                                type="text"
+                                placeholder="Username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+
+                            <input
+                                className="login-input"
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="login-actions">
+                            <Link to="/forgot-password" className="btn-link">
+                                Forgot Password?
+                            </Link>
+                            <Link to="/register" className="btn-link">
+                                Sign Up
+                            </Link>
+                        </div>
+
+                        <div className="button-wrapper">
+                            <button className="btn-login" onClick={handleLogin}>
+                                LOGIN
+                            </button>
+                        </div>
                     </div>
 
-                    <button className="btn-login" onClick={handleLogin}>
-                        LOGIN
-                    </button>
-                </AuthCard>
+                    {/* Sisi Kanan: Gambar Banner */}
+                    <div className="login-image-side">
+                        {/* Ganti src dengan path gambar tim esports Anda */}
+                        <img
+                            src="/images/esports-team.jpg"
+                            alt="Esports Team Valorant"
+                            className="banner-img"
+                        />
+                    </div>
+
+                </div>
             </div>
-        </>
+        </div>
     );
 }
