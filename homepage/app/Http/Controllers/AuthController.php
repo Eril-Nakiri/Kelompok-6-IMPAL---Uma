@@ -61,50 +61,50 @@ class AuthController extends Controller
     }
 
     public function verifyForgotAccount(Request $request)
-        {
-            $request->validate([
-                'username' => 'required|string',
-                'email' => 'required|email'
-            ]);
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'email' => 'required|email'
+        ]);
 
-            // Mencari akun yang username DAN email-nya cocok sekaligus
-            $user = UserAccount::where('username', $request->username)
-                ->where('email', $request->email)
-                ->first();
+        // Mencari akun berdasarkan kecocokan kombinasi username DAN email
+        $user = UserAccount::where('username', $request->username)
+            ->where('email', $request->email)
+            ->first();
 
-            if ($user) {
-                return response()->json([
-                    "success" => true,
-                    "message" => "Akun terverifikasi. Silakan lakukan reset password.",
-                    "user_id" => $user->id // Mengembalikan ID untuk proses update password selanjutnya jika diperlukan
-                ]);
-            }
-
+        if ($user) {
             return response()->json([
-                "success" => false,
-                "message" => "Kombinasi Username dan Email tidak ditemukan di database!"
-            ], 404);
+                "success" => true,
+                "message" => "Akun terverifikasi. Silakan lakukan reset password.",
+                "user_id" => $user->id_user // Mengembalikan id_user yang valid ke React frontend
+            ]);
         }
 
-        public function updateForgotPassword(Request $request)
+        return response()->json([
+            "success" => false,
+            "message" => "Kombinasi Username dan Email tidak ditemukan di database!"
+        ], 404);
+    }
+
+    public function updateForgotPassword(Request $request)
     {
         $request->validate([
             'user_id' => 'required',
             'password' => 'required|string'
         ]);
 
-        // Mencari user berdasarkan ID yang dikirim dari tahap verifikasi sebelumnya
+        // Mencari user berdasarkan Primary Key id_user yang dikirim dari frontend
         $user = UserAccount::find($request->user_id);
 
         if (!$user) {
             return response()->json([
                 "success" => false,
-                "message" => "User tidak ditemukan!"
+                "message" => "User tidak ditemukan di database!"
             ], 404);
         }
 
-        // Update password baru ke database
-        $user->password = $request->password; // Disarankan nantinya pakai bcrypt($request->password) jika tabelnya mendukung hashing
+        // Memperbarui password baru ke database
+        $user->password = $request->password;
         $user->save();
 
         return response()->json([
@@ -112,4 +112,4 @@ class AuthController extends Controller
             "message" => "Password Anda berhasil diperbarui. Silakan login kembali!"
         ]);
     }
-    }
+}
