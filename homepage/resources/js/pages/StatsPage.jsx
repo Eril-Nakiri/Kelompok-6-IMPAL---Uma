@@ -3,6 +3,19 @@ import { useState, useEffect } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
+    // Daftar Agent langsung ditaruh sebagai nilai default state agar dropdown TIDAK MUNGKIN KOSONG
+    const [agents, setAgents] = useState([
+        "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
+        "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
+        "Killjoy", "Neon", "Omen", "Phoenix", "Raze", "Reyna", "Sage",
+        "Skye", "Sova", "Tejo", "Viper", "Yoru"
+    ]);
+
+    const [maps, setMaps] = useState([
+        "Ascent", "Bind", "Breeze", "Abyss", "Fracture",
+        "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
+    ]);
+
     // Mengembalikan seluruh state filter bawaan awal seperti semula
     const [filters, setFilters] = useState({
         eventSeries: "All",
@@ -15,9 +28,6 @@ export default function StatsPage() {
     });
 
     const [stats, setStats] = useState([]);
-    const [agents, setAgents] = useState([]);
-    const [maps, setMaps] = useState([]);
-
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
     const handleChange = (e) => {
@@ -27,33 +37,39 @@ export default function StatsPage() {
         });
     };
 
-    // Fungsi fetch data dengan membawa seluruh parameter filter saat ini
+    // Fungsi fetch data statistik dari database
     const fetchStatsData = (currentFilters) => {
-        const params = new URLSearchParams(currentFilters).toString();
+        const params = new URLSearchParams();
 
-        fetch(`${API_URL}/api/stats?${params}`)
+        // Hanya kirim parameter jika nilainya bukan 'All' dan tidak kosong
+        if (currentFilters.agent && currentFilters.agent !== 'All') params.append('agent', currentFilters.agent);
+        if (currentFilters.map && currentFilters.map !== 'All') params.append('map', currentFilters.map);
+        if (currentFilters.minRounds) params.append('minRounds', currentFilters.minRounds);
+        if (currentFilters.minRating) params.append('minRating', currentFilters.minRating);
+
+        fetch(`${API_URL}/api/stats?${params.toString()}`)
             .then(res => res.json())
             .then(data => {
-                console.log("DATABASE STATS RESPONSE:", data);
-                // Menyiasati struktur data response dari Laravel
+                console.log("Response Database Stats:", data);
+                // Memastikan data array masuk dengan benar baik berupa data.data maupun langsung array
                 setStats(data.data || data || []);
             })
             .catch(err => console.error("Error fetching stats:", err));
     };
 
-    // Dieksekusi otomatis ketika user pertama kali mendarat di halaman Stats
+    // Dieksekusi OTOMATIS saat pertama kali masuk ke halaman Stats
     useEffect(() => {
-        // 1. Ambil isian dropdown Agent & Map dari Backend Laravel
+        // 1. Ambil data leaderboard awal tanpa filter (menampilkan semua data dari DB)
+        fetchStatsData(filters);
+
+        // 2. Opsional: Sync filter dari backend jika ada map/agent baru di database Anda
         fetch(`${API_URL}/api/stats/filters`)
             .then(res => res.json())
             .then(data => {
-                setAgents(data.agents || []);
-                setMaps(data.maps || []);
+                if (data.agents && data.agents.length > 0) setAgents(data.agents);
+                if (data.maps && data.maps.length > 0) setMaps(data.maps);
             })
             .catch(err => console.error("Error fetching filters:", err));
-
-        // 2. Langsung panggil data awal tanpa menunggu user klik tombol
-        fetchStatsData(filters);
     }, []);
 
     const handleApply = () => {
@@ -67,7 +83,7 @@ export default function StatsPage() {
                 <div className="stats-content-wrapper">
                     <h2 className="stats-page-title">PLAYER STATISTICS LEADERBOARD</h2>
 
-                    {/* FILTER TOOLBAR LENGKAP YANG SUDAH KEMBALI BAGUS */}
+                    {/* FILTER TOOLBAR LENGKAP */}
                     <div className="filter-toolbar">
                         <div className="filter-item">
                             <label>Event Series</label>
@@ -165,19 +181,19 @@ export default function StatsPage() {
                                                 <span className="player-name">User {row.id_user}</span>
                                             </td>
                                             <td>
-                                                <span className="agent-badge">{row.agent_used}</span>
+                                                <span className="agent-badge">{row.agent_used || "No Agent"}</span>
                                             </td>
                                             <td className="stat-number">{row.kills}</td>
                                             <td className="stat-number text-muted">{row.deaths}</td>
                                             <td className="stat-number text-muted">{row.assists}</td>
-                                            <td className="stat-number kd-highlight">{row.kd}</td>
-                                            <td className="stat-number acs-glow">{row.acs}</td>
+                                            <td className="stat-number kd-highlight">{row.kd || (row.deaths > 0 ? (row.kills/row.deaths).toFixed(2) : row.kills)}</td>
+                                            <td className="stat-number acs-glow">{row.acs || 0}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
                                         <td colSpan="7" className="no-data-cell">
-                                            📡 Menghubungkan ke database... Pastikan table 'player_match_stats' terisi data.
+                                            📡 Menghubungkan ke database... Pastikan data pada tabel 'player_match_stats' tersedia.
                                         </td>
                                     </tr>
                                 )}

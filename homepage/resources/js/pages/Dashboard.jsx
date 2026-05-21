@@ -2,60 +2,198 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [mainEvents, setMainEvents] = useState([
+        {
+            id: 1,
+            title: "VALORANT Champions 2024",
+            prize: "$2,250,000",
+            location: "Seoul",
+            type: "Offline",
+            dates: "Aug 1 - 25, 2024",
+            status: "Completed",
+            logo: "🏆"
+        },
+        {
+            id: 2,
+            title: "VCT 2024: Ascension Pacific",
+            prize: "$100,000",
+            location: "Jakarta",
+            type: "Offline",
+            dates: "Sep 20 - 29, 2024",
+            status: "Completed",
+            logo: "🌏"
+        },
+        {
+            id: 3,
+            title: "VCT 2024: Ascension EMEA",
+            prize: "$100,000",
+            location: "Monterrey",
+            type: "Offline",
+            dates: "Aug 31 - Sep 15, 2024",
+            status: "Completed",
+            logo: "🌍"
+        },
+        {
+            id: 4,
+            title: "VCT 2024: Ascension Americas",
+            prize: "$100,000",
+            location: "Monterrey",
+            type: "Offline",
+            dates: "Sep 9 - 21, 2024",
+            status: "Completed",
+            logo: "🌎"
+        }
+    ]);
 
+    const [upcomingEvents, setUpcomingEvents] = useState([
+        { id: 1, title: "VALORANT Radiant Asia Invitational", date: "Nov 21" },
+        { id: 2, title: "Red Bull Home Ground #5 - APAC", date: "Oct 19" },
+    ]);
+
+    const [recentEvents, setRecentEvents] = useState([
+        { id: 1, title: "VCT 2024: Ascension Pacific", winner: "Sin Prisa Gaming" },
+        { id: 2, title: "Red Bull Home Ground #5", winner: "T1" },
+    ]);
+
+    // State untuk memantau koneksi API Laravel di Railway
+    const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");
+    const [isApiReady, setIsApiReady] = useState(false);
+
+    // 2. Menggunakan useEffect untuk hit API backend begitu halaman pertama kali dimuat
     useEffect(() => {
         fetch("https://kelompok-6-impal-uma-production.up.railway.app")
-        .then((res) => res.json())
-        .then((result) => {
-            setData(result);
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error(err);
-            setLoading(false);
-        });
+            .then((res) => res.json())
+            .then((result) => {
+                // Jika berhasil terhubung, simpan statusnya
+                setBackendStatus(`Berhasil Terhubung: ${result.app} (v${result.version}) - Status: ${result.status}`);
+                setIsApiReady(true);
+            })
+            .catch((err) => {
+                console.error(err);
+                setBackendStatus("Gagal menyambungkan ke API Laravel Railway.");
+                setIsApiReady(false);
+            });
     }, []);
 
     return (
-        <>
-        <Navbar />
+        <div className="min-h-screen bg-[#f3f3f3] font-sans text-[#333]">
+            <Navbar />
 
-        <div className="min-h-screen bg-gray-50 py-10 px-4">
-            <div className="max-w-5xl mx-auto">
-
-            {/* HEADER */}
-            <div className="text-center mb-10">
-                <h1 className="text-3xl font-bold">Dashboard</h1>
-                <p className="text-gray-600 mt-2">
-                Sistem Pencatatan dan Manajemen Turnamen
-                </p>
+            {/* BANNER STATUS API BACKEND */}
+            <div className={`text-center py-2 text-xs font-semibold tracking-wide border-b ${
+                isApiReady ? "bg-green-100 text-green-800 border-green-200" : "bg-amber-100 text-amber-800 border-amber-200"
+            }`}>
+                📡 {backendStatus}
             </div>
 
-            {/* CONTENT */}
-            {loading ? (
-                <div className="bg-white shadow-md rounded-2xl p-6 text-center">
-                <p className="text-gray-600">Connecting to Laravel API...</p>
+            {/* SUB-NAVBAR (TABS MENU) */}
+            <div className="bg-white border-b border-gray-300 shadow-sm text-xs md:text-sm">
+                <div className="max-w-6xl mx-auto px-4 flex flex-wrap gap-4 py-3 font-medium text-gray-500">
+                    <span className="text-red-600 border-b-2 border-red-600 pb-1 cursor-pointer">featured</span>
+                    <span className="hover:text-black cursor-pointer pb-1">recent</span>
+                    <span className="hover:text-black cursor-pointer pb-1">main events</span>
+                    <span className="hover:text-black cursor-pointer pb-1">upcoming</span>
+                    <span className="hover:text-black cursor-pointer pb-1">regional</span>
+                    <span className="hover:text-black cursor-pointer pb-1">gameplay</span>
+                    <span className="hover:text-black cursor-pointer pb-1">fantasy</span>
                 </div>
-            ) : data ? (
-                <div className="bg-white shadow-md rounded-2xl p-6 text-center">
-                <h2 className="text-xl font-semibold mb-2">
-                    {data.app}
-                </h2>
-                <p className="text-gray-600">{data.status}</p>
-                <p className="mt-2 text-sm text-gray-500">
-                    Version: {data.version}
-                </p>
-                </div>
-            ) : (
-                <div className="bg-red-100 text-red-700 p-4 rounded-xl text-center">
-                Failed to load dashboard data.
-                </div>
-            )}
+            </div>
 
+            {/* MAIN CONTENT CONTAINER */}
+            <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
+
+                {/* KIRI: DAFTAR EVENTS UTAMA (70%) */}
+                <div className="w-full md:w-[70%]">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold">Events</h1>
+                        <div className="flex gap-2">
+                            <select className="border border-gray-300 rounded px-2 py-1 text-sm bg-white outline-none">
+                                <option>Events</option>
+                            </select>
+                            <button className="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-4 py-1 text-sm">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* EVENT CARDS */}
+                    <div className="flex flex-col gap-3">
+                        {mainEvents.map((ev) => (
+                            <div key={ev.id} className="bg-white border border-gray-200 rounded hover:shadow-md transition-shadow flex overflow-hidden">
+                                <div className="w-24 bg-gray-50 flex items-center justify-center text-4xl border-r border-gray-100">
+                                    {ev.logo}
+                                </div>
+
+                                <div className="flex-1 p-4 relative">
+                                    <div className="absolute top-4 right-4">
+                                        <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded font-semibold">
+                                            {ev.status}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="font-bold text-lg text-black mb-1">{ev.title}</h3>
+                                    <div className="text-sm font-semibold text-gray-700 mb-3">{ev.prize}</div>
+
+                                    <div className="flex items-center text-xs text-gray-500 gap-4 mt-2">
+                                        <div className="flex items-center gap-1">
+                                            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            {ev.location} • {ev.type}
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <span>📅 {ev.dates}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* KANAN: SIDEBAR (30%) */}
+                <div className="w-full md:w-[30%]">
+                    <div className="flex mb-4 text-sm font-bold text-gray-400 border-b border-gray-300">
+                        <span className="text-red-600 border-b-2 border-red-600 pb-2 px-2 cursor-pointer">featured</span>
+                        <span className="hover:text-black pb-2 px-2 cursor-pointer">all</span>
+                    </div>
+
+                    {/* Upcoming Events */}
+                    <div className="mb-6">
+                        <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                            Upcoming Valorant Events
+                        </h4>
+                        <div className="bg-white border border-gray-200 rounded">
+                            {upcomingEvents.map((ev) => (
+                                <div key={ev.id} className="border-b border-gray-100 p-3 hover:bg-gray-50 flex justify-between items-center cursor-pointer">
+                                    <span className="text-sm font-semibold text-black truncate pr-4">{ev.title}</span>
+                                    <span className="text-xs text-gray-500 whitespace-nowrap">{ev.date}</span>
+                                </div>
+                            ))}
+                            <div className="p-2 text-center border-t border-gray-200">
+                                <a href="#" className="text-xs text-blue-600 hover:underline">View all upcoming events</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Recent Events */}
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+                            Recent Valorant Events
+                        </h4>
+                        <div className="bg-white border border-gray-200 rounded">
+                            {recentEvents.map((ev) => (
+                                <div key={ev.id} className="border-b border-gray-100 p-3 hover:bg-gray-50 flex justify-between items-center cursor-pointer">
+                                    <span className="text-sm font-semibold text-black truncate pr-2">{ev.title}</span>
+                                    <span className="text-xs text-gray-500 whitespace-nowrap">{ev.winner}</span>
+                                </div>
+                            ))}
+                            <div className="p-2 text-center border-t border-gray-200">
+                                <a href="#" className="text-xs text-blue-600 hover:underline">View all completed events</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-        </>
     );
 }
