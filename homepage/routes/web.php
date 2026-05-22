@@ -2,17 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-// 1. Tempatkan rute khusus API/JSON di PALING ATAS
-Route::get('/', function () {
-    // Jika ada request dari frontend/React, kembalikan data JSON ini
+// Buat rute dengan prefix /api/ agar aman dari tabrakan rute web
+Route::get('/api/status', function () {
     return response()->json([
         'app' => 'META Portal Esports',
         'version' => '1.0.0',
-        'status' => 'Connected to Laravel'
+        'status' => 'Connected to Laravel via API Path'
     ]);
 });
 
-// 2. Rute catch-all untuk halaman web/HTML letakkan di PALING BAWAH
+// Kembalikan rute catch-all Anda seperti semula
 Route::get('/{any}', function () {
     return view('home');
 })->where('any', '.*');

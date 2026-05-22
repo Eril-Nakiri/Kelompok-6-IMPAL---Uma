@@ -30,17 +30,22 @@ export default function Dashboard() {
     ];
 
     useEffect(() => {
-        fetch("https://kelompok-6-impal-uma-production.up.railway.app")
-            .then((res) => res.json())
-            .then((result) => {
-                setBackendStatus(`Berhasil Terhubung: ${result.app} (v${result.version}) - Status: ${result.status}`);
-                setIsApiReady(true);
-            })
-            .catch((err) => {
-                console.error(err);
-                setBackendStatus("Gagal menyambungkan ke API Laravel Railway.");
-                setIsApiReady(false);
-            });
+    fetch("https://kelompok6uma-impal.up.railway.app/dashboard/api/status")
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return res.json();
+        })
+        .then((result) => {
+            setBackendStatus(`Berhasil Terhubung: ${result.app} (v${result.version}) - Status: ${result.status}`);
+            setIsApiReady(true);
+        })
+        .catch((err) => {
+            console.error(err);
+            setBackendStatus("Gagal menyambungkan ke API Laravel Railway.");
+            setIsApiReady(false);
+        });
     }, []);
 
     return (
