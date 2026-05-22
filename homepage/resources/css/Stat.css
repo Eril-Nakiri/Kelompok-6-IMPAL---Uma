@@ -1,42 +1,57 @@
-/* ==========================================================================
-    CSS LEADERBOARD STATISTICS (VLR.GG CYBER THEME)
-   ========================================================================== */
-
+/* Container Utama */
 .stats-page-container {
-    background-color: #030C11;
+    background-color: #1F232A; /* Warna latar sangat gelap ala gambar */
     min-height: 100vh;
-    padding-top: 90px;
-    padding-bottom: 50px;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 100px 40px 40px 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #E2E8F0;
 }
 
-.stats-content-wrapper {
-    max-width: 1250px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.stats-page-title {
-    color: #ffffff;
-    font-size: 1.4rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    border-left: 4px solid #00E1D9;
-    padding-left: 12px;
-}
-
-/* HORIZONTAL TOOLBAR FILTERS (Mirip VLR.GG) */
-.filter-toolbar {
-    background-color: #0C1E29;
-    border: 1px solid #142E3F;
-    border-radius: 8px;
-    padding: 15px 20px;
+/* Layout Grid Kiri (Konten) & Kanan (Sidebar) */
+.stats-layout-grid {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+.stats-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.stats-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+/* Base Card Style */
+.meta-card {
+    background-color: #292D39; /* Warna card abu-abu kebiruan gelap */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* --- FILTER SECTION --- */
+.filter-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-row {
+    display: flex;
     gap: 15px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.top-row {
+    width: 30%;
 }
 
 .filter-item {
@@ -47,149 +62,174 @@
     min-width: 120px;
 }
 
-.filter-item.short-input {
-    flex: 0.6;
+.filter-item.short {
+    flex: 0.5;
     min-width: 80px;
 }
 
 .filter-item label {
-    color: #8da6b9;
-    font-size: 0.75rem;
+    font-size: 12px;
+    color: #94A3B8;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .filter-item select,
 .filter-item input {
-    background-color: #122837;
-    border: 1px solid #1c3d53;
-    color: #ffffff;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    border-radius: 4px;
+    background-color: #3B404D;
+    border: 1px solid #4B5162;
+    color: #FFF;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
     outline: none;
-    transition: all 0.2s;
+    transition: 0.2s;
 }
 
 .filter-item select:focus,
 .filter-item input:focus {
-    border-color: #00E1D9;
-    box-shadow: 0 0 5px rgba(0, 225, 217, 0.3);
+    border-color: #FF4655;
 }
 
-/* BUTTON APPLY FILTER ACCENT */
-.btn-apply-filters {
-    background-color: #00E1D9;
-    color: #030C11;
+.btn-apply-red {
+    background-color: #FF4655;
+    color: #FFF;
     border: none;
-    padding: 9px 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    border-radius: 4px;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: bold;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-    height: 35px;
+    width: max-content;
+    transition: 0.2s;
+    margin-top: 5px;
 }
 
-.btn-apply-filters:hover {
-    background-color: #ffffff;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
-    transform: translateY(-1px);
+.btn-apply-red:hover {
+    background-color: #E03E4C;
 }
 
-/* COMPONENT CONTAINER TABLE ESCALATION */
-.stats-table-card {
-    background-color: #0C1E29;
-    border: 1px solid #142E3F;
-    border-radius: 8px;
+/* --- TABLE SECTION --- */
+.table-card {
+    padding: 0;
     overflow: hidden;
 }
 
-.vlr-style-table {
+.stats-data-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
-    color: #e2e8f0;
+    font-size: 13px;
 }
 
-.vlr-style-table thead tr {
-    background-color: #122837;
-    border-bottom: 2px solid #1c3d53;
-}
-
-.vlr-style-table th {
-    padding: 14px 10px;
-    color: #8da6b9;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.stats-data-table th {
+    background-color: #1F232A;
+    color: #94A3B8;
+    padding: 15px;
     text-align: center;
+    font-weight: 600;
+    border-bottom: 1px solid #3B404D;
 }
 
-/* INTERAKSI BARIS TABEL LEADERBOARD */
-.vlr-table-row {
-    border-bottom: 1px solid #142E3F;
-    transition: background-color 0.15s ease;
-    background-color: #0C1E29;
+.stats-data-table .text-left {
+    text-align: left;
 }
 
-.vlr-table-row:hover {
-    background-color: #122a3a;
-}
-
-.vlr-style-table td {
-    padding: 14px 10px;
+.stats-data-table td {
+    padding: 12px 15px;
     text-align: center;
+    border-bottom: 1px solid #3B404D;
+    color: #CBD5E1;
     vertical-align: middle;
 }
 
-/* DATA CELL STYLING */
-.rank-number {
-    color: #49687e;
-    font-weight: 700;
-    margin-right: 8px;
+.stats-data-table tr:hover {
+    background-color: #333846;
+}
+
+.player-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
 }
 
 .player-name {
-    color: #ffffff;
-    font-weight: 600;
+    font-weight: bold;
+    color: #FFF;
+    font-size: 14px;
 }
 
-.agent-badge {
-    background-color: #1b3444;
-    color: #00E1D9;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: 1px solid rgba(0, 225, 217, 0.15);
+.team-name {
+    font-size: 11px;
+    color: #94A3B8;
 }
 
-.stat-number {
-    font-weight: 500;
+.agent-text {
+    font-size: 12px;
+    background: #3B404D;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: #94A3B8;
 }
 
-.text-muted {
-    color: #64748b;
+/* Warna Kotak Data Stat (Ala VLR) */
+.stat-box {
+    font-weight: bold;
+    color: #FFF;
 }
 
-.kd-highlight {
-    color: #22c55e;
-    font-weight: 600;
-}
+.bg-tier-s { background-color: #7E3AF2; } /* Ungu / S-Tier */
+.bg-tier-a { background-color: #10B981; } /* Hijau / A-Tier */
+.bg-tier-b { background-color: #EAB308; } /* Kuning / B-Tier */
+.bg-tier-default { background-color: #4B5563; } /* Abu-abu netral */
 
-.acs-glow {
-    color: #ffb800;
-    font-weight: 700;
-}
-
-.no-data-cell {
+.no-data {
+    text-align: center !important;
     padding: 40px !important;
-    color: #64748b;
+    color: #94A3B8 !important;
     font-style: italic;
-    font-size: 0.95rem;
+}
+
+/* --- SIDEBAR LEGEND --- */
+.legend-card {
+    background-color: #E2E8F0; /* Kartu abu terang (seperti gambar) */
+    color: #1F232A;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.color-box {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.color-box.purple { background-color: #7E3AF2; }
+.color-box.green { background-color: #10B981; }
+.color-box.yellow { background-color: #EAB308; }
+
+.legend-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.legend-text .tier {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.legend-text .desc {
+    font-size: 12px;
+    color: #4B5563;
 }
