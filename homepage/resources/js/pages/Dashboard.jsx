@@ -30,7 +30,7 @@ export default function Dashboard() {
     ];
 
     useEffect(() => {
-    fetch("https://kelompok6uma-impal.up.railway.app/dashboard/api/status")
+    fetch("https://kelompok6uma-impal.up.railway.app/api/status")
         .then((res) => {
             if (!res.ok) {
                 throw new Error("Network response was not ok");
