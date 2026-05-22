@@ -1,11 +1,4 @@
-INSERT INTO News (judul, isi_konten, id_author) VALUES
-('Turnamen Dimulai','Liga resmi dimulai minggu ini',1),
-('Match Seru Hari Ini','Pertandingan berlangsung sengit',1),
-('Grand Final Soon','Final akan digelar minggu depan',1),
-('Patch Baru Dirilis','Update terbaru membawa perubahan meta',1),
-('Team Garuda Menang','Garuda Esports tampil dominan',1),
-('Nusantara Comeback','Kemenangan dramatis terjadi',1),
-('Phoenix Tampil Solid','Strategi mereka sangat rapi',1),
-('Rajawali Bangkit','Tim menunjukkan performa meningkat',1),
-('Highlight Mingguan','Kumpulan momen terbaik minggu ini',1),
-('Top Player Week 1','Player terbaik minggu pertama diumumkan',1);
+INSERT INTO VCT.News (id_news, judul, isi_konten, tanggal_post, id_author, thumbnail_url) VALUES (1, 'Paper Rex Secures Playoff Spot at Master Santiago 2026', 'A fierce battle unfolded during the Swiss Stage of Master Santiago 2026. Paper Rex successfully took down T1 with a narrow 2-1 victory after an intense final map on Bind. This win guarantees f0rsakeN and the rest of the squad a well-deserved ticket to the Playoffs.', '2026-05-22 06:42:35', 1, null);
+INSERT INTO VCT.News (id_news, judul, isi_konten, tanggal_post, id_author, thumbnail_url) VALUES (2, 'Complete VCT Pacific 2026 Roster Lock', 'As the 2026 VCT Pacific season approaches, teams have finally locked in their rosters. Gen.G arrives with massive ambitions to maintain their dominance, while VARREL is gearing up to be the dark horse from Japan ready to surprise the region.', '2026-05-22 06:42:35', 1, null);
+INSERT INTO VCT.News (id_news, judul, isi_konten, tanggal_post, id_author, thumbnail_url) VALUES (3, 'Valorant Patch 10.0: Major Changes to Initiators', 'Riot Games just released the details for the upcoming patch, focusing heavily on tuning Initiator agents like Skye and Breach. These adjustments are expected to significantly shift the competitive meta heading into the next Masters tournament.', '2026-05-22 06:42:35', 1, null);
+INSERT INTO VCT.News (id_news, judul, isi_konten, tanggal_post, id_author, thumbnail_url) VALUES (4, 'Welcome to the META Portal!', 'META is officially live as your ultimate hub for Valorant esports statistics and match schedules. Keep track of your favorite teams and players from every VCT region in real-time, all in one place.', '2026-05-22 06:42:35', 1, null);
