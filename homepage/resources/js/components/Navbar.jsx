@@ -105,7 +105,9 @@ export default function Navbar() {
 
                                 {open && (
                                     <div className="dropdown-menu">
-                                        <div className="dropdown-header">Hi, {user.username}</div>
+                                        <div className="dropdown-header">
+                                            Hi, {user.name ? user.name : user.username}
+                                        </div>
                                         <button className="dropdown-item">Ganti Username</button>
                                         <button className="dropdown-item">Ganti Password</button>
                                         <button className="dropdown-item logout" onClick={handleLogout}>

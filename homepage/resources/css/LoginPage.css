@@ -3,7 +3,6 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    /* Ganti dengan gambar background abstrak biru/teal Anda jika ada */
     background: radial-gradient(circle at center, #1197db 0%, #0087ca 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -17,7 +16,6 @@
     padding: 20px;
 }
 
-/* Card Utama yang Membagi Dua Sisi */
 .split-login-card {
     display: flex;
     max-width: 950px;
@@ -31,9 +29,9 @@
 
 /* Sisi Kiri: Form Login */
 .login-form-side {
-    flex: 4; /* Porsi sekitar 40% */
-    background: rgba(23, 41, 53, 0.65); /* Warna transparan gelap */
-    backdrop-filter: blur(12px); /* Efek blur kaca */
+    flex: 4;
+    background: rgba(23, 41, 53, 0.65);
+    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 45px;
     display: flex;
@@ -93,18 +91,16 @@
 }
 
 .btn-link:hover {
-    color: #38bdf8; /* Efek hover cyan */
+    color: #38bdf8;
     text-decoration: underline;
 }
 
-/* Container untuk Button agar Center */
 .button-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 35px;
 }
 
-/* Tombol Login Pill-Shape */
 .btn-login {
     background-color: #55657e;
     color: #ffffff;
@@ -137,7 +133,7 @@
 .banner-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Agar gambar tidak gepeng */
+    object-fit: cover;
     display: block;
 }
 
@@ -152,4 +148,26 @@
     .login-form-side {
         padding: 30px 20px;
     }
+}
+
+/* Container pembungkus input agar tombol mata bisa menempel di dalam */
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Tombol mata: memposisikan absolut di sisi kanan input */
+.toggle-password-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
