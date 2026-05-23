@@ -13,5 +13,5 @@ Route::get('/api/status', function () {
 
 // Kembalikan rute catch-all Anda seperti semula
 Route::get('/{any}', function () {
-    return view('home');
+    return view('login');
 })->where('any', '.*');
