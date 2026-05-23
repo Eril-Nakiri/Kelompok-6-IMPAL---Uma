@@ -5,7 +5,6 @@ export default function Dashboard() {
     const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");
     const [isApiReady, setIsApiReady] = useState(false);
 
-    // Mock Data Berita (Kiri)
     const newsList = [
         { id: 1, title: 'DRX Calls up academy teams player "yong" to main rosters', comments: 23 },
         { id: 2, title: 'M80 Statement', comments: 12 },
@@ -15,7 +14,6 @@ export default function Dashboard() {
         { id: 6, title: 'Tenz retirement', comments: 34 },
     ];
 
-    // Mock Data Jadwal Match (Kanan)
     const upcomingMatches = [
         { id: 1, team1: "BLG", team2: "TL", time: "5m", accent: "#a855f7" },
         { id: 2, team1: "PRX", team2: "T1", time: "55m", accent: "#ef4444" },
@@ -23,7 +21,6 @@ export default function Dashboard() {
         { id: 4, team1: "VIT", team2: "NRG", accent: "#a855f7" },
     ];
 
-    // Mock Data Live Events (Kanan Bawah)
     const liveEvents = [
         { id: 1, name: "Masters Santiago", date: "10 Mar - 29 Mar", color: "#8b5cf6" },
         { id: 2, name: "VCL Korea", date: "18 Mar - 27 Mar", color: "#14b8a6" },

@@ -1,26 +1,21 @@
+import AuthCard from "../components/AuthCard";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // 1. Tambahkan useNavigate
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Opsional: Tambahkan loading state
-    const navigate = useNavigate(); // Inisialisasi
 
     const API_URL = import.meta.env.VITE_API_URL || "";
 
-    // 2. Ubah handleLogin untuk menerima event
-    const handleLogin = async (e) => {
-        e.preventDefault(); // Mencegah reload halaman secara default
-
+    const handleLogin = async () => {
         if (!username || !password) {
             alert("Username dan Password wajib diisi!");
             return;
         }
-
-        setIsLoading(true);
 
         try {
             const res = await fetch(`${API_URL}/api/login`, {
@@ -29,35 +24,38 @@ export default function LoginPage() {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
             });
 
             const data = await res.json();
 
             if (data.success) {
                 localStorage.setItem("user", JSON.stringify(data.user));
-                navigate("/dashboard"); // Navigasi mulus tanpa reload
+                window.location.href = "/dashboard";
             } else {
                 alert(data.message || "Login gagal");
             }
         } catch (err) {
             console.error(err);
             alert("Server error / koneksi gagal");
-        } finally {
-            setIsLoading(false);
         }
     };
 
     return (
         <div className="login-page-container">
             <Navbar />
+
             <div className="page-wrapper">
+
                 <div className="split-login-card">
+
                     <div className="login-form-side">
                         <h1 className="brand-title">META.PORTAL</h1>
 
-                        {/* 3. Bungkus dengan form */}
-                        <form onSubmit={handleLogin} className="input-group">
+                        <div className="input-group">
                             <input
                                 className="login-input"
                                 type="text"
@@ -78,32 +76,38 @@ export default function LoginPage() {
                                     type="button"
                                     className="toggle-password-btn"
                                     onClick={() => setShowPassword(!showPassword)}
+                                    title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
                                 >
                                     {showPassword ? "🙈" : "👁️"}
                                 </button>
                             </div>
+                        </div>
 
-                            <div className="login-actions">
-                                <Link to="/forgot-password" className="btn-link">Forgot Password?</Link>
-                                <Link to="/register" className="btn-link">Sign Up</Link>
-                            </div>
+                        <div className="login-actions">
+                            <Link to="/forgot-password" className="btn-link">
+                                Forgot Password?
+                            </Link>
+                            <Link to="/register" className="btn-link">
+                                Sign Up
+                            </Link>
+                        </div>
 
-                            <div className="button-wrapper">
-                                {/* Gunakan type="submit" */}
-                                <button type="submit" className="btn-login" disabled={isLoading}>
-                                    {isLoading ? "LOADING..." : "LOGIN"}
-                                </button>
-                            </div>
-                        </form>
+                        <div className="button-wrapper">
+                            <button className="btn-login" onClick={handleLogin}>
+                                LOGIN
+                            </button>
+                        </div>
                     </div>
 
+                    {/* Sisi Kanan: Gambar Banner */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"
-                            alt="Banner"
+                            alt="META Portal Esports Banner"
                             className="banner-img"
                         />
                     </div>
+
                 </div>
             </div>
         </div>
