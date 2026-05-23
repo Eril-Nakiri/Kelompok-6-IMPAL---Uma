@@ -16,40 +16,42 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 function App() {
     return (
         <Routes>
+            <Route path="/" element={<LoginPage />} />
 
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/home" element={<Home />} />
 
-        <Route
-            path="/dashboard"
-            element={
-            <ProtectedRoute>
-                <Dashboard />
-            </ProtectedRoute>
-            }
-        />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        <Route
-            path="/about"
-            element={
-            <ProtectedRoute>
-                <AboutPage />
-            </ProtectedRoute>
-            }
-        />
+            <Route
+                path="/dashboard"
+                element={
+                <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
+                }
+            />
 
-        <Route
-            path="/stats"
-            element={
-            <ProtectedRoute>
-                <StatsPage />
-            </ProtectedRoute>
-            }
-        />
+            <Route
+                path="/about"
+                element={
+                <ProtectedRoute>
+                    <AboutPage />
+                </ProtectedRoute>
+                }
+            />
 
-        <Route path="*" element={<Home />} />
+            <Route
+                path="/stats"
+                element={
+                <ProtectedRoute>
+                    <StatsPage />
+                </ProtectedRoute>
+                }
+            />
+
+            <Route path="*" element={<LoginPage />} />
 
         </Routes>
     );
