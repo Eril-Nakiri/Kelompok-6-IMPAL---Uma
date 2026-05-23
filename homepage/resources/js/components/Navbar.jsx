@@ -19,7 +19,7 @@ export default function Navbar() {
         }
     }, []);
 
-    // SEARCH API (DEBUG VERSION)
+    // SEARCH API
     useEffect(() => {
         const delay = setTimeout(() => {
             if (query.length >= 2) {
@@ -54,55 +54,58 @@ export default function Navbar() {
         <nav className="navbar">
             <div className="navbar-inner">
 
-                {/* --- BAGIAN KIRI: Logo & Menu --- */}
+                {/* --- SISI KIRI: Logo, Search, Menu --- */}
                 <div className="nav-left">
                     <Link to="/dashboard" className="logo">
                         META
                     </Link>
-                    <div className="menu">
-                        <Link to="/dashboard" className="nav-link">Home</Link>
-                        <Link to="/about" className="nav-link">About</Link>
-                        <Link to="/stats" className="nav-link">Stats</Link>
-                    </div>
-                </div>
 
-                {/* --- BAGIAN KANAN: Search & User Profile --- */}
-                <div className="nav-right">
-
-                    {/* SEARCH */}
+                    {/* SEARCH BOX */}
                     <div className="search-container">
                         <input
                             className="search-input"
-                            placeholder="Search..."
+                            placeholder="Search...."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
-
-                        {/* HASIL PENCARIAN DROPDOWN */}
+                        {/* SEARCH DROPDOWN */}
                         {results && results.length > 0 && (
-                            <div className="search-results">
+                            <div className="search-dropdown">
                                 {results.map((u) => (
                                     <div key={u.id_user} className="search-item">
-                                        {u.username} - {u.email}
+                                        <div className="search-username">{u.username}</div>
+                                        <div className="email">{u.email}</div>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* USER DROPDOWN */}
+                    {/* MENU LINKS */}
+                    <div className="menu">
+                        <Link to="/dashboard" className="nav-link">Forum</Link>
+                        <Link to="/matches" className="nav-link">Matches</Link>
+                        <Link to="/stats" className="nav-link">Stats</Link>
+                    </div>
+                </div>
+
+                {/* --- SISI KANAN: Icons & User Profile --- */}
+                <div className="nav-right">
+
+                    {/* USER PROFILE & DROPDOWN */}
                     <div className="user-section">
                         {user ? (
                             <div className="user-dropdown">
-                                <div
-                                    className="user-trigger"
-                                    onClick={() => setOpen(!open)}
-                                >
-                                    👤 <span className="username-text">{user.username}</span>
-                                </div>
+                                <button className="icon-btn" onClick={() => setOpen(!open)} title={user.username}>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </button>
 
                                 {open && (
                                     <div className="dropdown-menu">
+                                        <div className="dropdown-header">Hi, {user.username}</div>
                                         <button className="dropdown-item">Ganti Username</button>
                                         <button className="dropdown-item">Ganti Password</button>
                                         <button className="dropdown-item logout" onClick={handleLogout}>
@@ -112,11 +115,28 @@ export default function Navbar() {
                                 )}
                             </div>
                         ) : (
-                            <Link to="/login" className="user-box login-btn">
-                                👤 Login
+                            <Link to="/login" className="login-btn-nav">
+                                Login
                             </Link>
                         )}
                     </div>
+
+                    {/* MAIL ICON */}
+                    <button className="icon-btn">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </button>
+
+                    {/* HAMBURGER MENU ICON */}
+                    <button className="icon-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
 
                 </div>
             </div>
