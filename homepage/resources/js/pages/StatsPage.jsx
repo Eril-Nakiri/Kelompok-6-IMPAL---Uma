@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
@@ -95,6 +95,46 @@ export default function StatsPage() {
         return "bg-tier-b";
     };
 
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
+
+    const handleSort = (key) => {
+        let direction = 'desc'; // Default klik pertama akan mengurutkan dari Terbesar (desc)
+        if (sortConfig.key === key && sortConfig.direction === 'desc') {
+            direction = 'asc';  // Klik kedua diubah menjadi Terkecil (asc)
+        } else if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'default'; // Klik ketiga mengembalikan ke urutan normal
+            key = null;
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedStats = useMemo(() => {
+        let sortableItems = [...stats];
+        if (sortConfig.key !== null) {
+            sortableItems.sort((a, b) => {
+                // Karena data berupa angka, kita pastikan di-parsing ke Float
+                const aValue = parseFloat(a[sortConfig.key]) || 0;
+                const bValue = parseFloat(b[sortConfig.key]) || 0;
+
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableItems;
+    }, [stats, sortConfig]);
+
+    const getSortIcon = (columnName) => {
+        if (sortConfig.key === columnName) {
+            return sortConfig.direction === 'asc' ? ' 🔼' : ' 🔽';
+        }
+        return '';
+    };
+
     return (
         <>
             <Navbar />
@@ -170,22 +210,44 @@ export default function StatsPage() {
                                 <thead>
                                     <tr>
                                         <th className="text-left">Player</th>
-                                        <th>RND</th>
-                                        <th>Rtg</th>
-                                        <th>ACS</th>
-                                        <th>KAST</th>
-                                        <th>ADR</th>
-                                        <th>K</th>
-                                        <th>D</th>
-                                        <th>A</th>
-                                        <th>FK</th>
-                                        <th>FD</th>
-                                        <th>HS%</th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('rounds')}>
+                                            RND{getSortIcon('rounds')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('rating')}>
+                                            Rtg{getSortIcon('rating')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('acs')}>
+                                            ACS{getSortIcon('acs')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('kast')}>
+                                            KAST{getSortIcon('kast')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('adr')}>
+                                            ADR{getSortIcon('adr')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('kills')}>
+                                            K{getSortIcon('kills')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('deaths')}>
+                                            D{getSortIcon('deaths')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('assists')}>
+                                            A{getSortIcon('assists')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('first_kills')}>
+                                            FK{getSortIcon('first_kills')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('first_deaths')}>
+                                            FD{getSortIcon('first_deaths')}
+                                        </th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('hs_percentage')}>
+                                            HS%{getSortIcon('hs_percentage')}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Array.isArray(stats) && stats.length > 0 ? (
-                                        stats.map((row, index) => (
+                                    {sortedStats.length > 0 ? (
+                                        sortedStats.map((row, index) => (
                                             <tr key={index}>
                                                 <td className="player-cell">
                                                     <div className="player-info">
