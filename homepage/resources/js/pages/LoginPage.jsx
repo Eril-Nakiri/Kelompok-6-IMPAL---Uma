@@ -69,7 +69,7 @@ export default function LoginPage() {
                                     className="login-input"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password"
-                                    style={{ paddingRight: "45px" }} // Mencegah teks nabrak ikon mata
+                                    style={{ paddingRight: "45px" }}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -90,9 +90,9 @@ export default function LoginPage() {
                                 Forgot Password?
                             </Link>
 
-                            <div className="signup-link-wrapper">
-                                <span>Sign Up</span>
-                            </div>
+                            <Link to="/register" className="btn-link">
+                                Sign Up
+                            </Link>
                         </div>
 
                         <div className="button-wrapper">
