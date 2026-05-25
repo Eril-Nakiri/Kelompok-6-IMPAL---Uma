@@ -32,7 +32,6 @@ Route::post('/register', [AuthController::class, 'register']);
 
 /* FORGOT PASSWORD VERIFICATION */
 Route::post('/forgot-password-verify', [AuthController::class, 'verifyForgotAccount']);
-// Tambahkan baris ini:
 Route::post('/forgot-password-update', [AuthController::class, 'updateForgotPassword']);
 
 /* USER SEARCH */
@@ -41,3 +40,4 @@ Route::get('/users/search', [UserController::class, 'search']);
 /* STATS */
 Route::get('/stats', [StatsController::class, 'getStats']);
 Route::get('/stats/filters', [StatsController::class, 'getFilters']);
+Route::get('/search', [StatsController::class, 'globalSearch']);

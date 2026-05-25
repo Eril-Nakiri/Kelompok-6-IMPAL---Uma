@@ -3,12 +3,10 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    /* Ganti dengan gambar background abstrak biru/teal Anda jika ada */
     background: radial-gradient(circle at center, #000406 0%, #0d1214 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Wrapper Tengah */
 .page-wrapper {
     flex: 1;
     display: flex;
@@ -17,7 +15,6 @@
     padding: 20px;
 }
 
-/* Card Utama yang Membagi Dua Sisi */
 .split-login-card {
     display: flex;
     max-width: 950px;
@@ -29,11 +26,10 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Sisi Kiri: Form Login */
 .login-form-side {
-    flex: 4; /* Porsi sekitar 40% */
-    background: rgba(23, 41, 53, 0.65); /* Warna transparan gelap */
-    backdrop-filter: blur(12px); /* Efek blur kaca */
+    flex: 4;
+    background: rgba(23, 41, 53, 0.65);
+    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 45px;
     display: flex;
@@ -41,7 +37,6 @@
     justify-content: center;
 }
 
-/* Judul META.PORTAL */
 .brand-title {
     color: #ffffff;
     font-size: 2rem;
@@ -52,7 +47,6 @@
     text-transform: uppercase;
 }
 
-/* Grouping Input */
 .login-input {
     width: 100%;
     padding: 12px 16px;
@@ -62,7 +56,7 @@
     font-size: 0.9rem;
     color: #333333;
     outline: none;
-    box-sizing: border-box; /* Ini kunci agar padding tidak melebihi kontainer */
+    box-sizing: border-box;
 }
 
 .login-input::placeholder {
@@ -70,19 +64,17 @@
     font-style: italic;
 }
 
-/* Wadah pembungkus input khusus password */
 .password-input-container {
     position: relative;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Tombol ikon mata agar pas di dalam password */
 .toggle-password-btn {
     position: absolute;
     right: 15px;
     top: 50%;
-    transform: translateY(-50%); /* Menengahkan ikon secara vertikal */
+    transform: translateY(-50%);
     background: none;
     border: none;
     color: #999999;
@@ -103,7 +95,7 @@
 /* Navigasi Link (Forgot Password & Sign Up) */
 .login-actions {
     display: flex;
-    justify-content: space-between; /* Menjauhkan "Forgot Password" ke kiri dan "Sign Up" ke kanan */
+    justify-content: space-between;
     align-items: center;
     margin-top: -5px;
     margin-bottom: 25px;
@@ -122,14 +114,13 @@
     text-decoration: underline;
 }
 
-/* PENTING UNTUK SIGN UP: Tambahkan text kecil "Don't have an account?" di samping Sign Up */
 .signup-link-wrapper {
     font-size: 0.8rem;
     color: #94a3b8;
 }
 
 .signup-link-wrapper .btn-link {
-    color: #d92525; /* Warna VLR Red */
+    color: #d92525;
     font-weight: 600;
     margin-left: 4px;
 }
@@ -138,16 +129,14 @@
     color: #ff4655;
 }
 
-/* Container untuk Button agar Center */
 .button-wrapper {
     display: flex;
     justify-content: center;
     width: 100%;
 }
 
-/* Tombol Login Pill-Shape */
 .btn-login {
-    width: 100%; /* Membuat tombol login memenuhi ruang agar elegan */
+    width: 100%;
     background-color: #55657e;
     color: #ffffff;
     border: none;
@@ -169,9 +158,8 @@
     transform: scale(0.98);
 }
 
-/* Sisi Kanan: Gambar Banner */
 .login-image-side {
-    flex: 6; /* Porsi sekitar 60% */
+    flex: 6;
     background-color: #000;
     position: relative;
 }
@@ -179,11 +167,11 @@
 .banner-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Agar gambar tidak gepeng */
+    object-fit: cover;
     display: block;
 }
 
-/* Responsif: Jika dibuka di HP, Sisi Gambar Hilang */
+/* responsive hp */
 @media (max-width: 768px) {
     .split-login-card {
         flex-direction: column;

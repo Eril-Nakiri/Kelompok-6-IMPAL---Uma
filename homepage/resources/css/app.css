@@ -8,15 +8,15 @@
 }
 
 /* ==========================================================================
-   NAVBAR (VLR.GG THEME)
+    NAVBAR
    ========================================================================== */
 
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 55px; /* Tinggi fixed ala VLR */
-    background-color: #0f1923; /* Dark mode khas Valorant/VLR */
+    height: 55px;
+    background-color: #0f1923;
     border-bottom: 1px solid #1f2326;
     display: flex;
     justify-content: center;
@@ -34,17 +34,17 @@
     height: 100%;
 }
 
-/* --- KIRI: Logo & Search --- */
+/* --- kiri: Logo & Search --- */
 .nav-left {
     display: flex;
     align-items: center;
     gap: 20px;
     height: 100%;
-    flex: 1; /* Fleksibel membagi ruang */
+    flex: 1;
 }
 
 .logo-vlr {
-    background-color: #bd3944; /* VLR Red Accent */
+    background-color: #bd3944;
     color: #ffffff;
     font-weight: 900;
     font-size: 16px;
@@ -116,7 +116,7 @@
     padding: 0 16px;
     font-size: 13px;
     font-weight: 600;
-    text-transform: lowercase; /* Tulisan kecil seperti di gambar */
+    text-transform: lowercase;
     display: flex;
     align-items: center;
     height: 100%;
@@ -128,7 +128,7 @@
     color: #ffffff;
 }
 
-/* --- KANAN: Waktu & Auth --- */
+/* --- kanan: Waktu & Auth --- */
 .nav-right {
     display: flex;
     align-items: center;
@@ -151,47 +151,80 @@
     background-color: #2a2a2a;
 }
 
-/* Dropdown Hasil Pencarian */
-.search-results {
+/* ==========================================================================
+    DROPDOWN HASIL PENCARIAN DINAMIS (UPDATE TERBARU)
+   ========================================================================== */
+.search-results-dropdown {
     position: absolute;
-    top: 40px;
+    top: 110%; /* Muncul persis di bawah kotak input */
     left: 0;
-    width: 100%;
-    min-width: 250px;
-    background: #141f2a;
-    border: 1px solid #bd3944;
-    border-radius: 4px;
-    z-index: 1001;
-    max-height: 250px;
-    overflow-y: auto;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-
-.search-item {
-    padding: 10px 15px;
-    cursor: pointer;
+    width: 300px; /* Lebar kotak hasil pencarian */
+    background-color: #1e1e24; /* Warna background gelap */
+    border: 1px solid #2d2d3a;
+    border-radius: 6px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Pastikan selalu berada di paling atas */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid #1f2326;
 }
 
-.search-item:last-child {
+.search-item-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #2d2d3a;
+}
+
+.search-item-row:last-child {
     border-bottom: none;
 }
 
-.search-item:hover {
-    background: #1f2326;
+.search-item-row:hover {
+    background-color: #2a2a35; /* Efek hover saat disorot mouse */
 }
 
-.search-username {
+.search-item-img {
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #333; /* Warna dasar jika gambar tidak ada */
+    flex-shrink: 0;
+}
+
+.search-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-fallback {
+    width: 100%;
+    height: 100%;
+    background-color: #4a4a5a;
+}
+
+.search-item-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.search-item-name {
     color: #ffffff;
-    font-size: 13px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.search-email {
-    font-size: 11px;
-    color: #8b978f;
+.search-item-type {
+    color: #888888;
+    font-size: 12px;
+    text-transform: capitalize;
+    margin-top: 2px;
 }
 
 /* --- User Dropdown & Login --- */
@@ -287,10 +320,9 @@
 }
 
 /* ==========================================================================
-    MODIFIKASI & TAMBAHAN UNTUK SPLIT LOGIN PAGE (META.PORTAL MOCKUP)
+    MODIFIKASI & TAMBAHAN UNTUK SPLIT LOGIN PAGE
    ========================================================================== */
 
-/* Container utama halaman login dengan warna background gelap kebiruan */
 .login-page-container {
     min-height: 100vh;
     display: flex;
@@ -299,17 +331,15 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Mengatur letak card di tengah-tengah layar */
 .login-page-container .page-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    padding-top: 90px; /* Jarak aman agar tidak tertutup Navbar */
+    padding-top: 90px;
 }
 
-/* Card utama pembagi layout kiri & kanan */
 .split-login-card {
     display: flex;
     max-width: 950px;
@@ -321,7 +351,6 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Sisi Kiri: Form Login dengan efek transparan (Glassmorphism) */
 .login-form-side {
     flex: 4;
     background: rgba(23, 41, 53, 0.65);
@@ -333,7 +362,6 @@
     justify-content: center;
 }
 
-/* Judul META.PORTAL */
 .brand-title {
     color: #ffffff;
     font-size: 2rem;
@@ -344,14 +372,12 @@
     text-transform: uppercase;
 }
 
-/* Jarak antar form input */
 .input-group {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Override khusus input login agar berwarna putih bersih */
 .login-form-side .login-input {
     width: 100% !important;
     padding: 12px 16px;
@@ -369,7 +395,6 @@
     font-style: italic;
 }
 
-/* Pengaturan link aksi (Forgot Password / Sign Up) */
 .btn-link {
     color: #cbd5e1;
     font-size: 0.75rem;
@@ -382,14 +407,12 @@
     text-decoration: underline;
 }
 
-/* Pembungkus tombol login agar berada di tengah */
 .button-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 35px;
 }
 
-/* Override tombol login agar berbentuk oval/pill dan abu kebiruan */
 .login-form-side .btn-login {
     width: auto !important;
     background-color: #55657e !important;
@@ -413,7 +436,6 @@
     transform: scale(0.98);
 }
 
-/* Sisi Kanan: Banner Gambar dari Unsplash */
 .login-image-side {
     flex: 6;
     background-color: #000;
@@ -427,7 +449,6 @@
     display: block;
 }
 
-/* Media Query: Sisi gambar otomatis hilang jika dibuka di handphone/layar kecil */
 @media (max-width: 768px) {
     .split-login-card {
         flex-direction: column;
@@ -442,172 +463,19 @@
 }
 
 /* ==========================================================================
-   MODIFIKASI & TAMBAHAN UNTUK SPLIT LAYOUT (LOGIN & REGISTER)
+    MODIFIKASI & TAMBAHAN UNTUK SPLIT LAYOUT (LOGIN & REGISTER)
    ========================================================================== */
-
-/* Container utama halaman auth dengan warna background gelap kebiruan */
-.login-page-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: radial-gradient(circle at center, #0a2533 0%, #030d12 100%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Mengatur letak card di tengah-tengah layar */
-.login-page-container .page-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    padding-top: 90px; /* Jarak aman agar tidak tertutup Navbar */
-}
-
-/* Card utama pembagi layout kiri & kanan */
-.split-login-card {
-    display: flex;
-    max-width: 950px;
-    width: 100%;
-    min-height: 520px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Sisi Kiri: Form dengan efek transparan (Glassmorphism) */
-.login-form-side {
-    flex: 4;
-    background: rgba(23, 41, 53, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 45px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Judul META.PORTAL */
-.brand-title {
-    color: #ffffff;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: 3px;
-    text-align: center;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-}
-
-/* Jarak antar form input */
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Override khusus input agar berwarna putih bersih */
-.login-form-side .login-input {
-    width: 100% !important;
-    padding: 12px 16px;
-    background-color: #ffffff !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-size: 0.9rem;
-    color: #333333 !important;
-    outline: none;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.login-form-side .login-input::placeholder {
-    color: #999999 !important;
-    font-style: italic;
-}
-
-/* Pengaturan link aksi di bawah input */
 .login-actions-register {
     display: flex;
-    justify-content: flex-end; /* Menaruh tautan back to login di sebelah kanan bawah */
+    justify-content: flex-end;
     margin-top: 12px;
     padding: 0 4px;
 }
 
-.btn-link {
-    color: #cbd5e1;
-    font-size: 0.75rem;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.btn-link:hover {
-    color: #38bdf8;
-    text-decoration: underline;
-}
-
-/* Pembungkus tombol agar berada di tengah */
-.button-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 35px;
-}
-
-/* Override tombol agar berbentuk oval/pill dan abu kebiruan */
-.login-form-side .btn-login {
-    width: auto !important;
-    background-color: #55657e !important;
-    color: #ffffff !important;
-    border: none;
-    padding: 10px 45px !important;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    border-radius: 12px !important;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.login-form-side .btn-login:hover {
-    background-color: #6c7d98 !important;
-}
-
-.login-form-side .btn-login:active {
-    transform: scale(0.98);
-}
-
-/* Sisi Kanan: Banner Gambar dari Unsplash */
-.login-image-side {
-    flex: 6;
-    background-color: #000;
-    position: relative;
-}
-
-.banner-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Media Query: Sisi gambar otomatis hilang jika dibuka di handphone/layar kecil */
-@media (max-width: 768px) {
-    .split-login-card {
-        flex-direction: column;
-        max-width: 450px;
-    }
-    .login-image-side {
-        display: none;
-    }
-    .login-form-side {
-        padding: 35px 20px;
-    }
-}
-
 /* ==========================================================================
-   FITUR SHOW/HIDE PASSWORD (TOMBOL MATA)
+    FITUR SHOW/HIDE PASSWORD (TOMBOL MATA)
    ========================================================================== */
 
-/* Wadah pembungkus input khusus password */
 .password-input-container {
     position: relative;
     width: 100%;
@@ -615,12 +483,10 @@
     align-items: center;
 }
 
-/* Memastikan input password mengambil ruang penuh */
 .password-input-container .login-input {
-    padding-right: 45px !important; /* Beri jarak di kanan agar teks tidak tertimpa ikon */
+    padding-right: 45px !important;
 }
 
-/* Tombol ikon mata */
 .toggle-password-btn {
     position: absolute;
     right: 15px;
@@ -638,11 +504,11 @@
 }
 
 .toggle-password-btn:hover {
-    color: #38bdf8; /* Berubah warna biru saat kursor diarahkan */
+    color: #38bdf8;
 }
 
 /* ==========================================================================
-   KOMPONEN CAPTCHA UNTUK FORGOT PASSWORD PAGE
+    KOMPONEN CAPTCHA UNTUK FORGOT PASSWORD PAGE
    ========================================================================== */
 
 .captcha-container {
@@ -652,10 +518,9 @@
     margin-top: 8px;
 }
 
-/* Kotak kode captcha acak */
 .captcha-box {
-    background-color: #1b3444; /* Muted Cyber Blue */
-    color: #00e1d9; /* Electric Cyan */
+    background-color: #1b3444;
+    color: #00e1d9;
     font-weight: 800;
     font-size: 1.2rem;
     letter-spacing: 4px;
@@ -663,12 +528,11 @@
     border-radius: 8px;
     user-select: none;
     font-style: italic;
-    text-decoration: line-through; /* Efek coretan khas captcha */
+    text-decoration: line-through;
     border: 1px solid #00e1d9;
     box-shadow: 0 0 10px rgba(0, 225, 217, 0.2);
 }
 
-/* Tombol refresh kode captcha */
 .btn-refresh-captcha {
     background: none;
     border: 1px solid #496277;
@@ -686,18 +550,17 @@
 }
 
 /* ==========================================================================
-   CSS DASHBOARD ESPORTS (VLR / CYBER THEME)
+    CSS DASHBOARD
    ========================================================================== */
 
 .dashboard-page {
-    background-color: #1e1e2f; /* Warna latar belakang ungu gelap ala gambar */
+    background-color: #1e1e2f;
     min-height: 100vh;
-    padding-top: 80px; /* Jarak untuk navbar */
+    padding-top: 80px;
     font-family: 'Segoe UI', Roboto, sans-serif;
     color: #ffffff;
 }
 
-/* Status Banner API */
 .api-status-banner {
     text-align: center;
     padding: 8px;
@@ -716,7 +579,6 @@
     border-bottom: 1px solid #b91c1c;
 }
 
-/* Layout Grid Utama */
 .dashboard-content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -725,7 +587,6 @@
     gap: 30px;
 }
 
-/* Kolom Kiri (70%) */
 .dashboard-main-col {
     flex: 7;
     display: flex;
@@ -733,7 +594,6 @@
     gap: 20px;
 }
 
-/* Banner Artikel Utama */
 .dashboard-hero-banner {
     position: relative;
     width: 100%;
@@ -755,7 +615,6 @@
     text-transform: uppercase;
 }
 
-/* List Berita (News Feed) */
 .news-feed-list {
     display: flex;
     flex-direction: column;
@@ -788,7 +647,6 @@
     font-weight: bold;
 }
 
-/* Kolom Kanan / Sidebar (30%) */
 .dashboard-sidebar-col {
     flex: 3;
     display: flex;
@@ -805,12 +663,11 @@
     letter-spacing: 1px;
 }
 
-/* Match Cards */
 .match-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f8fafc; /* Card Terang ala gambar mockup */
+    background-color: #f8fafc;
     color: #0f172a;
     padding: 15px;
     border-radius: 4px;
@@ -819,7 +676,7 @@
     position: relative;
     overflow: hidden;
 }
-/* Aksen warna di ujung kanan kartu match */
+
 .match-card::after {
     content: '';
     position: absolute;
@@ -842,7 +699,6 @@
     text-align: center;
 }
 
-/* Event Cards */
 .live-event-card {
     background: linear-gradient(135deg, #e0f2fe, #f0fdf4);
     color: #0f172a;
@@ -867,7 +723,250 @@
     font-weight: 600;
 }
 
-/* RESPONSIVE UNTUK HP */
+/* ==========================================================================
+    PROFIL TIM & PEMAIN (TEAM & PLAYER PAGE)
+   ========================================================================== */
+.profile-page-container {
+    background-color: #2b2e35; /* Warna background gelap Figma */
+    min-height: 100vh;
+    padding: 90px 40px 40px 40px;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-header-card {
+    background-color: #3b434c; /* Warna kotak header */
+    width: 100%;
+    max-width: 1000px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.team-logo-box {
+    width: 100px;
+    height: 100px;
+    background-color: #2d2a2a;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.team-logo-box img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.profile-title-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-title-info h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.team-tag {
+    font-size: 1.5rem;
+    color: #8b978f;
+    margin-left: 10px;
+    font-weight: 400;
+}
+
+.profile-title-info h1 {
+    display: flex;
+    align-items: center;
+}
+
+/* KHUSUS HEADER PEMAIN */
+.player-header {
+    height: 160px;
+    padding-left: 0; /* Agar foto mepet kiri */
+}
+
+.player-photo-box {
+    height: 100%;
+    position: relative;
+    margin-right: 30px;
+}
+
+.p-photo {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+    background-color: #212c3f; /* Background foto */
+}
+
+.p-team-logo {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 40px;
+    opacity: 0.8;
+}
+
+.player-real-name {
+    font-size: 1.2rem;
+    color: #8b978f;
+    margin-top: 5px;
+}
+
+.player-country {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #ece8e1;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+/* SECTION ROSTER */
+.section-title {
+    width: 100%;
+    max-width: 1000px;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.roster-card {
+    background-color: #3b434c;
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 4px;
+    padding: 30px;
+}
+
+.roster-category {
+    font-size: 0.8rem;
+    color: #8b978f;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.staff-mt {
+    margin-top: 40px;
+}
+
+.roster-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 10px;
+}
+
+.roster-item {
+    display: flex;
+    align-items: center;
+}
+
+.roster-photo {
+    width: 60px;
+    height: 60px;
+    background-color: #212c3f;
+    border-radius: 4px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.roster-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.roster-ingame-name {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.roster-real-name {
+    font-size: 0.8rem;
+    color: #8b978f;
+    margin-top: 4px;
+}
+
+.roster-role-tag {
+    font-size: 0.65rem;
+    background-color: #ece8e1;
+    color: #3b434c;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-top: 6px;
+    display: inline-block;
+    width: max-content;
+}
+
+/* SECTION TABEL AGENT (PLAYER PAGE) */
+.agents-table-container {
+    width: 100%;
+    max-width: 1000px;
+    background-color: #3b434c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.agents-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.agents-table th {
+    background-color: #2d343b;
+    color: #8b978f;
+    padding: 12px 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-bottom: 1px solid #4a5259;
+}
+
+.agents-table td {
+    padding: 10px 6px;
+    border-bottom: 1px solid #4a5259;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.agents-table tr:hover {
+    background-color: #424a54;
+}
+
+.agent-img-td {
+    width: 50px;
+}
+
+.table-agent-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.agents-table td.highlight-stat {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* responsive hp */
 @media (max-width: 900px) {
     .dashboard-content-wrapper {
         flex-direction: column;

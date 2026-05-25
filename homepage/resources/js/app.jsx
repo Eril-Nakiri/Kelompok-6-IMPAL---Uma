@@ -12,6 +12,8 @@ import AboutPage from "./pages/AboutPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
 import NewsPage from "./pages/NewsPage.jsx";
 import ForumPage from "./pages/ForumPage.jsx";
+import TeamPage from "./pages/TeamPage.jsx";
+import PlayerPage from "./pages/PlayerPage.jsx";
 
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 
@@ -70,6 +72,24 @@ function App() {
                 <ProtectedRoute>
                     <ForumPage />
                 </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/teams"
+                element={
+                    <ProtectedRoute>
+                        <TeamPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/players"
+                element={
+                    <ProtectedRoute>
+                        <PlayerPage />
+                    </ProtectedRoute>
                 }
             />
 

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
@@ -12,13 +12,18 @@ export default function Navbar() {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
 
+    // Referensi untuk mendeteksi klik di luar area dropdown pencarian
+    const searchRef = useRef(null);
+
     const navigate = useNavigate();
+
+    // Gunakan string kosong karena React dan Laravel berada di 1 server (Monolith Railway)
+    const API_URL = import.meta.env.VITE_API_URL || "";
 
     // UPDATE WAKTU
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
-            // Format: "10:04 AM Mon"
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dayString = now.toLocaleDateString('en-US', { weekday: 'short' });
             setCurrentTime(`${timeString} ${dayString}`);
@@ -36,15 +41,16 @@ export default function Navbar() {
         }
     }, []);
 
-    // SEARCH API (DEBUG VERSION)
+    // SEARCH API (VERSI PRODUCTION)
     useEffect(() => {
         const delay = setTimeout(() => {
-            if (query.length >= 2) {
-                fetch(`http://127.0.0.1:8000/api/users/search?query=${query}`)
+            if (query.trim().length >= 2) {
+                // Menembak API global search yang baru dibuat di Laravel
+                fetch(`${API_URL}/api/search?q=${query}`)
                     .then(res => res.json())
                     .then(data => {
-                        if (data && Array.isArray(data.data)) {
-                            setResults(data.data);
+                        if (Array.isArray(data)) {
+                            setResults(data);
                         } else {
                             setResults([]);
                         }
@@ -60,6 +66,30 @@ export default function Navbar() {
 
         return () => clearTimeout(delay);
     }, [query]);
+
+    // Menutup dropdown search jika user klik di luar kotak pencarian
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setResults([]); // Sembunyikan hasil
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Aksi ketika hasil pencarian diklik
+    const handleResultClick = (item) => {
+        setQuery(""); // Kosongkan input pencarian
+        setResults([]); // Tutup dropdown
+
+        // Arahkan ke halaman spesifik sesuai tipe (Team atau Player)
+        if (item.type === 'player') {
+            navigate(`/player/${item.id}`);
+        } else if (item.type === 'team') {
+            navigate(`/team/${item.id}`);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.removeItem("user");
@@ -78,22 +108,40 @@ export default function Navbar() {
                     </Link>
 
                     {/* SEARCH BOX */}
-                    <div className="search-container">
+                    <div className="search-container" ref={searchRef}>
                         <span className="search-icon">🔍</span>
                         <input
                             className="search-input"
-                            placeholder="search..."
+                            placeholder="search teams or players..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
 
                         {/* HASIL PENCARIAN DROPDOWN */}
                         {results && results.length > 0 && (
-                            <div className="search-results">
-                                {results.map((u) => (
-                                    <div key={u.id_user} className="search-item">
-                                        <span className="search-username">{u.username}</span>
-                                        <span className="search-email">{u.email}</span>
+                            <div className="search-results-dropdown">
+                                {results.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="search-item-row"
+                                        onClick={() => handleResultClick(item)}
+                                    >
+                                        {/* FOTO/LOGO */}
+                                        <div className="search-item-img">
+                                            {item.image ? (
+                                                <img src={item.image} alt={item.name} />
+                                            ) : (
+                                                <div className="img-fallback"></div>
+                                            )}
+                                        </div>
+
+                                        {/* NAMA & TIPE (Player/Team) */}
+                                        <div className="search-item-info">
+                                            <span className="search-item-name">{item.name}</span>
+                                            <span className="search-item-type">
+                                                {item.type === 'player' ? 'Player' : 'Team'}
+                                            </span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

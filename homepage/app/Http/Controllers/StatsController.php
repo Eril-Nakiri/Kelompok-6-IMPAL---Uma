@@ -83,4 +83,41 @@ class StatsController extends Controller
             'tournaments' => $tournaments
         ]);
     }
+
+    public function globalSearch(Request $request)
+    {
+        $keyword = $request->input('q');
+
+        if (!$keyword) {
+            return response()->json([]);
+        }
+
+        // 1. Cari data Player
+        $players = DB::table('players')
+            ->where('nama', 'ILIKE', '%' . $keyword . '%')
+            ->select(
+                'id_player as id',
+                'nama as name',
+                'photo_url as image',
+                DB::raw("'player' as type")
+            )
+            ->limit(5)
+            ->get();
+
+        // 2. Cari data Tim
+        $teams = DB::table('teams')
+            ->where('nama_tim', 'ILIKE', '%' . $keyword . '%')
+            ->select(
+                'id_team as id',
+                'nama_tim as name',
+                'logo_url as image',
+                DB::raw("'team' as type")
+            )
+            ->limit(5)
+            ->get();
+
+        $results = $players->merge($teams);
+
+        return response()->json($results);
+    }
 }

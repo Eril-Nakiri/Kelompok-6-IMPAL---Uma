@@ -1,6 +1,6 @@
 /* Container Utama */
 .stats-page-container {
-    background-color: #1F232A; /* Warna latar sangat gelap ala gambar */
+    background-color: #1F232A;
     min-height: 100vh;
     padding: 100px 40px 40px 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,9 +30,8 @@
     z-index: 10;
 }
 
-/* Base Card Style */
 .meta-card {
-    background-color: #292D39; /* Warna card abu-abu kebiruan gelap */
+    background-color: #292D39;
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
@@ -167,9 +166,9 @@
 .player-avatar {
     width: 40px;
     height: 40px;
-    border-radius: 50%; /* Membuat foto menjadi bulat */
-    object-fit: cover;  /* Memastikan foto tidak gepeng */
-    border: 2px solid #2d2d3a; /* Opsional: Memberi garis tepi yang elegan */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2d2d3a;
 }
 
 .team-name {
@@ -185,16 +184,16 @@
     color: #94A3B8;
 }
 
-/* Warna Kotak Data Stat (Ala VLR) */
 .stat-box {
     font-weight: bold;
     color: #FFF;
 }
 
-.bg-tier-s { background-color: #7E3AF2; } /* Ungu / S-Tier */
-.bg-tier-a { background-color: #10B981; } /* Hijau / A-Tier */
-.bg-tier-b { background-color: #EAB308; } /* Kuning / B-Tier */
-.bg-tier-default { background-color: #4B5563; } /* Abu-abu netral */
+/* Warna berdasarkan tier */
+.bg-tier-s { background-color: #7E3AF2; }
+.bg-tier-a { background-color: #10B981; }
+.bg-tier-b { background-color: #EAB308; }
+.bg-tier-default { background-color: #4B5563; }
 
 .no-data {
     text-align: center !important;
@@ -205,7 +204,7 @@
 
 /* --- SIDEBAR LEGEND --- */
 .legend-card {
-    background-color: #E2E8F0; /* Kartu abu terang (seperti gambar) */
+    background-color: #E2E8F0;
     color: #1F232A;
     display: flex;
     flex-direction: column;
