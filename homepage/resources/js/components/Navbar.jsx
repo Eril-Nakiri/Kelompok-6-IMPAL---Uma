@@ -5,11 +5,28 @@ export default function Navbar() {
     const [user, setUser] = useState(null);
     const [open, setOpen] = useState(false);
 
+    // WAKTU REAL-TIME (Untuk meniru tampilan VLR.gg)
+    const [currentTime, setCurrentTime] = useState("");
+
     // SEARCH STATE
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
 
     const navigate = useNavigate();
+
+    // UPDATE WAKTU
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            // Format: "10:04 AM Mon"
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dayString = now.toLocaleDateString('en-US', { weekday: 'short' });
+            setCurrentTime(`${timeString} ${dayString}`);
+        };
+        updateTime();
+        const timer = setInterval(updateTime, 60000); // Update setiap 1 menit
+        return () => clearInterval(timer);
+    }, []);
 
     // LOAD USER
     useEffect(() => {
@@ -54,26 +71,18 @@ export default function Navbar() {
         <nav className="navbar">
             <div className="navbar-inner">
 
-                {/* --- BAGIAN KIRI: Logo & Menu --- */}
+                {/* --- BAGIAN KIRI: Logo & Search --- */}
                 <div className="nav-left">
-                    <Link to="/dashboard" className="logo">
+                    <Link to="/dashboard" className="logo-vlr">
                         META
                     </Link>
-                    <div className="menu">
-                        <Link to="/dashboard" className="nav-link">Home</Link>
-                        <Link to="/about" className="nav-link">About</Link>
-                        <Link to="/stats" className="nav-link">Stats</Link>
-                    </div>
-                </div>
 
-                {/* --- BAGIAN KANAN: Search & User Profile --- */}
-                <div className="nav-right">
-
-                    {/* SEARCH */}
+                    {/* SEARCH BOX */}
                     <div className="search-container">
+                        <span className="search-icon">🔍</span>
                         <input
                             className="search-input"
-                            placeholder="Search..."
+                            placeholder="search..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
@@ -83,14 +92,32 @@ export default function Navbar() {
                             <div className="search-results">
                                 {results.map((u) => (
                                     <div key={u.id_user} className="search-item">
-                                        {u.username} - {u.email}
+                                        <span className="search-username">{u.username}</span>
+                                        <span className="search-email">{u.email}</span>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
+                </div>
 
-                    {/* USER DROPDOWN */}
+                {/* --- BAGIAN TENGAH: Menu Links (VLR Style) --- */}
+                <div className="nav-center">
+                    <div className="menu">
+                        <Link to="/forum" className="nav-link">forum</Link>
+                        <Link to="/matches" className="nav-link">matches</Link>
+                        <Link to="/events" className="nav-link">events</Link>
+                        <Link to="/stats" className="nav-link">stats</Link>
+                        <Link to="/news" className="nav-link">news</Link>
+                    </div>
+                </div>
+
+                {/* --- BAGIAN KANAN: Waktu & User Profile --- */}
+                <div className="nav-right">
+                    <div className="nav-time">{currentTime}</div>
+
+                    <div className="nav-divider"></div>
+
                     <div className="user-section">
                         {user ? (
                             <div className="user-dropdown">
@@ -103,8 +130,7 @@ export default function Navbar() {
 
                                 {open && (
                                     <div className="dropdown-menu">
-                                        <button className="dropdown-item">Ganti Username</button>
-                                        <button className="dropdown-item">Ganti Password</button>
+                                        <button className="dropdown-item">Settings</button>
                                         <button className="dropdown-item logout" onClick={handleLogout}>
                                             Logout
                                         </button>
@@ -112,13 +138,13 @@ export default function Navbar() {
                                 )}
                             </div>
                         ) : (
-                            <Link to="/login" className="user-box login-btn">
+                            <Link to="/login" className="login-btn-vlr">
                                 👤 Login
                             </Link>
                         )}
                     </div>
-
                 </div>
+
             </div>
         </nav>
     );

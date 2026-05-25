@@ -7,310 +7,283 @@
     --neon-blue: #00A3FF;
 }
 
+/* ==========================================================================
+   NAVBAR (VLR.GG THEME)
+   ========================================================================== */
+
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-
-    background: #1e293b;
-    border-bottom: 1px solid rgba(255, 70, 84, 0.3);
-
+    height: 55px; /* Tinggi fixed ala VLR */
+    background-color: #0f1923; /* Dark mode khas Valorant/VLR */
+    border-bottom: 1px solid #1f2326;
     display: flex;
     justify-content: center;
     z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-inner {
     width: 100%;
     max-width: 1200px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 15px 20px;
+    padding: 0 20px;
+    height: 100%;
 }
 
-.nav-right {
+/* --- KIRI: Logo & Search --- */
+.nav-left {
     display: flex;
     align-items: center;
     gap: 20px;
-
-    flex-shrink: 0;
+    height: 100%;
+    flex: 1; /* Fleksibel membagi ruang */
 }
 
-.logo {
-    font-weight: bold;
-    font-size: 22px;
-    color: white;
+.logo-vlr {
+    background-color: #bd3944; /* VLR Red Accent */
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 16px;
+    font-style: italic;
     text-decoration: none;
-
-    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    transition: 0.2s;
 }
 
-.search {
-    width: 160px;
-    padding: 7px 12px;
-    border-radius: 6px;
-
-    border: 1px solid #2a3344;
-    background: #0b0f17;
-    color: white;
-
-    flex-shrink: 0;
+.logo-vlr:hover {
+    background-color: #a02e38;
 }
 
-.search-dropdown {
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
     position: absolute;
-    top: 40px;
-    width: 100%;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    z-index: 999;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.search-item {
-    padding: 8px;
-    cursor: pointer;
-}
-
-.search-item:hover {
-    background: #f5f5f5;
-}
-
-.email {
+    left: 10px;
     font-size: 12px;
-    color: gray;
+    color: #8b978f;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 150px;
+    padding: 6px 10px 6px 32px;
+    border-radius: 4px;
+    border: 1px solid #2a2a2a;
+    background: #141f2a;
+    color: #ece8e1;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    width: 200px;
+    outline: none;
+    border-color: #bd3944;
+    background: #0f1923;
+}
+
+.search-input::placeholder {
+    color: #5b655f;
+    font-style: italic;
+}
+
+/* --- TENGAH: Menu --- */
+.nav-center {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    flex: 2;
 }
 
 .menu {
     display: flex;
-    gap: 20px;
+    height: 100%;
 }
 
-.menu a {
-    color: white;
+.nav-link {
+    color: #8b978f;
     text-decoration: none;
-    margin-right: 20px;
-    font-size: 14px;
-    transition: 0.2s;
-}
-
-.menu a:hover {
-    color: #ff4654;
-}
-
-.auth-wrapper {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 80px;
-    background: radial-gradient(circle at top, #0f1624, #0a0f1c);
-}
-
-.auth-card {
-    width: 100%;
-    max-width: 420px;
-
-    background: #111823;
-    border: 1px solid rgba(255, 70, 84, 0.25);
-    border-radius: 14px;
-    padding: 40px;
-
-    box-shadow: 0 0 25px rgba(255, 70, 84, 0.2);
-
-    display: flex;
-    flex-direction: column;
-}
-
-.auth-body {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 12px;
-}
-
-.page-content {
-    padding-top: 90px;
-    padding-left: 40px;
-    padding-right: 40px;
-}
-
-.page-container {
-    padding-top: 70px;
-}
-
-.page-wrapper {
-    padding-top: 80px;
-}
-
-.login-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: radial-gradient(circle at top, #0f1624, #0a0f1c);
-    padding-top: 80px;
-}
-
-.login-card {
-    width: 420px;
-    background: #111823;
-    border: 1px solid rgba(255, 70, 84, 0.25);
-    border-radius: 14px;
-    padding: 40px;
-
-    box-shadow: 0 0 25px rgba(255, 70, 84, 0.25);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.login-input {
-    width: 100% !important;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #2a3344;
-    background: #0b0f17;
-    color: white;
-}
-
-.login-input:focus {
-    border-color: #ff4654;
-    box-shadow: 0 0 10px rgba(255, 70, 84, 0.3);
-}
-
-.login-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.btn-small {
+    padding: 0 16px;
     font-size: 13px;
-    color: #ff4654;
-    text-decoration: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-small:hover {
-    text-decoration: underline;
-}
-
-.btn-login {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #ff4654;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-login:hover {
-    background: #ff2e43;
-}
-
-.user-box {
+    font-weight: 600;
+    text-transform: lowercase; /* Tulisan kecil seperti di gambar */
     display: flex;
     align-items: center;
-    gap: 10px;
+    height: 100%;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.username {
-    font-size: 14px;
-    color: white;
+.nav-link:hover {
+    background-color: #1f2326;
+    color: #ffffff;
 }
 
-.logout-btn {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ff4654;
-    background: transparent;
-    color: #ff4654;
+/* --- KANAN: Waktu & Auth --- */
+.nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+    height: 100%;
+    flex: 1;
+}
+
+.nav-time {
+    color: #8b978f;
     font-size: 12px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.nav-divider {
+    height: 20px;
+    width: 1px;
+    background-color: #2a2a2a;
+}
+
+/* Dropdown Hasil Pencarian */
+.search-results {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    min-width: 250px;
+    background: #141f2a;
+    border: 1px solid #bd3944;
+    border-radius: 4px;
+    z-index: 1001;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.search-item {
+    padding: 10px 15px;
     cursor: pointer;
-    transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #1f2326;
 }
 
-.logout-btn:hover {
-    background: #ff4654;
-    color: white;
+.search-item:last-child {
+    border-bottom: none;
 }
 
-.user-dropdown {
+.search-item:hover {
+    background: #1f2326;
+}
+
+.search-username {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.search-email {
+    font-size: 11px;
+    color: #8b978f;
+}
+
+/* --- User Dropdown & Login --- */
+.user-section {
     position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .user-trigger {
-    padding: 6px 10px;
-    border-radius: 6px;
+    cursor: pointer;
+    color: #8b978f;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    height: 100%;
+    font-size: 13px;
+    font-weight: 600;
     transition: 0.2s;
 }
 
 .user-trigger:hover {
-    background: rgba(255, 70, 84, 0.15);
-}
-
-.user-section {
-    position: relative;
-    flex-shrink: 0;
-    color: white;
+    background-color: #1f2326;
+    color: #ffffff;
 }
 
 .dropdown-menu {
     position: absolute;
+    top: 55px;
     right: 0;
-
-    top: 45px;
-    width: 180px;
-
-    background: #0b0f17;
-    border: 1px solid rgba(255, 70, 84, 0.3);
-    border-radius: 10px;
-
-    padding: 8px;
-    z-index: 999;
-
-    transform: translateX(-5px);
+    width: 160px;
+    background: #141f2a;
+    border: 1px solid #2a2a2a;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 1000;
 }
 
 .dropdown-item {
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     background: transparent;
     border: none;
-    color: white;
+    border-bottom: 1px solid #1f2326;
+    color: #ece8e1;
     text-align: left;
     cursor: pointer;
     font-size: 13px;
-    border-radius: 6px;
     transition: 0.2s;
 }
 
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
 .dropdown-item:hover {
-    background: rgba(255, 70, 84, 0.15);
+    background: #1f2326;
+    color: #ffffff;
 }
 
 .dropdown-item.logout {
-    color: #ff4654;
+    color: #bd3944;
+    font-weight: bold;
 }
 
 .dropdown-item.logout:hover {
-    background: #ff4654;
-    color: white;
+    background: #bd3944;
+    color: #ffffff;
+}
+
+/* Tombol Login saat belum masuk */
+.login-btn-vlr {
+    color: #ece8e1;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    background-color: #1f2326;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.login-btn-vlr:hover {
+    background-color: #bd3944;
+    border-color: #bd3944;
+    color: #ffffff;
 }
 
 /* ==========================================================================
