@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
-    // 1. STATE & KONSTANTA (Struktur Paling Atas Agar Aman dari Build Error)
     const [stats, setStats] = useState([]);
     const API_URL = "";
 
@@ -20,7 +19,7 @@ export default function StatsPage() {
     ]);
 
     const [filters, setFilters] = useState({
-        event: "All", // GANTI DARI eventSeries MENJADI event 🔥
+        event: "All",
         region: "All",
         minRounds: "",
         minRating: "",
@@ -31,7 +30,6 @@ export default function StatsPage() {
     const [regions, setRegions] = useState([]);
     const [events, setEvents] = useState([]);
 
-    // 2. FUNGSI FETCH DATA STATISTIK (Diberikan pengaman pembacaan array data)
     const fetchStatsData = (currentFilters) => {
         const params = new URLSearchParams();
 
@@ -46,7 +44,6 @@ export default function StatsPage() {
             .then(res => res.json())
             .then(resData => {
                 console.log("Response Database Stats:", resData);
-                // PASTIKAN MEMBACA .data KARENA LARAVEL MENGEMBALIKAN ['data' => $data]
                 if (resData && resData.data) {
                     setStats(resData.data);
                 } else if (Array.isArray(resData)) {
@@ -61,7 +58,6 @@ export default function StatsPage() {
             });
     };
 
-    // 3. HANDLER PERUBAHAN FILTER
     const handleChange = (e) => {
         setFilters({
             ...filters,
@@ -69,7 +65,6 @@ export default function StatsPage() {
         });
     };
 
-    // 4. LIFECYCLE EFFECT (MEMANGGIL DATA PERTAMA KALI)
     useEffect(() => {
         fetchStatsData(filters);
 
@@ -98,11 +93,11 @@ export default function StatsPage() {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'default' });
 
     const handleSort = (key) => {
-        let direction = 'desc'; // Default klik pertama akan mengurutkan dari Terbesar (desc)
+        let direction = 'desc';
         if (sortConfig.key === key && sortConfig.direction === 'desc') {
-            direction = 'asc';  // Klik kedua diubah menjadi Terkecil (asc)
+            direction = 'asc';
         } else if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'default'; // Klik ketiga mengembalikan ke urutan normal
+            direction = 'default';
             key = null;
         }
         setSortConfig({ key, direction });
@@ -115,15 +110,12 @@ export default function StatsPage() {
                 let aValue = a[sortConfig.key];
                 let bValue = b[sortConfig.key];
 
-                // Cek apakah datanya berupa angka valid atau teks
                 const isNumeric = !isNaN(parseFloat(aValue)) && isFinite(aValue);
 
                 if (isNumeric) {
-                    // Jika angka, jadikan desimal/float
                     aValue = parseFloat(aValue) || 0;
                     bValue = parseFloat(bValue) || 0;
                 } else {
-                    // Jika teks (seperti nama map), jadikan huruf kecil semua agar sorting akurat
                     aValue = String(aValue || '').toLowerCase();
                     bValue = String(bValue || '').toLowerCase();
                 }
@@ -152,11 +144,7 @@ export default function StatsPage() {
             <Navbar />
             <div className="stats-page-container">
                 <div className="stats-layout-grid">
-
-                    {/* SISI KIRI: MAIN CONTENT */}
                     <div className="stats-main-content">
-
-                        {/* FILTER CARD */}
                         <div className="meta-card filter-card">
                             <div className="filter-row top-row">
                                 <div className="filter-item">
@@ -216,7 +204,6 @@ export default function StatsPage() {
                             <button className="btn-apply-red" onClick={handleApply}>Apply</button>
                         </div>
 
-                        {/* DATA TABLE CARD */}
                         <div className="meta-card table-card">
                             <table className="stats-data-table">
                                 <thead>
@@ -308,7 +295,6 @@ export default function StatsPage() {
                         </div>
                     </div>
 
-                    {/* SISI KANAN: SIDEBAR LEGEND */}
                     <div className="stats-sidebar">
                         <div className="meta-card legend-card">
                             <div className="legend-item">

@@ -8,27 +8,16 @@ export default function TeamPage() {
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     useEffect(() => {
-        // TODO: Nanti sambungkan dengan API aslimu (contoh: fetch(`${API_URL}/api/teams/${id}`))
-        // Sementara kita pakai data tiruan (Mock Data) agar desain Figma langsung terlihat
-        setTeam({
-            id: id,
-            name: "Paper Rex",
-            tag: "PRX",
-            logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Paper_Rex_logo.svg/1200px-Paper_Rex_logo.svg.png",
-            players: [
-                { name: "invy", realName: "Adrian Jiggs Reyes", country: "Philippines", photo: "https://owcdn.net/img/63c5c9ba6cefa.png" },
-                { name: "Jinggg", realName: "Wang Jing Jie", country: "Singapore", photo: "https://owcdn.net/img/6225b6c00d5a3.png" },
-                { name: "f0rsakeN", realName: "Jason Susanto", country: "Indonesia", photo: "https://owcdn.net/img/603c4672e6189.png" },
-                { name: "d4v41", realName: "Khalish Rusyaidee", country: "Malaysia", photo: "https://owcdn.net/img/603c467f3388c.png" },
-                { name: "something", realName: "Ilya Petrov", country: "Russia", photo: "https://owcdn.net/img/64293f0b2daab.png" },
-            ],
-            staff: [
-                { name: "Tommy", realName: "Kumaresan Ramani", country: "Singapore", role: "MANAGER", photo: "https://owcdn.net/img/65e97bd9a175f.png" },
-                { name: "alecks", realName: "Alexandre Sallé", country: "France", role: "COACH", photo: "https://owcdn.net/img/6225b6d51624c.png" },
-                { name: "Wendler", realName: "Ashton Wendler", country: "United States", role: "ASSISTANT COACH", photo: "https://owcdn.net/img/663ccb05ea8bb.png" },
-                { name: "Panda", realName: "Laijhun Cheng", country: "United States", role: "PERFORMANCE COACH", photo: "https://owcdn.net/img/663ccb0e6dfbc.png" },
-            ]
-        });
+        fetch(`${API_URL}/api/teams/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                setTeam({
+                    name: data.team.nama_tim,
+                    logo: data.team.logo_url,
+                    players: data.players
+                });
+            })
+            .catch(err => console.error("Error fetching team:", err));
     }, [id]);
 
     if (!team) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Loading Team...</div>;
@@ -37,7 +26,6 @@ export default function TeamPage() {
         <>
             <Navbar />
             <div className="profile-page-container">
-                {/* HEADER TIM */}
                 <div className="profile-header-card">
                     <div className="team-logo-box">
                         <img src={team.logo} alt={team.name} />
@@ -50,7 +38,6 @@ export default function TeamPage() {
 
                 <h2 className="section-title">Current Roster</h2>
 
-                {/* DAFTAR ROSTER */}
                 <div className="roster-card">
                     <h3 className="roster-category">PLAYERS</h3>
                     <div className="roster-grid">

@@ -8,22 +8,17 @@ export default function PlayerPage() {
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     useEffect(() => {
-        // TODO: Sambungkan ke API aslimu (contoh: fetch(`${API_URL}/api/players/${id}`))
-        // Sementara kita pakai Mock Data untuk menyesuaikan desain Figma
-        setPlayer({
-            id: id,
-            name: "f0rsakeN",
-            realName: "Jason Susanto",
-            country: "Indonesia",
-            photo: "https://owcdn.net/img/603c4672e6189.png",
-            team_logo: "https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Paper_Rex_logo.svg/1200px-Paper_Rex_logo.svg.png",
-            agents: [
-                { name: "Omen", img: "https://owcdn.net/img/603cabcfa38d7.png", use: "(16) 59%", rnd: 339, rtg: "0.98", acs: 201.5, kd: "1.02", adr: 131.4, kast: "76%", kpr: 0.72, apr: 0.40, fkpr: 0.11, fdpr: 0.08, k: 245, d: 241, a: 136, fk: 36, fd: 26 },
-                { name: "Neon", img: "https://owcdn.net/img/61e89bd402e4d.png", use: "(6) 22%", rnd: 119, rtg: "1.10", acs: 241.5, kd: "1.20", adr: 156.2, kast: "71%", kpr: 0.87, apr: 0.25, fkpr: 0.13, fdpr: 0.14, k: 103, d: 86, a: 30, fk: 15, fd: 17 },
-                { name: "Astra", img: "https://owcdn.net/img/603cb0673322d.png", use: "(3) 11%", rnd: 62, rtg: "1.22", acs: 229.0, kd: "1.19", adr: 147.8, kast: "77%", kpr: 0.82, apr: 0.47, fkpr: 0.05, fdpr: 0.05, k: 51, d: 43, a: 29, fk: 3, fd: 3 },
-                { name: "Brimstone", img: "https://owcdn.net/img/603cac51410d5.png", use: "(2) 7%", rnd: 44, rtg: "1.04", acs: 161.0, kd: "0.92", adr: 114.1, kast: "82%", kpr: 0.55, apr: 0.61, fkpr: 0.02, fdpr: 0.05, k: 24, d: 26, a: 27, fk: 1, fd: 2 },
-            ]
-        });
+        fetch(`${API_URL}/api/players/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                setPlayer({
+                    name: data.player.nama,
+                    country: data.player.country,
+                    photo: data.player.photo_url,
+                    agents: data.stats
+                });
+            })
+            .catch(err => console.error("Error fetching player:", err));
     }, [id]);
 
     if (!player) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Loading Player...</div>;
@@ -32,7 +27,6 @@ export default function PlayerPage() {
         <>
             <Navbar />
             <div className="profile-page-container">
-                {/* HEADER PEMAIN */}
                 <div className="profile-header-card player-header">
                     <div className="player-photo-box">
                         <img src={player.photo} alt={player.name} className="p-photo" />
@@ -49,7 +43,6 @@ export default function PlayerPage() {
 
                 <h2 className="section-title">Agents</h2>
 
-                {/* TABEL AGENT */}
                 <div className="agents-table-container">
                     <table className="agents-table">
                         <thead>

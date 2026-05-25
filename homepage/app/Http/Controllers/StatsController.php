@@ -9,7 +9,6 @@ class StatsController extends Controller
 {
     public function getStats(Request $request)
     {
-        // 1. DIUBAH MENJADI leftJoin AGAR DATA STATISTIK TETAP KELUAR MESKIPUN PROFIL PLAYER BELUM LENGKAP 🔥
         $query = DB::table('player_map_stats')
             ->leftJoin('players', 'player_map_stats.id_player', '=', 'players.id_player')
             ->select(
@@ -21,27 +20,22 @@ class StatsController extends Controller
                 DB::raw('13 as rounds')
             );
 
-        // 2. Filter Agent
         if ($request->filled('agent') && $request->agent !== 'All') {
             $query->where('player_map_stats.agent_used', $request->agent);
         }
 
-        // 3. Filter Map
         if ($request->filled('map') && $request->map !== 'All') {
             $query->where('player_map_stats.map_name', $request->map);
         }
 
-        // 4. Filter Region / Country (Hanya memfilter jika memilih negara tertentu)
         if ($request->filled('region') && $request->region !== 'All') {
             $query->where('players.country', $request->region);
         }
 
-        // 5. Filter Min Rating
         if ($request->filled('minRating')) {
             $query->where('player_map_stats.rating', '>=', $request->minRating);
         }
 
-        // Ambil data maksimal 50 baris teratas demi kecepatan loading
         $data = $query->limit(50)->get();
 
         return response()->json([
@@ -92,7 +86,6 @@ class StatsController extends Controller
             return response()->json([]);
         }
 
-        // 1. Cari data Player
         $players = DB::table('players')
             ->where('nama', 'ILIKE', '%' . $keyword . '%')
             ->select(
@@ -104,7 +97,6 @@ class StatsController extends Controller
             ->limit(5)
             ->get();
 
-        // 2. Cari data Tim
         $teams = DB::table('teams')
             ->where('nama_tim', 'ILIKE', '%' . $keyword . '%')
             ->select(
@@ -119,5 +111,35 @@ class StatsController extends Controller
         $results = $players->merge($teams);
 
         return response()->json($results);
+    }
+
+    public function getPlayerDetail($id) {
+        $player = DB::table('players')
+            ->where('id_player', $id)
+            ->first();
+
+        $stats = DB::table('player_map_stats')
+            ->where('id_player', $id)
+            ->get();
+
+        return response()->json([
+            'player' => $player,
+            'stats' => $stats
+        ]);
+    }
+
+    public function getTeamDetail($id) {
+        $team = DB::table('teams')
+            ->where('id_team', $id)
+            ->first();
+
+        $players = DB::table('players')
+            ->where('id_teams', $id)
+            ->get();
+
+        return response()->json([
+            'team' => $team,
+            'players' => $players
+        ]);
     }
 }
