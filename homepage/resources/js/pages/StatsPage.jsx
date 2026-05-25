@@ -5,7 +5,7 @@ import "../../css/Stat.css";
 export default function StatsPage() {
     // 1. STATE & KONSTANTA (Struktur Paling Atas Agar Aman dari Build Error)
     const [stats, setStats] = useState([]);
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+    const API_URL = "";
 
     const [agents, setAgents] = useState([
         "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
@@ -20,7 +20,7 @@ export default function StatsPage() {
     ]);
 
     const [filters, setFilters] = useState({
-        event: "All", // Diselaraskan dengan name="event" pada dropdown select
+        event: "All", // GANTI DARI eventSeries MENJADI event 🔥
         region: "All",
         minRounds: "",
         minRating: "",
