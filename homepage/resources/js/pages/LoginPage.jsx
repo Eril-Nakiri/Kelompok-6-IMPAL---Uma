@@ -1,7 +1,8 @@
 import AuthCard from "../components/AuthCard";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+// 1. Tambahkan useNavigate di import ini
+import { Link, useNavigate } from "react-router-dom";
 import '../../css/LoginPage.css';
 
 export default function LoginPage() {
@@ -11,6 +12,9 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
 
     const API_URL = import.meta.env.VITE_API_URL || "";
+
+    // 2. Inisialisasi hook navigate
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         if (!username || !password) {
@@ -34,8 +38,16 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (data.success) {
+                // Simpan data user ke localStorage
                 localStorage.setItem("user", JSON.stringify(data.user));
-                window.location.href = "/dashboard";
+
+                // 3. Logika Redirect Berdasarkan Role
+                // Mengasumsikan id_role === 1 adalah Admin dan selainnya adalah User Biasa
+                if (data.user.id_role === 1) {
+                    navigate("/dashboard-admin"); // Arahkan Admin
+                } else {
+                    navigate("/dashboard"); // Arahkan User Biasa
+                }
             } else {
                 alert(data.message || "Login gagal");
             }
@@ -85,7 +97,6 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        {/* Letak Link Forgot Password & Sign Up yang diperbaiki */}
                         <div className="login-actions">
                             <Link to="/forgot-password" className="btn-link">
                                 Forgot Password?
@@ -103,7 +114,6 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Sisi Kanan: Gambar Banner */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"

@@ -27,9 +27,9 @@ function App() {
             <Route
                 path="/dashboard"
                 element={
-                <ProtectedRoute>
-                    <Dashboard />
-                </ProtectedRoute>
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
                 }
             />
 
@@ -51,8 +51,34 @@ function App() {
                 }
             />
 
+            <Route
+                path="/news"
+                element={
+                <ProtectedRoute>
+                    <NewsPage />
+                </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/forum"
+                element={
+                <ProtectedRoute>
+                    <ForumPage />
+                </ProtectedRoute>
+                }
+            />
+
             <Route path="*" element={<LoginPage />} />
 
+            <Route
+                path="/dashboard-admin"
+                element={
+                    <ProtectedRoute allowedRoles={[1]}>
+                        <DashboardAdmin />
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
     );
 }
