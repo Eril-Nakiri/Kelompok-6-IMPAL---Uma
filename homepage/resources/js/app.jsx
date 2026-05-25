@@ -10,6 +10,10 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
+import NewsPage from "./pages/NewsPage.jsx";
+import ForumPage from "./pages/ForumPage.jsx";
+
+import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
