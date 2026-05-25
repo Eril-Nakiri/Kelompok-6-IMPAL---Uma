@@ -25,8 +25,7 @@ export default function StatsPage() {
         minRounds: "",
         minRating: "",
         agent: "All",
-        map: "All",
-        timespan: "Past 60 Days"
+        map: "All"
     });
 
     const [regions, setRegions] = useState([]);
@@ -160,12 +159,6 @@ export default function StatsPage() {
                                     </select>
                                 </div>
 
-                                <div className="filter-item">
-                                    <label>Timespan</label>
-                                    <select name="timespan" value={filters.timespan} onChange={handleChange}>
-                                        <option value="Past 60 Days">Past 60 Days</option>
-                                    </select>
-                                </div>
                             </div>
 
                             <button className="btn-apply-red" onClick={handleApply}>Apply</button>
