@@ -93,6 +93,7 @@ export default function RegisterPage() {
                             <div className="password-input-container">
                                 <input
                                     className="login-input"
+                                    // Tipe input berubah dinamis tergantung state showPassword
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password (Min. 8 char, 1 Capital, 1 Number, 1 Symbol)"
                                     value={password}
@@ -107,6 +108,12 @@ export default function RegisterPage() {
                                     {showPassword ? "🙈" : "👁️"}
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="button-wrapper">
+                            <button className="btn-login" onClick={handleRegister}>
+                                SIGN UP
+                            </button>
                         </div>
                     </div>
 
