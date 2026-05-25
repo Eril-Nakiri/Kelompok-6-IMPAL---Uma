@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 import "../css/app.css";
 import "../css/index.css";
@@ -19,92 +19,60 @@ import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
-function App() {
+export default function App() {
     return (
-        <Routes>
-            <Route path="/" element={<LoginPage />} />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<LoginPage />} />
 
-            <Route path="/home" element={<Home />} />
+                <Route path="/home" element={<Home />} />
 
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-            <Route
-                path="/dashboard"
-                element={
-                    <ProtectedRoute>
-                        <Dashboard />
-                    </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/dashboard" element={
+                        <ProtectedRoute><Dashboard /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/about"
-                element={
-                <ProtectedRoute>
-                    <AboutPage />
-                </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/about" element={
+                        <ProtectedRoute><AboutPage /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/stats"
-                element={
-                <ProtectedRoute>
-                    <StatsPage />
-                </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/stats" element={
+                        <ProtectedRoute><StatsPage /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/news"
-                element={
-                <ProtectedRoute>
-                    <NewsPage />
-                </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/news" element={
+                        <ProtectedRoute><NewsPage /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/forum"
-                element={
-                <ProtectedRoute>
-                    <ForumPage />
-                </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/forum" element={
+                        <ProtectedRoute><ForumPage /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/teams"
-                element={
-                    <ProtectedRoute>
-                        <TeamPage />
-                    </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/teams" element={
+                        <ProtectedRoute><TeamPage /></ProtectedRoute>
+                    } />
 
-            <Route
-                path="/players"
-                element={
-                    <ProtectedRoute>
-                        <PlayerPage />
-                    </ProtectedRoute>
-                }
-            />
+                <Route
+                    path="/players" element={
+                        <ProtectedRoute><PlayerPage /></ProtectedRoute>
+                    } />
 
-            <Route path="*" element={<LoginPage />} />
-
-            <Route
-                path="/dashboard-admin"
-                element={
-                    <ProtectedRoute allowedRoles={[1]}>
-                        <DashboardAdmin />
-                    </ProtectedRoute>
-                }
-            />
-        </Routes>
+                <Route
+                    path="/dashboard-admin" element={
+                        <ProtectedRoute allowedRoles={[1]}> <DashboardAdmin />
+                        </ProtectedRoute>
+                    } />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
-
-export default App;
