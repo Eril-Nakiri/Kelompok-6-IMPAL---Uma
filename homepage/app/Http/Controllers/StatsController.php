@@ -113,7 +113,7 @@ class StatsController extends Controller
         return response()->json($results);
     }
 
-    public function getPlayerDetail($id) {
+    public function getPlayerDetail(int $id) {
         $player = DB::table('players')
             ->where('id_player', $id)
             ->first();
@@ -128,7 +128,7 @@ class StatsController extends Controller
         ]);
     }
 
-    public function getTeamDetail($id) {
+    public function getTeamDetail(int $id) {
         $team = DB::table('teams')
             ->where('id_team', $id)
             ->first();

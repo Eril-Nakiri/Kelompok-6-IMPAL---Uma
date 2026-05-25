@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 export default function TeamPage() {
-    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
     const [team, setTeam] = useState(null);
@@ -13,15 +12,15 @@ export default function TeamPage() {
         fetch(`${API_URL}/api/teams/${id}`)
             .then(res => res.json())
             .then(data => {
-                // Pastikan data yang diterima tidak kosong
+                // Pastikan data tim ada
                 if (data && data.team) {
                     setTeam({
                         name: data.team.nama_tim || "Unknown Team",
+                        tag: data.team.singkatan || "",
                         logo: data.team.logo_url || "",
-                        players: data.players || [], // Jika null, jadikan array kosong
-                        staff: data.staff || []      // Jika null, jadikan array kosong
+                        players: data.players || [] // Memastikan players adalah array
                     });
-                    setLoading(false); // Matikan loading setelah data didapat
+                    setLoading(false);
                 }
             })
             .catch(err => {
@@ -37,6 +36,7 @@ export default function TeamPage() {
         <>
             <Navbar />
             <div className="profile-page-container">
+                {/* HEADER TIM */}
                 <div className="profile-header-card">
                     <div className="team-logo-box">
                         <img src={team.logo} alt={team.name} />
@@ -49,21 +49,23 @@ export default function TeamPage() {
 
                 <h2 className="section-title">Current Roster</h2>
 
+                {/* DAFTAR PLAYERS */}
                 <div className="roster-card">
                     <h3 className="roster-category">PLAYERS</h3>
                     <div className="roster-grid">
-                        {team.players?.map((p, idx) => (
+                        {team.players.map((p, idx) => (
                             <div className="roster-item" key={idx}>
-                                {/* ... */}
-                            </div>
-                        ))}
-                    </div>
-
-                    <h3 className="roster-category staff-mt">STAFF</h3>
-                    <div className="roster-grid">
-                        {team.staff?.map((s, idx) => (
-                            <div className="roster-item" key={idx}>
-                                {/* ... */}
+                                <img
+                                    src={p.photo_url || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
+                                    alt={p.nama}
+                                    className="roster-photo"
+                                />
+                                <div className="roster-info">
+                                    <div className="roster-ingame-name">
+                                        {p.nama}
+                                    </div>
+                                    <div className="roster-role-tag">{p.role}</div>
+                                </div>
                             </div>
                         ))}
                     </div>
