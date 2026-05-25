@@ -24,8 +24,10 @@
 }
 
 .stats-sidebar {
-    width: 250px;
-    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    z-index: 10;
 }
 
 /* Base Card Style */
