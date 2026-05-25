@@ -9,43 +9,42 @@ class StatsController extends Controller
 {
     public function getStats(Request $request)
     {
-        // 1. Mulai query dari tabel utama 'player_match_stats'
-        // Lakukan JOIN ke tabel akun user untuk mengambil nama asli pemain dan nama tim.
-        // PENTING: Ganti 'user_accounts' dengan nama tabel user/pemain yang asli di database-mu jika berbeda.
+        // 1. Ambil data dari player_match_stats dan gabungkan (JOIN) dengan tabel players
         $query = DB::table('player_match_stats')
-            ->join('user_accounts', 'player_match_stats.id_player', '=', 'user_accounts.id_user')
+            ->join('players', 'player_match_stats.id_player', '=', 'players.id_player')
             ->select(
                 'player_match_stats.*',
-                'user_accounts.username as nama', // Meng-alias username menjadi 'nama' agar terbaca di React
-                DB::raw("'FA' as nama_tim"),     // Placeholder jika kamu belum memiliki tabel tim, atau join tabel timmu di sini
-                DB::raw('15 as rounds')          // Dummy atau ganti dengan kolom jumlah round jika ada di tabel match
+                'players.nama as nama', // Mengambil kolom 'nama' dari tabel players untuk dibaca oleh React
+                DB::raw("'FA' as nama_tim"), // Placeholder tim (kamu bisa join tabel teams nanti jika diperlukan)
+                DB::raw('13 as rounds')      // Nilai dummy rounds agar kolom RND di React tidak tampil 0
             );
 
-        // 2. FILTER AGENT
+        // 2. FILTER AGENT (Diselaraskan dengan kolom 'agent_used')
         if ($request->filled('agent') && $request->agent !== 'All') {
             $query->where('player_match_stats.agent_used', $request->agent);
         }
 
-        // 3. FILTER MAP (Diselaraskan dengan kolom database-mu: 'map_name')
+        // 3. FILTER MAP (Diselaraskan dengan kolom 'map_name')
         if ($request->filled('map') && $request->map !== 'All') {
             $query->where('player_match_stats.map_name', $request->map);
         }
 
-        // 4. FILTER MIN ROUNDS (Menggunakan raw query atau kolom pengganti sejenis)
-        if ($request->filled('minRounds')) {
-            // Karena di tabelmu tidak ada kolom rounds, sementara kita kunci atau sesuaikan ke kolom stat lain
-            // $query->where('player_match_stats.kolom_round_kamu', '>=', $request->minRounds);
-        }
-
-        // 5. FILTER MIN RATING (Diselaraskan dengan kolom database-mu: 'rating')
+        // 4. FILTER MIN RATING (Diselaraskan dengan kolom 'rating')
         if ($request->filled('minRating')) {
             $query->where('player_match_stats.rating', '>=', $request->minRating);
         }
 
-        // Ambil data maksimal 50 baris teratas demi optimasi kecepatan PostgreSQL
+        // 5. FILTER MIN ROUNDS (Buka komentar ini jika nanti kamu sudah menambahkan kolom round di database)
+        /*
+        if ($request->filled('minRounds')) {
+            $query->where('player_match_stats.rounds_played', '>=', $request->minRounds);
+        }
+        */
+
+        // Ambil data maksimal 50 baris teratas demi kecepatan loading website
         $data = $query->limit(50)->get();
 
-        // Mengembalikan data terbungkus dalam properti 'data' sesuai permintaan fetchStatsData di React
+        // Mengembalikan data terbungkus dalam properti 'data' agar langsung terbaca oleh React
         return response()->json([
             'success' => true,
             'data' => $data
