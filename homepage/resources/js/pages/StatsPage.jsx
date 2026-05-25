@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
-    // 1. STATE & KONSTANTA (Dipindahkan ke paling atas agar aman dari error)
+    // 1. STATE & KONSTANTA (Struktur Paling Atas Agar Aman dari Build Error)
     const [stats, setStats] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -20,7 +20,7 @@ export default function StatsPage() {
     ]);
 
     const [filters, setFilters] = useState({
-        event: "All", // Menggunakan 'event' agar sinkron dengan dropdown select
+        event: "All", // Diselaraskan dengan name="event" pada dropdown select
         region: "All",
         minRounds: "",
         minRating: "",
@@ -32,7 +32,7 @@ export default function StatsPage() {
     const [regions, setRegions] = useState([]);
     const [events, setEvents] = useState([]);
 
-    // 2. FUNGSI FETCH DATA STATISTIK
+    // 2. FUNGSI FETCH DATA STATISTIK (Diberikan pengaman pembacaan array data)
     const fetchStatsData = (currentFilters) => {
         const params = new URLSearchParams();
 
@@ -45,11 +45,21 @@ export default function StatsPage() {
 
         fetch(`${API_URL}/api/stats?${params.toString()}`)
             .then(res => res.json())
-            .then(data => {
-                console.log("Response Database Stats:", data);
-                setStats(data.data || data || []);
+            .then(resData => {
+                console.log("Response Database Stats:", resData);
+                // PASTIKAN MEMBACA .data KARENA LARAVEL MENGEMBALIKAN ['data' => $data]
+                if (resData && resData.data) {
+                    setStats(resData.data);
+                } else if (Array.isArray(resData)) {
+                    setStats(resData);
+                } else {
+                    setStats([]);
+                }
             })
-            .catch(err => console.error("Error fetching stats:", err));
+            .catch(err => {
+                console.error("Error fetching stats:", err);
+                setStats([]);
+            });
     };
 
     // 3. HANDLER PERUBAHAN FILTER
@@ -60,7 +70,7 @@ export default function StatsPage() {
         });
     };
 
-    // 4. LIFECYCLE EFFECT (MENGAMBIL DATA AWAL)
+    // 4. LIFECYCLE EFFECT (MEMANGGIL DATA PERTAMA KALI)
     useEffect(() => {
         fetchStatsData(filters);
 
@@ -70,8 +80,6 @@ export default function StatsPage() {
                 if (data.agents && data.agents.length > 0) setAgents(data.agents);
                 if (data.maps && data.maps.length > 0) setMaps(data.maps);
                 if (data.countries && data.countries.length > 0) setRegions(data.countries);
-
-                // Simpan data turnamen dari backend ke dalam state events
                 if (data.tournaments && data.tournaments.length > 0) setEvents(data.tournaments);
             })
             .catch(err => console.error("Error fetching filters:", err));
@@ -183,7 +191,7 @@ export default function StatsPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {stats.length > 0 ? (
+                                    {Array.isArray(stats) && stats.length > 0 ? (
                                         stats.map((row, index) => (
                                             <tr key={index}>
                                                 <td className="player-cell">
@@ -211,7 +219,7 @@ export default function StatsPage() {
                                     ) : (
                                         <tr>
                                             <td colSpan="12" className="no-data">
-                                                📡 Sedang menarik data dari database...
+                                                ⚠️ Tidak ada data statistik ditemukan atau gagal terhubung ke server.
                                             </td>
                                         </tr>
                                     )}
