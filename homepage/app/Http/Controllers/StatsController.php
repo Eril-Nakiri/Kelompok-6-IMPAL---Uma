@@ -9,45 +9,43 @@ class StatsController extends Controller
 {
     public function getStats(Request $request)
     {
-        // Hubungkan ke tabel di PostgreSQL (Pastikan nama tabel ini benar-benar sesuai di database-mu)
-        $query = DB::table('player_match_stats');
+        // 1. Mulai query dari tabel utama 'player_match_stats'
+        // Lakukan JOIN ke tabel akun user untuk mengambil nama asli pemain dan nama tim.
+        // PENTING: Ganti 'user_accounts' dengan nama tabel user/pemain yang asli di database-mu jika berbeda.
+        $query = DB::table('player_match_stats')
+            ->join('user_accounts', 'player_match_stats.id_player', '=', 'user_accounts.id_user')
+            ->select(
+                'player_match_stats.*',
+                'user_accounts.username as nama', // Meng-alias username menjadi 'nama' agar terbaca di React
+                DB::raw("'FA' as nama_tim"),     // Placeholder jika kamu belum memiliki tabel tim, atau join tabel timmu di sini
+                DB::raw('15 as rounds')          // Dummy atau ganti dengan kolom jumlah round jika ada di tabel match
+            );
 
-        // 1. FILTER AGENT
+        // 2. FILTER AGENT
         if ($request->filled('agent') && $request->agent !== 'All') {
-            $query->where('agent_used', $request->agent);
+            $query->where('player_match_stats.agent_used', $request->agent);
         }
 
-        // 2. FILTER MAP (Diaktifkan)
+        // 3. FILTER MAP (Diselaraskan dengan kolom database-mu: 'map_name')
         if ($request->filled('map') && $request->map !== 'All') {
-            // Menggunakan nama kolom 'map_name', sesuaikan jika kolom di PostgreSQL-mu bernama 'map'
-            $query->where('map_name', $request->map);
+            $query->where('player_match_stats.map_name', $request->map);
         }
 
-        // 3. FILTER REGION (Diaktifkan jika kolomnya tersedia)
-        if ($request->filled('region') && $request->region !== 'All') {
-            $query->where('region', $request->region);
-        }
-
-        // 4. FILTER EVENT SERIES (Diaktifkan jika kolomnya tersedia)
-        if ($request->filled('eventSeries') && $request->eventSeries !== 'All') {
-            $query->where('event_series', $request->eventSeries);
-        }
-
-        // 5. FILTER MIN ROUNDS (Diaktifkan)
+        // 4. FILTER MIN ROUNDS (Menggunakan raw query atau kolom pengganti sejenis)
         if ($request->filled('minRounds')) {
-            // Disesuaikan menjadi 'rounds' mengikuti properti row.rounds di React kamu
-            $query->where('rounds', '>=', $request->minRounds);
+            // Karena di tabelmu tidak ada kolom rounds, sementara kita kunci atau sesuaikan ke kolom stat lain
+            // $query->where('player_match_stats.kolom_round_kamu', '>=', $request->minRounds);
         }
 
-        // 6. FILTER MIN RATING (Diaktifkan)
+        // 5. FILTER MIN RATING (Diselaraskan dengan kolom database-mu: 'rating')
         if ($request->filled('minRating')) {
-            $query->where('rating', '>=', $request->minRating);
+            $query->where('player_match_stats.rating', '>=', $request->minRating);
         }
 
-        // Ambil data maksimal 50 baris teratas untuk optimasi performa
+        // Ambil data maksimal 50 baris teratas demi optimasi kecepatan PostgreSQL
         $data = $query->limit(50)->get();
 
-        // Mengembalikan bungkus objek data langsung agar dibaca oleh setStats(data.data || data) di React
+        // Mengembalikan data terbungkus dalam properti 'data' sesuai permintaan fetchStatsData di React
         return response()->json([
             'success' => true,
             'data' => $data
@@ -56,7 +54,6 @@ class StatsController extends Controller
 
     public function getFilters()
     {
-        // Menyediakan daftar nama Agent lengkap untuk sinkronisasi dropdown frontend
         $agents = [
             "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
             "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
@@ -64,7 +61,6 @@ class StatsController extends Controller
             "Skye", "Sova", "Tejo", "Viper", "Yoru"
         ];
 
-        // Menyediakan daftar Map lengkap untuk sinkronisasi dropdown frontend
         $maps = [
             "Abyss", "Ascent", "Bind", "Breeze", "District", "Fracture",
             "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"

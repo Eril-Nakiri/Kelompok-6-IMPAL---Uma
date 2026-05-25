@@ -161,7 +161,7 @@ export default function StatsPage() {
                                         <th>A</th>
                                         <th>FK</th>
                                         <th>FD</th>
-                                        <th>HS%</th>
+                                        <th>HS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
