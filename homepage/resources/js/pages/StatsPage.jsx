@@ -264,7 +264,14 @@ export default function StatsPage() {
                                     {sortedStats.length > 0 ? (
                                         sortedStats.map((row, index) => (
                                             <tr key={index}>
-                                                <td className="player-cell">
+                                                <td className="player-cell" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+
+                                                    <img
+                                                        src={row.photo_url || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
+                                                        alt={row.nama || "Player"}
+                                                        className="player-avatar"
+                                                    />
+
                                                     <div className="player-info">
                                                         <span className="player-name">{row.nama || `User ${row.id_player}`}</span>
                                                         <span className="team-name">{row.nama_tim || "FA"}</span>

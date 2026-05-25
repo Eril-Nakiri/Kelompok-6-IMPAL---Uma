@@ -16,6 +16,7 @@ class StatsController extends Controller
                 'player_map_stats.*',
                 'players.nama as nama',
                 'players.country as country',
+                'players.photo_url as photo_url',
                 DB::raw("'FA' as nama_tim"),
                 DB::raw('13 as rounds')
             );
