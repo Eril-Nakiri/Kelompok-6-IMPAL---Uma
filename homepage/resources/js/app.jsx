@@ -21,7 +21,6 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 
 function App() {
     return (
-        <BrowserRouter>
             <Routes>
                 <Route path="/" element={<LoginPage />} />
 
@@ -73,7 +72,6 @@ function App() {
                     } />
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
-        </BrowserRouter>
     );
 }
 export default App;
