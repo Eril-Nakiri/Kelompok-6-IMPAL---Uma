@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 
 import "../css/app.css";
 import "../css/index.css";
@@ -19,7 +19,7 @@ import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
-export default function App() {
+function App() {
     return (
         <BrowserRouter>
             <Routes>
@@ -76,3 +76,4 @@ export default function App() {
         </BrowserRouter>
     );
 }
+export default App;
