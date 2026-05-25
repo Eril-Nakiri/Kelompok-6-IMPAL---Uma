@@ -110,6 +110,12 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
+                        <div className="login-actions-register">
+                            <Link to="/login" className="btn-link">
+                                Already have an account? Sign In
+                            </Link>
+                        </div>
+
                         <div className="button-wrapper">
                             <button className="btn-login" onClick={handleRegister}>
                                 SIGN UP

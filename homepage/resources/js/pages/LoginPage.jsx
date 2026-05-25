@@ -2,6 +2,7 @@ import AuthCard from "../components/AuthCard";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import '../../css/LoginPage.css';
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
