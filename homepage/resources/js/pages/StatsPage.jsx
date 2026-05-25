@@ -112,9 +112,21 @@ export default function StatsPage() {
         let sortableItems = [...stats];
         if (sortConfig.key !== null) {
             sortableItems.sort((a, b) => {
-                // Karena data berupa angka, kita pastikan di-parsing ke Float
-                const aValue = parseFloat(a[sortConfig.key]) || 0;
-                const bValue = parseFloat(b[sortConfig.key]) || 0;
+                let aValue = a[sortConfig.key];
+                let bValue = b[sortConfig.key];
+
+                // Cek apakah datanya berupa angka valid atau teks
+                const isNumeric = !isNaN(parseFloat(aValue)) && isFinite(aValue);
+
+                if (isNumeric) {
+                    // Jika angka, jadikan desimal/float
+                    aValue = parseFloat(aValue) || 0;
+                    bValue = parseFloat(bValue) || 0;
+                } else {
+                    // Jika teks (seperti nama map), jadikan huruf kecil semua agar sorting akurat
+                    aValue = String(aValue || '').toLowerCase();
+                    bValue = String(bValue || '').toLowerCase();
+                }
 
                 if (aValue < bValue) {
                     return sortConfig.direction === 'asc' ? -1 : 1;
@@ -210,6 +222,9 @@ export default function StatsPage() {
                                 <thead>
                                     <tr>
                                         <th className="text-left">Player</th>
+                                        <th style={{ cursor: "pointer" }} onClick={() => handleSort('map_name')}>
+                                            Map{getSortIcon('map_name')}
+                                        </th>
                                         <th style={{ cursor: "pointer" }} onClick={() => handleSort('rounds')}>
                                             RND{getSortIcon('rounds')}
                                         </th>
@@ -256,6 +271,9 @@ export default function StatsPage() {
                                                     </div>
                                                     <span className="agent-text">{row.agent_used}</span>
                                                 </td>
+
+                                                <td className="stat-box bg-tier-default">{row.map_name || '-'}</td>
+
                                                 <td>{row.rounds || 0}</td>
                                                 <td className={`stat-box ${getRatingColor(row.rating)}`}>
                                                     {row.rating || "0.00"}
