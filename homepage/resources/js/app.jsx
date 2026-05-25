@@ -56,12 +56,12 @@ function App() {
                     } />
 
                 <Route
-                    path="/teams" element={
+                    path="/teams/:id" element={
                         <ProtectedRoute><TeamPage /></ProtectedRoute>
                     } />
 
                 <Route
-                    path="/players" element={
+                    path="/players/:id" element={
                         <ProtectedRoute><PlayerPage /></ProtectedRoute>
                     } />
 
