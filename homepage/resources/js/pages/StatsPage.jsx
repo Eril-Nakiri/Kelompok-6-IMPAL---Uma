@@ -25,21 +25,16 @@ export default function StatsPage() {
         timespan: "Past 60 Days"
     });
 
-    const [stats, setStats] = useState([]);
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
-    const handleChange = (e) => {
-        setFilters({
-            ...filters,
-            [e.target.name]: e.target.value
-        });
-    };
+    const [regions, setRegions] = useState([]);
+    const [events, setEvents] = useState([]);
 
     const fetchStatsData = (currentFilters) => {
         const params = new URLSearchParams();
 
         if (currentFilters.agent && currentFilters.agent !== 'All') params.append('agent', currentFilters.agent);
         if (currentFilters.map && currentFilters.map !== 'All') params.append('map', currentFilters.map);
+        if (currentFilters.region && currentFilters.region !== 'All') params.append('region', currentFilters.region);
+        if (currentFilters.event && currentFilters.event !== 'All') params.append('event', currentFilters.event);
         if (currentFilters.minRounds) params.append('minRounds', currentFilters.minRounds);
         if (currentFilters.minRating) params.append('minRating', currentFilters.minRating);
 
@@ -52,6 +47,16 @@ export default function StatsPage() {
             .catch(err => console.error("Error fetching stats:", err));
     };
 
+    const [stats, setStats] = useState([]);
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+    const handleChange = (e) => {
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value
+        });
+    };
+
     useEffect(() => {
         fetchStatsData(filters);
 
@@ -60,6 +65,10 @@ export default function StatsPage() {
             .then(data => {
                 if (data.agents && data.agents.length > 0) setAgents(data.agents);
                 if (data.maps && data.maps.length > 0) setMaps(data.maps);
+                if (data.countries && data.countries.length > 0) setRegions(data.countries);
+
+                // Simpan data turnamen dari backend ke dalam state events
+                if (data.tournaments && data.tournaments.length > 0) setEvents(data.tournaments);
             })
             .catch(err => console.error("Error fetching filters:", err));
     }, []);
@@ -68,7 +77,6 @@ export default function StatsPage() {
         fetchStatsData(filters);
     };
 
-    // Fungsi penentu warna background rating ala VLR
     const getRatingColor = (rating) => {
         if (!rating) return "bg-tier-default";
         if (rating >= 1.30) return "bg-tier-s";
@@ -89,18 +97,24 @@ export default function StatsPage() {
                         <div className="meta-card filter-card">
                             <div className="filter-row top-row">
                                 <div className="filter-item">
-                                    <label>Event Series</label>
-                                    <select name="eventSeries" value={filters.eventSeries} onChange={handleChange}>
-                                        <option value="All">All</option>
+                                    <label>Event</label>
+                                    <select name="event" value={filters.event} onChange={handleChange}>
+                                        <option value="All">All Events</option>
+                                        {events.map((namaTurnamen, index) => (
+                                            <option key={index} value={namaTurnamen}>{namaTurnamen}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
 
                             <div className="filter-row bottom-row">
                                 <div className="filter-item">
-                                    <label>Region</label>
+                                    <label>Region / Country</label>
                                     <select name="region" value={filters.region} onChange={handleChange}>
                                         <option value="All">All</option>
+                                        {regions.map((country, index) => (
+                                            <option key={index} value={country}>{country}</option>
+                                        ))}
                                     </select>
                                 </div>
 

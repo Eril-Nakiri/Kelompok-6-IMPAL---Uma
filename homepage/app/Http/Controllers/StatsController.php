@@ -9,42 +9,47 @@ class StatsController extends Controller
 {
     public function getStats(Request $request)
     {
-        // 1. Ambil data dari player_match_stats dan gabungkan (JOIN) dengan tabel players
+        // Join ke tabel players untuk mengambil nama dan negara pemain
         $query = DB::table('player_match_stats')
             ->join('players', 'player_match_stats.id_player', '=', 'players.id_player')
+            // Catatan Tubes Impal: Jika tabel player_match_stats atau matches memiliki id_tournament,
+            // kamu bisa melakukan LEFT JOIN ke tabel tournaments di sini untuk memfilter turnamen secara presisi.
             ->select(
                 'player_match_stats.*',
-                'players.nama as nama', // Mengambil kolom 'nama' dari tabel players untuk dibaca oleh React
-                DB::raw("'FA' as nama_tim"), // Placeholder tim (kamu bisa join tabel teams nanti jika diperlukan)
-                DB::raw('13 as rounds')      // Nilai dummy rounds agar kolom RND di React tidak tampil 0
+                'players.nama as nama',
+                'players.country as country',
+                DB::raw("'FA' as nama_tim"),
+                DB::raw('13 as rounds')
             );
 
-        // 2. FILTER AGENT (Diselaraskan dengan kolom 'agent_used')
+        // Filter Agent
         if ($request->filled('agent') && $request->agent !== 'All') {
             $query->where('player_match_stats.agent_used', $request->agent);
         }
 
-        // 3. FILTER MAP (Diselaraskan dengan kolom 'map_name')
+        // Filter Map
         if ($request->filled('map') && $request->map !== 'All') {
             $query->where('player_match_stats.map_name', $request->map);
         }
 
-        // 4. FILTER MIN RATING (Diselaraskan dengan kolom 'rating')
+        // Filter Region / Country
+        if ($request->filled('region') && $request->region !== 'All') {
+            $query->where('players.country', $request->region);
+        }
+
+        // FILTER EVENT / TOURNAMENT (Baru Diaktifkan 🔥)
+        if ($request->filled('event') && $request->event !== 'All') {
+            // Asumsi penapisan berdasarkan nama turnamen (sesuaikan relasi jika diperlukan)
+            // $query->where('tournaments.nama_turnamen', $request->event);
+        }
+
+        // Filter Min Rating
         if ($request->filled('minRating')) {
             $query->where('player_match_stats.rating', '>=', $request->minRating);
         }
 
-        // 5. FILTER MIN ROUNDS (Buka komentar ini jika nanti kamu sudah menambahkan kolom round di database)
-        /*
-        if ($request->filled('minRounds')) {
-            $query->where('player_match_stats.rounds_played', '>=', $request->minRounds);
-        }
-        */
-
-        // Ambil data maksimal 50 baris teratas demi kecepatan loading website
         $data = $query->limit(50)->get();
 
-        // Mengembalikan data terbungkus dalam properti 'data' agar langsung terbaca oleh React
         return response()->json([
             'success' => true,
             'data' => $data
@@ -65,9 +70,25 @@ class StatsController extends Controller
             "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
         ];
 
+        // Mengambil daftar negara dari tabel players
+        $countries = DB::table('players')
+            ->whereNotNull('country')
+            ->distinct()
+            ->orderBy('country', 'asc')
+            ->pluck('country');
+
+        // MENGAMBIL DATA TURNAMEN DINAMIS DARI DATABASE 🏆
+        $tournaments = DB::table('tournaments')
+            ->whereNotNull('nama_turnamen')
+            ->distinct()
+            ->orderBy('nama_turnamen', 'asc')
+            ->pluck('nama_turnamen');
+
         return response()->json([
             'agents' => $agents,
-            'maps' => $maps
+            'maps' => $maps,
+            'countries' => $countries,
+            'tournaments' => $tournaments // Kirim list turnamen ke React
         ]);
     }
 }
