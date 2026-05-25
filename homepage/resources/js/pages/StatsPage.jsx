@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import "../../css/Stat.css";
 
 export default function StatsPage() {
+    // 1. STATE & KONSTANTA (Dipindahkan ke paling atas agar aman dari error)
+    const [stats, setStats] = useState([]);
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
     const [agents, setAgents] = useState([
         "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
         "Deadlock", "Fade", "Gekko", "Harbor", "Iso", "Jett", "KAY/O",
@@ -16,7 +20,7 @@ export default function StatsPage() {
     ]);
 
     const [filters, setFilters] = useState({
-        eventSeries: "All",
+        event: "All", // Menggunakan 'event' agar sinkron dengan dropdown select
         region: "All",
         minRounds: "",
         minRating: "",
@@ -28,6 +32,7 @@ export default function StatsPage() {
     const [regions, setRegions] = useState([]);
     const [events, setEvents] = useState([]);
 
+    // 2. FUNGSI FETCH DATA STATISTIK
     const fetchStatsData = (currentFilters) => {
         const params = new URLSearchParams();
 
@@ -47,9 +52,7 @@ export default function StatsPage() {
             .catch(err => console.error("Error fetching stats:", err));
     };
 
-    const [stats, setStats] = useState([]);
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
+    // 3. HANDLER PERUBAHAN FILTER
     const handleChange = (e) => {
         setFilters({
             ...filters,
@@ -57,6 +60,7 @@ export default function StatsPage() {
         });
     };
 
+    // 4. LIFECYCLE EFFECT (MENGAMBIL DATA AWAL)
     useEffect(() => {
         fetchStatsData(filters);
 
@@ -111,7 +115,7 @@ export default function StatsPage() {
                                 <div className="filter-item">
                                     <label>Region / Country</label>
                                     <select name="region" value={filters.region} onChange={handleChange}>
-                                        <option value="All">All</option>
+                                        <option value="All">All Regions</option>
                                         {regions.map((country, index) => (
                                             <option key={index} value={country}>{country}</option>
                                         ))}
@@ -175,7 +179,7 @@ export default function StatsPage() {
                                         <th>A</th>
                                         <th>FK</th>
                                         <th>FD</th>
-                                        <th>HS</th>
+                                        <th>HS%</th>
                                     </tr>
                                 </thead>
                                 <tbody>
