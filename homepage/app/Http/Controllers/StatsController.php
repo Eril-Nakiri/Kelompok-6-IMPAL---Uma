@@ -10,12 +10,12 @@ class StatsController extends Controller
     public function getStats(Request $request)
     {
         // Join ke tabel players untuk mengambil nama dan negara pemain
-        $query = DB::table('player_match_stats')
-            ->join('players', 'player_match_stats.id_player', '=', 'players.id_player')
-            // Catatan Tubes Impal: Jika tabel player_match_stats atau matches memiliki id_tournament,
+        $query = DB::table('player_map_stats')
+            ->join('players', 'player_map_stats.id_player', '=', 'players.id_player')
+            // Catatan Tubes Impal: Jika tabel player_map_stats atau maps memiliki id_tournament,
             // kamu bisa melakukan LEFT JOIN ke tabel tournaments di sini untuk memfilter turnamen secara presisi.
             ->select(
-                'player_match_stats.*',
+                'player_map_stats.*',
                 'players.nama as nama',
                 'players.country as country',
                 DB::raw("'FA' as nama_tim"),
@@ -24,12 +24,12 @@ class StatsController extends Controller
 
         // Filter Agent
         if ($request->filled('agent') && $request->agent !== 'All') {
-            $query->where('player_match_stats.agent_used', $request->agent);
+            $query->where('player_map_stats.agent_used', $request->agent);
         }
 
         // Filter Map
         if ($request->filled('map') && $request->map !== 'All') {
-            $query->where('player_match_stats.map_name', $request->map);
+            $query->where('player_map_stats.map_name', $request->map);
         }
 
         // Filter Region / Country
@@ -45,7 +45,7 @@ class StatsController extends Controller
 
         // Filter Min Rating
         if ($request->filled('minRating')) {
-            $query->where('player_match_stats.rating', '>=', $request->minRating);
+            $query->where('player_map_stats.rating', '>=', $request->minRating);
         }
 
         $data = $query->limit(50)->get();
