@@ -53,13 +53,6 @@
 }
 
 /* Grouping Input */
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Gaya Input Box Putih */
 .login-input {
     width: 100%;
     padding: 12px 16px;
@@ -69,7 +62,7 @@
     font-size: 0.9rem;
     color: #333333;
     outline: none;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Ini kunci agar padding tidak melebihi kontainer */
 }
 
 .login-input::placeholder {
@@ -77,43 +70,92 @@
     font-style: italic;
 }
 
-/* Navigasi Link di Bawah Input */
+/* Wadah pembungkus input khusus password */
+.password-input-container {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tombol ikon mata agar pas di dalam password */
+.toggle-password-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%); /* Menengahkan ikon secara vertikal */
+    background: none;
+    border: none;
+    color: #999999;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    color: #38bdf8;
+}
+
+/* Navigasi Link (Forgot Password & Sign Up) */
 .login-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding: 0 4px;
+    justify-content: space-between; /* Menjauhkan "Forgot Password" ke kiri dan "Sign Up" ke kanan */
+    align-items: center;
+    margin-top: -5px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
 .btn-link {
     color: #cbd5e1;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-decoration: none;
     transition: color 0.2s;
 }
 
 .btn-link:hover {
-    color: #38bdf8; /* Efek hover cyan */
+    color: #38bdf8;
     text-decoration: underline;
+}
+
+/* PENTING UNTUK SIGN UP: Tambahkan text kecil "Don't have an account?" di samping Sign Up */
+.signup-link-wrapper {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.signup-link-wrapper .btn-link {
+    color: #d92525; /* Warna VLR Red */
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.signup-link-wrapper .btn-link:hover {
+    color: #ff4655;
 }
 
 /* Container untuk Button agar Center */
 .button-wrapper {
     display: flex;
     justify-content: center;
-    margin-top: 35px;
+    width: 100%;
 }
 
 /* Tombol Login Pill-Shape */
 .btn-login {
+    width: 100%; /* Membuat tombol login memenuhi ruang agar elegan */
     background-color: #55657e;
     color: #ffffff;
     border: none;
-    padding: 10px 45px;
-    font-size: 0.8rem;
+    padding: 12px;
+    font-size: 0.9rem;
     font-weight: bold;
-    letter-spacing: 1px;
-    border-radius: 12px;
+    letter-spacing: 1.5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

@@ -69,6 +69,7 @@ export default function LoginPage() {
                                     className="login-input"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password"
+                                    style={{ paddingRight: "45px" }} // Mencegah teks nabrak ikon mata
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -83,13 +84,15 @@ export default function LoginPage() {
                             </div>
                         </div>
 
+                        {/* Letak Link Forgot Password & Sign Up yang diperbaiki */}
                         <div className="login-actions">
                             <Link to="/forgot-password" className="btn-link">
                                 Forgot Password?
                             </Link>
-                            <Link to="/register" className="btn-link">
-                                Sign Up
-                            </Link>
+
+                            <div className="signup-link-wrapper">
+                                <span>Sign Up</span>
+                            </div>
                         </div>
 
                         <div className="button-wrapper">
