@@ -14,8 +14,8 @@
 /* Header & Tabs */
 .matches-header {
     display: flex;
-    gap: 200px;
-    border-bottom: 1px solid #222;
+    gap: 20px;
+    border-bottom: 100px solid #222;
     margin-bottom: 30px;
 }
 
