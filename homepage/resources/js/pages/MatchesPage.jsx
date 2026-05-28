@@ -60,7 +60,7 @@ export default function MatchesPage() {
         return acc;
     }, {});
 
-    // Helper untuk memformat jam (Misal: 2024-05-12T16:00:00 -> 16:00)
+    // Helper untuk memformat jam (contoh: 2024-05-12T16:00:00 -> 16:00)
     const formatTime = (datetimeStr) => {
         const date = new Date(datetimeStr);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
