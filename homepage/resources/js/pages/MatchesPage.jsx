@@ -12,14 +12,22 @@ export default function MatchesPage() {
     useEffect(() => {
         const fetchMatches = async () => {
             try {
+                setIsLoading(true);
                 const response = await fetch(`${API_URL}/api/matches`);
+
                 if (!response.ok) {
-                    throw new Error('Gagal mengambil data');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
                 const data = await response.json();
+
+                console.log("Data yang diterima dari API:", data);
+
                 setMatches(data);
+                setIsLoading(false);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error("Error saat fetch:", error);
+                setIsLoading(false);
             }
         };
 
