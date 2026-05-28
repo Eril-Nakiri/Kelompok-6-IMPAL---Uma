@@ -29,10 +29,14 @@ export default function MatchesPage() {
     }, []);
 
     const filteredMatches = matches.filter(match => {
+        const now = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(now.getMonth() + 1);
+
         if (activeTab === 'upcoming') {
-            return match.skor_akhir_a === null || match.skor_akhir_a === undefined;
+            return matchDate >= now && matchDate <= oneMonthLater && match.skor_akhir_a === null
         } else {
-            return match.skor_akhir_a !== null && match.skor_akhir_a !== undefined;
+            return matchDate < now || match.skor_akhir_a !== null;
         }
     });
 
