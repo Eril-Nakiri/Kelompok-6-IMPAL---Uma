@@ -11,7 +11,7 @@ export default function MatchesPage() {
 
     useEffect(() => {
         const fetchMatches = async () => {
-            setLoading(true); // Memulai loading
+            setLoading(true);
             try {
                 const response = await fetch(`${API_URL}/api/matches`);
 
@@ -21,26 +21,20 @@ export default function MatchesPage() {
 
                 const data = await response.json();
 
-                // Jika API Anda membungkus data di dalam object (misal: { data: [...] }),
-                // ubah setMatches(data) menjadi setMatches(data.data)
                 console.log("Data diterima:", data);
                 setMatches(data);
 
             } catch (error) {
                 console.error("Gagal mengambil data:", error);
             } finally {
-                setLoading(false); // Wajib mematikan loading
+                setLoading(false);
             }
         };
 
         fetchMatches();
     }, []);
 
-    // Logic Filtering
     const filteredMatches = matches.filter(match => {
-        // Asumsi logic:
-        // Upcoming = skor null
-        // Results = ada skor
         if (activeTab === 'upcoming') {
             return match.skor_akhir_a === null && match.skor_akhir_b === null;
         } else {
@@ -48,7 +42,6 @@ export default function MatchesPage() {
         }
     });
 
-    // Logic Grouping
     const groupedMatches = filteredMatches.reduce((acc, match) => {
         const { id_tournament, nama_turnamen, penyelenggara } = match;
         if (!acc[id_tournament]) {
@@ -94,19 +87,25 @@ export default function MatchesPage() {
                     Object.values(groupedMatches).map(tournament => (
                         <div key={tournament.id_tournament} className="tournament-group">
                             <div className="tournament-header">
-                                <h3 className="tournament-name">{tournament.nama_turnamen}</h3>
-                                <span className="tournament-organizer">| {tournament.penyelenggara}</span>
+                                {/* Menambahkan fallback jika nama turnamen kosong */}
+                                <h3 className="tournament-name">
+                                    {tournament.nama_turnamen || "Turnamen Tanpa Nama"}
+                                </h3>
+                                <span className="tournament-organizer">
+                                    | {tournament.penyelenggara || "Penyelenggara Tidak Diketahui"}
+                                </span>
                             </div>
 
                             {tournament.matches.map(match => (
                                 <div key={match.id_match} className="match-row">
                                     <div className="match-time">
-                                        {formatTime(match.jadwal)}
+                                        {match.jadwal ? formatTime(match.jadwal) : "-"}
                                     </div>
 
                                     <div className="match-teams-container">
                                         <div className="team left">
-                                            <span className="team-name">{match.nama_tim_a}</span>
+                                            {/* Memastikan nama tim muncul */}
+                                            <span className="team-name">{match.nama_tim_a || "TBD"}</span>
                                         </div>
 
                                         <div className="match-center">
@@ -114,27 +113,23 @@ export default function MatchesPage() {
                                                 <span className="match-vs">vs</span>
                                             ) : (
                                                 <span className="match-score">
-                                                    {match.skor_akhir_a} : {match.skor_akhir_b}
+                                                    {match.skor_akhir_a ?? 0} : {match.skor_akhir_b ?? 0}
                                                 </span>
                                             )}
                                         </div>
 
                                         <div className="team right">
-                                            <span className="team-name">{match.nama_tim_b}</span>
+                                            <span className="team-name">{match.nama_tim_b || "TBD"}</span>
                                         </div>
                                     </div>
 
                                     <div className="match-format">
-                                        {match.match_format}
+                                        {match.match_format || "-"}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ))
-                )}
-
-                {!loading && Object.keys(groupedMatches).length === 0 && (
-                    <p style={{ textAlign: 'center', color: '#888' }}>Tidak ada pertandingan tersedia.</p>
                 )}
             </div>
         </div>
