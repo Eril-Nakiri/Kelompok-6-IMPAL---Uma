@@ -8,13 +8,13 @@
 .matches-content {
     max-width: 1000px;
     margin: 0 auto;
+    margin-top: 80px;
     padding: 40px 20px;
 }
 
 /* Header & Tabs */
 .matches-header {
     display: flex;
-    top: 100px;
     gap: 20px;
     border-bottom: 1px solid #222;
     margin-bottom: 30px;

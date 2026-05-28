@@ -4,7 +4,7 @@ import "../../css/Stat.css";
 
 export default function StatsPage() {
     const [stats, setStats] = useState([]);
-    const API_URL = "";
+    const API_URL = "https://kelompok6uma-impal.up.railway.app";
 
     const [agents, setAgents] = useState([
         "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher",
@@ -286,7 +286,7 @@ export default function StatsPage() {
                                     ) : (
                                         <tr>
                                             <td colSpan="12" className="no-data">
-                                                ⚠️ Tidak ada data statistik ditemukan atau gagal terhubung ke server.
+                                                Tidak ada data statistik ditemukan atau gagal terhubung ke server.
                                             </td>
                                         </tr>
                                     )}

@@ -4,12 +4,25 @@ import '../../css/MatchesPage.css'; // Pastikan path ini sesuai dengan lokasi fi
 
 export default function MatchesPage() {
     const [matches, setMatches] = useState([]);
-    const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' atau 'results'
+    const [activeTab, setActiveTab] = useState('upcoming');
     const [loading, setLoading] = useState(true);
 
-    const API_URL = import.meta.env.VITE_API_URL || "";
+    const API_URL = "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
+        const fetchMatches = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/matches`);
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data');
+                }
+                const data = await response.json();
+                setMatches(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
         fetchMatches();
     }, []);
 
