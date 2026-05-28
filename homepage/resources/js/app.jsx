@@ -12,6 +12,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
 import NewsPage from "./pages/NewsPage.jsx";
 import ForumPage from "./pages/ForumPage.jsx";
+import MatchesPage from "./pages/MatchesPage.jsx";
 import TeamPage from "./pages/TeamPage.jsx";
 import PlayerPage from "./pages/PlayerPage.jsx";
 
