@@ -16,7 +16,6 @@ export default function MatchesPage() {
                 const response = await fetch(`${API_URL}/api/matches`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
-
                 setMatches(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Gagal mengambil data:", error);
@@ -33,10 +32,13 @@ export default function MatchesPage() {
         const oneMonthLater = new Date();
         oneMonthLater.setMonth(now.getMonth() + 1);
 
+        const matchDate = new Date(match.jadwal);
+
         if (activeTab === 'upcoming') {
-            return matchDate >= now && matchDate <= oneMonthLater && match.skor_akhir_a === null
+            return matchDate >= now && matchDate <= oneMonthLater && (match.skor_akhir_a === null || match.skor_akhir_a === undefined);
         } else {
-            return matchDate < now || match.skor_akhir_a !== null;
+            return matchDate < now ||
+                (match.skor_akhir_a !== null && match.skor_akhir_a !== undefined);
         }
     });
 
@@ -56,6 +58,7 @@ export default function MatchesPage() {
 
     const formatTime = (datetimeStr) => {
         const date = new Date(datetimeStr);
+        if (isNaN(date.getTime())) return "-";
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
@@ -101,7 +104,7 @@ export default function MatchesPage() {
                                                 <span className="match-vs">vs</span>
                                             ) : (
                                                 <span className="match-score">
-                                                    {match.skor_akhir_a} : {match.skor_akhir_b}
+                                                    {match.skor_akhir_a ?? 0} : {match.skor_akhir_b ?? 0}
                                                 </span>
                                             )}
                                         </div>
@@ -109,13 +112,12 @@ export default function MatchesPage() {
                                             <span className="team-name">{match.nama_tim_b || `Team ${match.id_team_b}`}</span>
                                         </div>
                                     </div>
-                                    <div className="match-format">{match.match_format}</div>
+                                    <div className="match-format">{match.match_format || "-"}</div>
                                 </div>
                             ))}
                         </div>
                     ))
                 ) : (
-
                     <p style={{ textAlign: 'center', marginTop: '20px', color: '#888' }}>
                         {activeTab === 'upcoming'
                             ? "Tidak Ada Pertandingan Terdekat..."
