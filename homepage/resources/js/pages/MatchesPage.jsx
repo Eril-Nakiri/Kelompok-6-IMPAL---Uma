@@ -48,7 +48,6 @@ export default function MatchesPage() {
         if (!acc[id_tournament]) {
             acc[id_tournament] = {
                 id_tournament,
-                // KOREKSI: Menggunakan nama_turnamen sesuai kolom database terbaru Anda
                 nama_turnamen: match.nama_turnamen || "Turnamen Tanpa Nama",
                 penyelenggara: match.penyelenggara || "Penyelenggara",
                 matches: []
@@ -90,7 +89,6 @@ export default function MatchesPage() {
                     Object.values(groupedMatches).map(tournament => (
                         <div key={tournament.id_tournament} className="tournament-group">
                             <div className="tournament-header">
-                                {/* Menampilkan Nama Turnamen & Penyelenggara */}
                                 <h3 className="tournament-name">{tournament.nama_turnamen}</h3>
                                 <span className="tournament-organizer">| {tournament.penyelenggara}</span>
                             </div>
@@ -111,8 +109,12 @@ export default function MatchesPage() {
                                                         style={{ width: '30px', height: '30px', marginRight: '10px', objectFit: 'contain' }}
                                                     />
                                                 )}
+                                                {/* FIXED: Menampilkan Nama Tim beserta Singkatannya */}
                                                 <span className="team-name">
-                                                    {match.nama_tim_a || `Team ${match.id_team_a}`}
+                                                    {match.nama_tim_a
+                                                        ? `${match.nama_tim_a} ${match.singkatan_a ? `(${match.singkatan_a})` : ''}`
+                                                        : `Team ${match.id_team_a}`
+                                                    }
                                                 </span>
                                             </div>
 
@@ -129,8 +131,12 @@ export default function MatchesPage() {
 
                                             {/* TEAM B (KANAN) */}
                                             <div className="team right">
+                                                {/* FIXED: Menampilkan Nama Tim beserta Singkatannya */}
                                                 <span className="team-name">
-                                                    {match.nama_tim_b || `Team ${match.id_team_b}`}
+                                                    {match.nama_tim_b
+                                                        ? `${match.nama_tim_b} ${match.singkatan_b ? `(${match.singkatan_b})` : ''}`
+                                                        : `Team ${match.id_team_b}`
+                                                    }
                                                 </span>
                                                 {match.logo_url_b && (
                                                     <img
@@ -146,7 +152,7 @@ export default function MatchesPage() {
                                         <div className="match-format">{match.match_format || "-"}</div>
                                     </div>
 
-                                    {/* FITUR TAMBAHAN: Menampilkan detail maps (jika ada data 'maps' dari backend) */}
+                                    {/* Detail maps untuk Tab Results */}
                                     {activeTab === 'results' && match.maps && match.maps.length > 0 && (
                                         <div className="match-maps-box" style={{ background: '#1e1e24', padding: '5px 15px', borderRadius: '0 0 8px 8px', fontSize: '12px', color: '#bbb', display: 'flex', gap: '15px', justifyContent: 'center', borderTop: '1px solid #2d2d35' }}>
                                             {match.maps.map((map) => (
