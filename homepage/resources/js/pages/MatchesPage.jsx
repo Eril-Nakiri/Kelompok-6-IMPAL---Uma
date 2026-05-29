@@ -42,11 +42,13 @@ export default function MatchesPage() {
         }
     });
 
+    // Grouping berdasarkan id_tournament
     const groupedMatches = filteredMatches.reduce((acc, match) => {
         const id_tournament = match.id_tournament || 'unknown';
         if (!acc[id_tournament]) {
             acc[id_tournament] = {
                 id_tournament,
+                // KOREKSI: Menggunakan nama_turnamen sesuai kolom database terbaru Anda
                 nama_turnamen: match.nama_turnamen || "Turnamen Tanpa Nama",
                 penyelenggara: match.penyelenggara || "Penyelenggara",
                 matches: []
@@ -88,31 +90,72 @@ export default function MatchesPage() {
                     Object.values(groupedMatches).map(tournament => (
                         <div key={tournament.id_tournament} className="tournament-group">
                             <div className="tournament-header">
+                                {/* Menampilkan Nama Turnamen & Penyelenggara */}
                                 <h3 className="tournament-name">{tournament.nama_turnamen}</h3>
                                 <span className="tournament-organizer">| {tournament.penyelenggara}</span>
                             </div>
 
                             {tournament.matches.map(match => (
-                                <div key={match.id_match} className="match-row">
-                                    <div className="match-time">{formatTime(match.jadwal)}</div>
-                                    <div className="match-teams-container">
-                                        <div className="team left">
-                                            <span className="team-name">{match.nama_tim_a || `Team ${match.id_teams_a}`}</span>
-                                        </div>
-                                        <div className="match-center">
-                                            {activeTab === 'upcoming' ? (
-                                                <span className="match-vs">vs</span>
-                                            ) : (
-                                                <span className="match-score">
-                                                    {match.skor_akhir_a ?? 0} : {match.skor_akhir_b ?? 0}
+                                <div key={match.id_match} className="match-card-wrapper" style={{ marginBottom: '15px' }}>
+                                    <div className="match-row">
+                                        <div className="match-time">{formatTime(match.jadwal)}</div>
+                                        <div className="match-teams-container">
+
+                                            {/* TEAM A (KIRI) */}
+                                            <div className="team left">
+                                                {match.logo_url_a && (
+                                                    <img
+                                                        src={match.logo_url_a}
+                                                        alt={match.nama_tim_a}
+                                                        className="team-logo"
+                                                        style={{ width: '30px', height: '30px', marginRight: '10px', objectFit: 'contain' }}
+                                                    />
+                                                )}
+                                                <span className="team-name">
+                                                    {match.nama_tim_a || `Team ${match.id_team_a}`}
                                                 </span>
-                                            )}
+                                            </div>
+
+                                            {/* SKOR / VS */}
+                                            <div className="match-center">
+                                                {activeTab === 'upcoming' ? (
+                                                    <span className="match-vs">vs</span>
+                                                ) : (
+                                                    <span className="match-score">
+                                                        {match.skor_akhir_a ?? 0} : {match.skor_akhir_b ?? 0}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* TEAM B (KANAN) */}
+                                            <div className="team right">
+                                                <span className="team-name">
+                                                    {match.nama_tim_b || `Team ${match.id_team_b}`}
+                                                </span>
+                                                {match.logo_url_b && (
+                                                    <img
+                                                        src={match.logo_url_b}
+                                                        alt={match.nama_tim_b}
+                                                        className="team-logo"
+                                                        style={{ width: '30px', height: '30px', marginLeft: '10px', objectFit: 'contain' }}
+                                                    />
+                                                )}
+                                            </div>
+
                                         </div>
-                                        <div className="team right">
-                                            <span className="team-name">{match.nama_tim_b || `Team ${match.id_team_b}`}</span>
-                                        </div>
+                                        <div className="match-format">{match.match_format || "-"}</div>
                                     </div>
-                                    <div className="match-format">{match.match_format || "-"}</div>
+
+                                    {/* FITUR TAMBAHAN: Menampilkan detail maps (jika ada data 'maps' dari backend) */}
+                                    {activeTab === 'results' && match.maps && match.maps.length > 0 && (
+                                        <div className="match-maps-box" style={{ background: '#1e1e24', padding: '5px 15px', borderRadius: '0 0 8px 8px', fontSize: '12px', color: '#bbb', display: 'flex', gap: '15px', justifyContent: 'center', borderTop: '1px solid #2d2d35' }}>
+                                            {match.maps.map((map) => (
+                                                <span key={map.id_match_map}>
+                                                    Map {map.map_number} ({map.map_name}): <strong>{map.team_a_score}-{map.team_b_score}</strong>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
