@@ -15,7 +15,7 @@ class MatchController extends Controller
 
             $matches = DB::table($tableName . ' as m')
                 // JOIN ke tabel tournament tunggal
-                ->leftJoin('tournament as t', 'm.id_tournament', '=', 't.id_tournament')
+                ->leftJoin('tournaments as t', 'm.id_tournament', '=', 't.id_tournament')
                 // JOIN ke tabel teams untuk mendapatkan detail Team A
                 ->leftJoin('teams as team_a', 'm.id_team_a', '=', 'team_a.id_team')
                 // JOIN ke tabel teams untuk mendapatkan detail Team B
