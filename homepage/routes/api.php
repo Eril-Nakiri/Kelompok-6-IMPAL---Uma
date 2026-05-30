@@ -51,3 +51,4 @@ Route::get('/matches', [MatchController::class, 'index']);
 
 // TOURNAMENTS ADMIN
 Route::post('/tournament', [TournamentController::class, 'store']);
+Route::get('/tournament', [TournamentController::class, 'index']);

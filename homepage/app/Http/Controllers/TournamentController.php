@@ -8,6 +8,19 @@ use Illuminate\Support\Facades\DB;
 
 class TournamentController extends Controller
 {
+    public function index()
+    {
+        try {
+            $tournaments = \App\Models\Tournament::all();
+
+            return response()->json($tournaments, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil data database: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function store(Request $request)
     {
         $request->validate([
