@@ -134,6 +134,20 @@ export default function DashboardAdmin() {
                     </div>
                 </div>
             )}
+
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ maxWidth: '400px' }}>
+                        <h3>Tambah Turnamen Baru</h3>
+                        {/* Form Anda di sini */}
+                        <input type="text" placeholder="Nama Turnamen" className="input-field" />
+                        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                            <button className="action-btn" onClick={() => setIsModalOpen(false)}>Batal</button>
+                            <button className="action-btn" style={{ backgroundColor: '#10B981' }}>Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
