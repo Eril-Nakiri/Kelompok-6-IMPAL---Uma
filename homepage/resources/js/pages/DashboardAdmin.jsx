@@ -49,13 +49,13 @@ export default function DashboardAdmin() {
                         <Link to="/admin" className="menu-btn active">
                             <span>📊</span> Dashboard Overview
                         </Link>
-                        <Link to="/admin/manage-news" className="menu-btn">
+                        <Link to="manage-news" className="menu-btn">
                             <span>📰</span> Manage News
                         </Link>
-                        <Link to="/admin/input-match" className="menu-btn">
+                        <Link to="input-match" className="menu-btn">
                             <span>⚔️</span> Input Match
                         </Link>
-                        <Link to="/admin/input-match-result" className="menu-btn">
+                        <Link to="input-match-result" className="menu-btn">
                             <span>🏆</span> Input Matches Result
                         </Link>
                     </nav>
