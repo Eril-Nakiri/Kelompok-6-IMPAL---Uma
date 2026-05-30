@@ -2,25 +2,21 @@ import React, { useState, useEffect } from 'react';
 import '../../css/DashboardAdmin.css';
 
 export default function DashboardAdmin() {
-    // State untuk menampung daftar turnamen dari database pgsql
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    // State Kontrol Modal Popup Inputan
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isChoiceModalOpen, setIsChoiceModalOpen] = useState(false);
+    const [selectedTournament, setSelectedTournament] = useState({ id: null, name: '' });
 
-    // State Inputan Form "Buat Turnamen"
     const [formData, setFormData] = useState({
         nama_turnamen: '',
         penyelenggara: ''
     });
 
-    // 1. FUNGSI AMBIL DAFTAR TURNAMEN DARI DATABASE (GET)
     const fetchTournaments = async () => {
         try {
             const response = await fetch('/api/tournament');
             const data = await response.json();
-            // Menampung data response dari Laravel
             setTournaments(data.data || data || []);
         } catch (error) {
             console.error("Gagal mengambil data turnamen dari database:", error);
@@ -31,13 +27,11 @@ export default function DashboardAdmin() {
         fetchTournaments();
     }, []);
 
-    // 2. FUNGSI HANDLE INPUT CHANGE
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // 3. FUNGSI KIRIM INPUTAN TURNAMEN BARU (POST)
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -56,9 +50,9 @@ export default function DashboardAdmin() {
 
             if (response.ok || result.status === 'success') {
                 alert('🎉 Turnamen baru berhasil disimpan!');
-                setIsModalOpen(false); // Tutup popup modal
-                setFormData({ nama_turnamen: '', penyelenggara: '' }); // Reset form
-                fetchTournaments(); // Refresh tabel agar turnamen baru langsung muncul
+                setIsModalOpen(false);
+                setFormData({ nama_turnamen: '', penyelenggara: '' });
+                fetchTournaments();
             } else {
                 alert('Gagal menyimpan data: ' + (result.message || 'Terjadi kesalahan sistem.'));
             }
@@ -70,13 +64,21 @@ export default function DashboardAdmin() {
         }
     };
 
-    // Fungsi simulasi ketika admin memilih turnamen yang sudah ada
     const handleSelectTournament = (id, name) => {
-        alert(`Anda memilih Turnamen: ${name} (ID: ${id}) untuk dikelola.`);
-        // Di sini nantinya Anda bisa mengarahkan halaman atau nge-set active tournament ID
+        setSelectedTournament({ id: id, name: name });
+        setIsChoiceModalOpen(true);
     };
 
-    // Navigasi Menu Baru sesuai request Anda
+    const handleNavigateToModule = (moduleName) => {
+        setIsChoiceModalOpen(false); // Tutup popup pilihan
+
+        alert(`Mengalihkan Anda ke modul [${moduleName}] untuk turnamen: ${selectedTournament.name} (ID: ${selectedTournament.id})`);
+
+        // Catatan: Jika nanti Anda sudah mengonfigurasi React Router Dom,
+        // Anda tinggal mengganti baris alert di atas dengan fungsi navigasi real seperti:
+        // navigate(`/admin/${moduleName.toLowerCase().replace(" ", "-")}?tournament_id=${selectedTournament.id}`);
+    };
+
     const menuItems = [
         { name: 'Dashboard Overview', icon: '📊', active: true },
         { name: 'Manage News', icon: '📰', active: false },
@@ -87,7 +89,6 @@ export default function DashboardAdmin() {
     return (
         <div className="db-container">
 
-            {/* SIDEBAR NAVIGASI (KIRI LAYAR) */}
             <aside className="db-sidebar">
                 <div>
                     <div className="sidebar-brand">
@@ -112,11 +113,10 @@ export default function DashboardAdmin() {
                             <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>Super Admin</p>
                         </div>
                     </div>
-                    <button className="logout-btn" title="Keluar Log">🚪</button>
+                    <button className="logout-btn" title="Keluar">🚪</button>
                 </div>
             </aside>
 
-            {/* AREA MAIN CONTENT */}
             <main className="db-main">
                 <header className="db-header">
                     <div className="header-title">
@@ -132,7 +132,6 @@ export default function DashboardAdmin() {
                 <div className="db-body">
                     <div className="panel-grid" style={{ gridTemplateColumns: '1fr' }}>
 
-                        {/* TABEL DAFTAR TURNAMEN UTAMA */}
                         <div className="panel-box">
                             <div className="panel-header">
                                 <div>
@@ -192,7 +191,6 @@ export default function DashboardAdmin() {
                 </div>
             </main>
 
-            {/* POPUP MODAL UNTUK INPUT DATA TURNAMEN BARU */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -233,6 +231,47 @@ export default function DashboardAdmin() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {isChoiceModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ maxWidth: '440px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚙️</div>
+                        <h3 style={{ marginBottom: '6px' }}>Pengaturan Turnamen</h3>
+                        <p style={{ fontSize: '14px', color: '#CBD5E1', marginBottom: '24px' }}>
+                            Anda memilih <strong style={{ color: '#10B981' }}>{selectedTournament.name}</strong>.<br />
+                            Silakan pilih aksi yang ingin Anda lakukan:
+                        </p>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <button
+                                className="action-btn"
+                                style={{ width: '100%', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                                onClick={() => handleNavigateToModule('Input Match')}
+                            >
+                                <span>⚔️</span> Input Match (Jadwal Pertandingan)
+                            </button>
+
+                            <button
+                                className="action-btn"
+                                style={{ width: '100%', padding: '14px', backgroundColor: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                                onClick={() => handleNavigateToModule('Input Matches Result')}
+                            >
+                                <span>🏆</span> Input Matches Result (Hasil Skor)
+                            </button>
+                        </div>
+
+                        <div style={{ marginTop: '20px', borderTop: '1px solid #334155', paddingTop: '16px' }}>
+                            <button
+                                className="btn-secondary"
+                                style={{ width: '100%' }}
+                                onClick={() => setIsChoiceModalOpen(false)}
+                            >
+                                Kembali ke Overview
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
