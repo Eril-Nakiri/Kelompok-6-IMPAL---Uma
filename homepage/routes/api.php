@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\TournamentController;
 
 
 // TEST API
@@ -47,3 +48,6 @@ Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 
 // MATCHES
 Route::get('/matches', [MatchController::class, 'index']);
+
+// TOURNAMENTS ADMIN
+Route::post('/tournament', [TournamentController::class, 'store']);
