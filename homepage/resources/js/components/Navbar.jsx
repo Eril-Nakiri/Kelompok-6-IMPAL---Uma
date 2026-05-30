@@ -5,22 +5,17 @@ export default function Navbar() {
     const [user, setUser] = useState(null);
     const [open, setOpen] = useState(false);
 
-    // WAKTU REAL-TIME (Untuk meniru tampilan VLR.gg)
     const [currentTime, setCurrentTime] = useState("");
 
-    // SEARCH STATE
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
 
-    // Referensi untuk mendeteksi klik di luar area dropdown pencarian
     const searchRef = useRef(null);
 
     const navigate = useNavigate();
 
-    // Gunakan string kosong karena React dan Laravel berada di 1 server (Monolith Railway)
     const API_URL = import.meta.env.VITE_API_URL || "";
 
-    // UPDATE WAKTU
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
@@ -29,11 +24,10 @@ export default function Navbar() {
             setCurrentTime(`${timeString} ${dayString}`);
         };
         updateTime();
-        const timer = setInterval(updateTime, 60000); // Update setiap 1 menit
+        const timer = setInterval(updateTime, 60000);
         return () => clearInterval(timer);
     }, []);
 
-    // LOAD USER
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -41,11 +35,9 @@ export default function Navbar() {
         }
     }, []);
 
-    // SEARCH API (VERSI PRODUCTION)
     useEffect(() => {
         const delay = setTimeout(() => {
             if (query.trim().length >= 2) {
-                // Menembak API global search yang baru dibuat di Laravel
                 fetch(`${API_URL}/api/search?q=${query}`)
                     .then(res => res.json())
                     .then(data => {
@@ -67,23 +59,20 @@ export default function Navbar() {
         return () => clearTimeout(delay);
     }, [query]);
 
-    // Menutup dropdown search jika user klik di luar kotak pencarian
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
-                setResults([]); // Sembunyikan hasil
+                setResults([]);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Aksi ketika hasil pencarian diklik
     const handleResultClick = (item) => {
-        setQuery(""); // Kosongkan input pencarian
-        setResults([]); // Tutup dropdown
+        setQuery("");
+        setResults([]);
 
-        // Arahkan ke halaman spesifik sesuai tipe (Team atau Player)
         if (item.type === 'player') {
             navigate(`/player/${item.id}`);
         } else if (item.type === 'team') {
@@ -101,7 +90,6 @@ export default function Navbar() {
         <nav className="navbar">
             <div className="navbar-inner">
 
-                {/* --- BAGIAN KIRI: Logo & Search --- */}
                 <div className="nav-left">
                     <Link to="/dashboard" className="logo-vlr">
                         META

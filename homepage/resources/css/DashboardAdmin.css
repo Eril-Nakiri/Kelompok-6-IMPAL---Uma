@@ -316,6 +316,10 @@ body {
     margin-top: 28px;
 }
 
+.modal-content button[style*="background-color: rgb(59, 130, 246)"]:hover {
+    background-color: #2563EB !important;
+}
+
 .btn-secondary {
     background-color: transparent;
     color: #94A3B8;

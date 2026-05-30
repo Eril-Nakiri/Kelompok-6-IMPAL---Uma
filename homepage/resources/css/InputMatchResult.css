@@ -1,0 +1,218 @@
+.mr-container {
+    padding: 10px 20px;
+}
+
+.mr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background-color: #1E293B;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+.mr-title-area h2 {
+    font-size: 24px;
+    color: #FFF;
+    margin-bottom: 4px;
+}
+
+.mr-title-area .sub-text {
+    font-size: 14px;
+    color: #94A3B8;
+}
+
+.active-match-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #0F172A;
+    border: 1px solid #10B981;
+    padding: 12px 20px;
+    border-radius: 30px;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.badge-pulse {
+    width: 10px;
+    height: 10px;
+    background-color: #10B981;
+    border-radius: 50%;
+    animation: pulse-glow 1.5s infinite;
+}
+
+.badge-text {
+    font-size: 14px;
+    color: #CBD5E1;
+}
+
+.highlight-team {
+    color: #FFF;
+    font-size: 15px;
+}
+
+.map-indicator {
+    color: #3B82F6;
+    font-weight: 700;
+}
+
+.bo3-selector-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 14px;
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #94A3B8;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background-color: #243347;
+    color: #FFF;
+    border-color: #475569;
+}
+
+.tab-btn.active {
+    background-color: #3B82F6;
+    color: white;
+    border-color: #3B82F6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.mr-form-card {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 32px;
+}
+
+.form-section-title h3 {
+    font-size: 18px;
+    color: #FFF;
+    margin-bottom: 6px;
+}
+
+.form-section-title p {
+    font-size: 13px;
+    color: #94A3B8;
+    margin-bottom: 24px;
+}
+
+.flex-score-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin: 30px 0;
+}
+
+.form-group-score {
+    text-align: center;
+    width: 140px;
+}
+
+.form-group-score label {
+    display: block;
+    font-size: 13px;
+    color: #94A3B8;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.form-group-score input {
+    width: 100%;
+    padding: 16px;
+    background-color: #0F172A;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    color: white;
+    font-size: 32px;
+    text-align: center;
+    font-weight: 700;
+    outline: none;
+}
+
+.form-group-score input:focus {
+    border-color: #3B82F6;
+}
+
+.score-separator {
+    font-size: 24px;
+    font-weight: 800;
+    color: #475569;
+    margin-top: 24px;
+}
+
+.form-divider {
+    border: none;
+    border-top: 1px solid #334155;
+    margin: 32px 0;
+}
+
+.form-grid-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.form-group-stats label {
+    display: block;
+    font-size: 13px;
+    color: #CBD5E1;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group-stats input {
+    width: 100%;
+    padding: 12px 14px;
+    background-color: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group-stats input:focus {
+    border-color: #3B82F6;
+}
+
+.form-actions-area {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.save-result-btn {
+    background-color: #10B981;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.save-result-btn:hover {
+    background-color: #059669;
+}
+
+@keyframes pulse-glow {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}

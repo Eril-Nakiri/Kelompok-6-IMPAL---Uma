@@ -17,6 +17,7 @@ import TeamPage from "./pages/TeamPage.jsx";
 import PlayerPage from "./pages/PlayerPage.jsx";
 
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
+import InputMatchResult from "./pages/InputMatchResult.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -74,6 +75,13 @@ function App() {
                 <Route
                     path="/dashboard-admin" element={
                         <ProtectedRoute allowedRoles={[1]}> <DashboardAdmin />
+                        </ProtectedRoute>
+                    } />
+
+                <Route
+                    path="/input-match-result" element={
+                        <ProtectedRoute allowedRoles={[1]}>
+                            <InputMatchResult />
                         </ProtectedRoute>
                     } />
                 <Route path="*" element={<Navigate to="/login" replace />} />

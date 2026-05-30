@@ -11,7 +11,7 @@ class TournamentController extends Controller
     public function index()
     {
         try {
-            $tournaments = \App\Models\Tournament::all();
+            $tournaments = Tournament::all();
 
             return response()->json($tournaments, 200);
         } catch (\Exception $e) {
