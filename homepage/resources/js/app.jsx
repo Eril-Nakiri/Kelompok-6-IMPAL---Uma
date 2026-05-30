@@ -80,8 +80,7 @@ function App() {
 
                 <Route
                     path="/input-match-result" element={
-                        <ProtectedRoute allowedRoles={[1]}>
-                            <InputMatchResult />
+                        <ProtectedRoute allowedRoles={[1]}> <InputMatchResult />
                         </ProtectedRoute>
                     } />
                 <Route path="*" element={<Navigate to="/login" replace />} />
