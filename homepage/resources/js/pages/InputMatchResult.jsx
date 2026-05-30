@@ -5,12 +5,14 @@ import '../../css/InputMatchResult.css';
 export default function InputMatchResult() {
     const location = useLocation();
 
+    const tournamentTerpilih = location.state?.tournament;
+
     const [activeMap, setActiveMap] = useState('Map 1');
 
-    const [matchInfo, setMatchInfo] = useState({
+    const [matchInfo] = useState({
         teamA: 'PRX',
         teamB: 'Fnatic',
-        tournamentName: 'VCT Champions 2026'
+        tournamentName: tournamentTerpilih ? tournamentTerpilih.name : 'Belum Memilih Turnamen'
     });
 
     const [gameData, setGameData] = useState({
