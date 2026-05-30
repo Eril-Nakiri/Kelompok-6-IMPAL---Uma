@@ -10,6 +10,10 @@ class Tournament extends Model
     use HasFactory;
     protected $table = 'tournaments';
 
+    protected $primaryKey = 'id_tournament';
+
+    public $timestamps = false;
+    
     protected $fillable = [
         'nama_turnamen',
         'penyelenggara',

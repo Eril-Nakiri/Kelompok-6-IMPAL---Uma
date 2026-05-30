@@ -10,7 +10,7 @@
 .db-sidebar {
     width: 260px;
     background-color: #1E293B;
-    display: flex;
+    display: sticky;
     flex-direction: column;
     justify-content: space-between;
     border-right: 1px solid #334155;
