@@ -11,7 +11,6 @@ export default function DashboardAdmin() {
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChoiceModalOpen, setIsChoiceModalOpen] = useState(false);
-
     const [selectedTournament, setSelectedTournament] = useState(null);
 
     const [formData, setFormData] = useState({
@@ -22,31 +21,19 @@ export default function DashboardAdmin() {
     const fetchUser = () => {
         try {
             const storedUser = localStorage.getItem('user');
-
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
-
                 setUser({
                     username: parsedUser.username,
                     email: parsedUser.email
                 });
             } else {
-                console.warn("Tidak ada data user, mengalihkan ke login...");
                 navigate('/login');
             }
         } catch (error) {
             console.error("Gagal membaca data user dari penyimpanan:", error);
             setUser({ username: 'Error', email: 'Data rusak' });
         }
-    };
-
-    const handleLogout = () => {
-        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar dari META Portal?");
-        if (!confirmLogout) return;
-
-        localStorage.removeItem('user');
-
-        navigate('/login');
     };
 
     const fetchTournaments = async () => {
@@ -111,7 +98,7 @@ export default function DashboardAdmin() {
 
         if (moduleName === 'Input Matches Result') {
             if (!selectedTournament.matches_count || selectedTournament.matches_count === 0) {
-                alert('Turnamen ini belum memiliki pertandingan. Anda diarahkan ke halaman Input Match untuk membuatnya terlebih dahulu.');
+                alert('⚠️ Turnamen ini belum memiliki pertandingan. Anda diarahkan ke halaman Input Match untuk membuatnya terlebih dahulu.');
                 navigate('/input-match', { state: { tournament: selectedTournament } });
             } else {
                 navigate('/input-match-result', { state: { tournament: selectedTournament } });
@@ -119,6 +106,44 @@ export default function DashboardAdmin() {
         } else if (moduleName === 'Input Match') {
             navigate('/input-match', { state: { tournament: selectedTournament } });
         }
+    };
+
+    const handleDeleteTournament = async () => {
+        const isConfirm = window.confirm(`⚠️ Yakin ingin menghapus turnamen ${selectedTournament.nama_turnamen}? Semua match di dalamnya mungkin akan ikut terhapus!`);
+
+        if (!isConfirm) return;
+
+        setIsLoading(true);
+        try {
+            const response = await fetch(`/api/tournament/${selectedTournament.id_tournament}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                alert('🗑️ Turnamen berhasil dihapus!');
+                setIsChoiceModalOpen(false);
+                fetchTournaments();
+            } else {
+                const result = await response.json();
+                alert(`Gagal menghapus: ${result.message || 'Kesalahan server'}`);
+            }
+        } catch (error) {
+            console.error("Error Delete Data:", error);
+            alert('Gagal terhubung ke server.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar dari META Portal?");
+        if (!confirmLogout) return;
+
+        localStorage.removeItem('user');
+        navigate('/login');
     };
 
     const handleMenuClick = (path) => {
@@ -164,7 +189,7 @@ export default function DashboardAdmin() {
                             <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
                         </div>
                     </div>
-                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪</button>
+                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪Logout</button>
                 </div>
             </aside>
 
