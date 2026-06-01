@@ -12,7 +12,6 @@
     padding: 40px 20px;
 }
 
-/* Header & Tabs */
 .matches-header {
     display: flex;
     gap: 20px;
@@ -51,7 +50,6 @@
     background-color: #d92525;
 }
 
-/* Tournament Grouping */
 .tournament-group {
     margin-bottom: 30px;
     background-color: #121a20;
@@ -81,7 +79,6 @@
     margin-left: 10px;
 }
 
-/* Match Row */
 .match-row {
     display: flex;
     align-items: center;
@@ -99,7 +96,6 @@
     border-bottom: none;
 }
 
-/* Bagian Waktu */
 .match-time {
     width: 80px;
     font-size: 0.9rem;
@@ -107,7 +103,6 @@
     font-weight: 500;
 }
 
-/* Bagian Tim dan Skor */
 .match-teams-container {
     flex: 1;
     display: flex;
@@ -142,7 +137,6 @@
     border-radius: 4px;
 }
 
-/* Bagian Tengah (VS atau Skor) */
 .match-center {
     width: 60px;
     text-align: center;
@@ -162,7 +156,6 @@
     border-radius: 4px;
 }
 
-/* Bagian Format (Bo3, Bo1) */
 .match-format {
     width: 60px;
     text-align: right;

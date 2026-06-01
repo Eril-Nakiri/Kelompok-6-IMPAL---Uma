@@ -49,23 +49,19 @@ export default function Dashboard() {
         <div className="dashboard-page">
             <Navbar />
 
-            {/* BANNER STATUS API BACKEND */}
             <div className={`api-status-banner ${isApiReady ? "success" : "error"}`}>
                 📡 {backendStatus}
             </div>
 
             <div className="dashboard-content-wrapper">
 
-                {/* KOLOM KIRI (BERITA & BANNER UTAMA) */}
                 <div className="dashboard-main-col">
-                    {/* Banner Hero */}
                     <div className="dashboard-hero-banner">
                         <div className="hero-banner-title">
                             Carlotta Sign With FNATIC
                         </div>
                     </div>
 
-                    {/* Feed Berita Terbaru */}
                     <div className="news-feed-list">
                         {newsList.map((news) => (
                             <div key={news.id} className="news-item">
@@ -76,10 +72,8 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* KOLOM KANAN (JADWAL MATCH & EVENT) */}
                 <div className="dashboard-sidebar-col">
 
-                    {/* Upcoming Matches */}
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Upcoming Match</h3>
                         {upcomingMatches.map((match) => (
@@ -98,7 +92,6 @@ export default function Dashboard() {
                         ))}
                     </div>
 
-                    {/* Live Events */}
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Live Event</h3>
                         {liveEvents.map((event) => (

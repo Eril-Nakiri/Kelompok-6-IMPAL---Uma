@@ -6,19 +6,18 @@ export default function TeamPage() {
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
     const [team, setTeam] = useState(null);
-    const API_URL = import.meta.env.VITE_API_URL || "";
+    const API_URL = import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
         fetch(`${API_URL}/api/teams/${id}`)
             .then(res => res.json())
             .then(data => {
-                // Pastikan data tim ada
                 if (data && data.team) {
                     setTeam({
                         name: data.team.nama_tim || "Unknown Team",
                         tag: data.team.singkatan || "",
                         logo: data.team.logo_url || "",
-                        players: data.players || [] // Memastikan players adalah array
+                        players: data.players || []
                     });
                     setLoading(false);
                 }
@@ -36,7 +35,6 @@ export default function TeamPage() {
         <>
             <Navbar />
             <div className="profile-page-container">
-                {/* HEADER TIM */}
                 <div className="profile-header-card">
                     <div className="team-logo-box">
                         <img src={team.logo} alt={team.name} />
@@ -49,7 +47,6 @@ export default function TeamPage() {
 
                 <h2 className="section-title">Current Roster</h2>
 
-                {/* DAFTAR PLAYERS */}
                 <div className="roster-card">
                     <h3 className="roster-category">PLAYERS</h3>
                     <div className="roster-grid">

@@ -1,7 +1,6 @@
 import AuthCard from "../components/AuthCard";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-// 1. Tambahkan useNavigate di import ini
 import { Link, useNavigate } from "react-router-dom";
 import '../../css/LoginPage.css';
 
@@ -13,7 +12,6 @@ export default function LoginPage() {
 
     const API_URL = import.meta.env.VITE_API_URL || "";
 
-    // 2. Inisialisasi hook navigate
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -38,15 +36,12 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (data.success) {
-                // Simpan data user ke localStorage
                 localStorage.setItem("user", JSON.stringify(data.user));
 
-                // 3. Logika Redirect Berdasarkan Role
-                // Mengasumsikan id_role === 1 adalah Admin dan selainnya adalah User Biasa
                 if (data.user.id_role === 1) {
-                    navigate("/dashboard-admin"); // Arahkan Admin
+                    navigate("/dashboard-admin");
                 } else {
-                    navigate("/dashboard"); // Arahkan User Biasa
+                    navigate("/dashboard");
                 }
             } else {
                 alert(data.message || "Login gagal");

@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Buat rute dengan prefix /api/ agar aman dari tabrakan rute web
 Route::get('/api/status', function () {
     return response()->json([
         'app' => 'META Portal Esports',
@@ -11,7 +10,6 @@ Route::get('/api/status', function () {
     ]);
 });
 
-// Kembalikan rute catch-all Anda seperti semula
 Route::get('/{any}', function () {
     return view('home');
 })->where('any', '.*');

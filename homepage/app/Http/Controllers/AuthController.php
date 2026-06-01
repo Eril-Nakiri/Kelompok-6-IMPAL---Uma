@@ -67,7 +67,6 @@ class AuthController extends Controller
             'email' => 'required|email'
         ]);
 
-        // Mencari akun berdasarkan kecocokan kombinasi username DAN email
         $user = UserAccount::where('username', $request->username)
             ->where('email', $request->email)
             ->first();
@@ -76,7 +75,7 @@ class AuthController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Akun terverifikasi. Silakan lakukan reset password.",
-                "user_id" => $user->id_user // Mengembalikan id_user yang valid ke React frontend
+                "user_id" => $user->id_user
             ]);
         }
 
@@ -93,7 +92,6 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
-        // Mencari user berdasarkan Primary Key id_user yang dikirim dari frontend
         $user = UserAccount::find($request->user_id);
 
         if (!$user) {
@@ -103,7 +101,6 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // Memperbarui password baru ke database
         $user->password = $request->password;
         $user->save();
 

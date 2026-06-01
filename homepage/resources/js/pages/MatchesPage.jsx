@@ -42,7 +42,6 @@ export default function MatchesPage() {
         }
     });
 
-    // Grouping berdasarkan id_tournament
     const groupedMatches = filteredMatches.reduce((acc, match) => {
         const id_tournament = match.id_tournament || 'unknown';
         if (!acc[id_tournament]) {
@@ -99,7 +98,6 @@ export default function MatchesPage() {
                                         <div className="match-time">{formatTime(match.jadwal)}</div>
                                         <div className="match-teams-container">
 
-                                            {/* TEAM A (KIRI) */}
                                             <div className="team left">
                                                 {match.logo_url_a && (
                                                     <img
@@ -109,7 +107,6 @@ export default function MatchesPage() {
                                                         style={{ width: '30px', height: '30px', marginRight: '10px', objectFit: 'contain' }}
                                                     />
                                                 )}
-                                                {/* FIXED: Menampilkan Nama Tim beserta Singkatannya */}
                                                 <span className="team-name">
                                                     {match.nama_tim_a
                                                         ? `${match.nama_tim_a} ${match.singkatan_a ? `(${match.singkatan_a})` : ''}`
@@ -118,7 +115,6 @@ export default function MatchesPage() {
                                                 </span>
                                             </div>
 
-                                            {/* SKOR / VS */}
                                             <div className="match-center">
                                                 {activeTab === 'upcoming' ? (
                                                     <span className="match-vs">vs</span>
@@ -129,9 +125,7 @@ export default function MatchesPage() {
                                                 )}
                                             </div>
 
-                                            {/* TEAM B (KANAN) */}
                                             <div className="team right">
-                                                {/* FIXED: Menampilkan Nama Tim beserta Singkatannya */}
                                                 <span className="team-name">
                                                     {match.nama_tim_b
                                                         ? `${match.nama_tim_b} ${match.singkatan_b ? `(${match.singkatan_b})` : ''}`
@@ -152,7 +146,6 @@ export default function MatchesPage() {
                                         <div className="match-format">{match.match_format || "-"}</div>
                                     </div>
 
-                                    {/* Detail maps untuk Tab Results */}
                                     {activeTab === 'results' && match.maps && match.maps.length > 0 && (
                                         <div className="match-maps-box" style={{ background: '#1e1e24', padding: '5px 15px', borderRadius: '0 0 8px 8px', fontSize: '12px', color: '#bbb', display: 'flex', gap: '15px', justifyContent: 'center', borderTop: '1px solid #2d2d35' }}>
                                             {match.maps.map((map) => (

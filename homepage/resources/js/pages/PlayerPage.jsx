@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 export default function PlayerPage() {
     const { id } = useParams();
     const [player, setPlayer] = useState(null);
-    const API_URL = import.meta.env.VITE_API_URL || "";
+    const API_URL = import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
         fetch(`${API_URL}/api/players/${id}`)

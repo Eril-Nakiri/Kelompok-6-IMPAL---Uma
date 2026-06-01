@@ -7,13 +7,11 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    // State baru untuk mengatur visibilitas password (true = kelihatan, false = disembunyikan)
     const [showPassword, setShowPassword] = useState(false);
 
     const API_URL = import.meta.env.VITE_API_URL || "";
 
     const handleRegister = async () => {
-        // --- ALGORITMA VALIDASI CLIENT-SIDE ---
         if (!username || !email || !password) {
             alert("Semua kolom input wajib diisi!");
             return;
@@ -68,7 +66,6 @@ export default function RegisterPage() {
             <div className="page-wrapper">
                 <div className="split-login-card">
 
-                    {/* Sisi Kiri: Form Register */}
                     <div className="login-form-side">
                         <h1 className="brand-title">META.PORTAL</h1>
 
@@ -89,11 +86,9 @@ export default function RegisterPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
 
-                            {/* Wadah khusus dengan tombol mata */}
                             <div className="password-input-container">
                                 <input
                                     className="login-input"
-                                    // Tipe input berubah dinamis tergantung state showPassword
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password (Min. 8 char, 1 Capital, 1 Number, 1 Symbol)"
                                     value={password}
@@ -123,7 +118,6 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    {/* Sisi Kanan: Banner */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"

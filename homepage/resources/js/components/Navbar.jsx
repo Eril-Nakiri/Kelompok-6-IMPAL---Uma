@@ -14,7 +14,7 @@ export default function Navbar() {
 
     const navigate = useNavigate();
 
-    const API_URL = import.meta.env.VITE_API_URL || "";
+    const API_URL = import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
         const updateTime = () => {
@@ -95,7 +95,6 @@ export default function Navbar() {
                         META
                     </Link>
 
-                    {/* SEARCH BOX */}
                     <div className="search-container" ref={searchRef}>
                         <span className="search-icon">🔍</span>
                         <input
@@ -105,7 +104,6 @@ export default function Navbar() {
                             onChange={(e) => setQuery(e.target.value)}
                         />
 
-                        {/* HASIL PENCARIAN DROPDOWN */}
                         {results && results.length > 0 && (
                             <div className="search-results-dropdown">
                                 {results.map((item, index) => (
@@ -114,7 +112,6 @@ export default function Navbar() {
                                         className="search-item-row"
                                         onClick={() => handleResultClick(item)}
                                     >
-                                        {/* FOTO/LOGO */}
                                         <div className="search-item-img">
                                             {item.image ? (
                                                 <img src={item.image} alt={item.name} />
@@ -123,7 +120,6 @@ export default function Navbar() {
                                             )}
                                         </div>
 
-                                        {/* NAMA & TIPE (Player/Team) */}
                                         <div className="search-item-info">
                                             <span className="search-item-name">{item.name}</span>
                                             <span className="search-item-type">
@@ -137,7 +133,6 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                {/* --- BAGIAN TENGAH: Menu Links (VLR Style) --- */}
                 <div className="nav-center">
                     <div className="menu">
                         <Link to="/forum" className="nav-link">forum</Link>
@@ -148,7 +143,6 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                {/* --- BAGIAN KANAN: Waktu & User Profile --- */}
                 <div className="nav-right">
                     <div className="nav-time">{currentTime}</div>
 

@@ -8,7 +8,7 @@ use App\Http\Controllers\MatchController;
 use App\Http\Controllers\TournamentController;
 
 
-// TEST API
+// tes API
 Route::get('/ping', function () {
     return response()->json([
         'message' => 'Laravel API hidup 🔥'
@@ -26,29 +26,29 @@ Route::get('/dashboard', function () {
 });
 
 
-// LOGIN
+// Login
 Route::post('/login', [AuthController::class, 'login']);
 
-// REGISTER
+// Register
 Route::post('/register', [AuthController::class, 'register']);
 
-// FORGOT PASSWORD VERIFICATION
+// Forgot Password
 Route::post('/forgot-password-verify', [AuthController::class, 'verifyForgotAccount']);
 Route::post('/forgot-password-update', [AuthController::class, 'updateForgotPassword']);
 
-// USER SEARCH
+// User Search //fitur gak kepake
 Route::get('/users/search', [UserController::class, 'search']);
 Route::get('/players/{id}', [StatsController::class, 'getPlayerDetail']);
 Route::get('/teams/{id}', [StatsController::class, 'getTeamDetail']);
 Route::get('/search', [StatsController::class, 'globalSearch']);
 
-// STATS
+// Stats
 Route::get('/stats', [StatsController::class, 'getStats']);
 Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 
-// MATCHES
+// matches
 Route::get('/matches', [MatchController::class, 'index']);
 
-// TOURNAMENTS ADMIN
+// Admin Tournament
 Route::post('/tournament', [TournamentController::class, 'store']);
 Route::get('/tournament', [TournamentController::class, 'index']);

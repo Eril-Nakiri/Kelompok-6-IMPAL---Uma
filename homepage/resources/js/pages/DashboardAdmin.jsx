@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. IMPORT useNavigate di sini
+import { useNavigate } from 'react-router-dom';
 import '../../css/DashboardAdmin.css';
 
 export default function DashboardAdmin() {
-    const navigate = useNavigate(); // 2. INISIALISASI navigate
+    const navigate = useNavigate();
 
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -72,20 +72,16 @@ export default function DashboardAdmin() {
         setIsChoiceModalOpen(true);
     };
 
-    // 3. FUNGSI NAVIGASI YANG DIPERBARUI
     const handleNavigateToModule = (moduleName) => {
-        setIsChoiceModalOpen(false); // Tutup popup pilihan
+        setIsChoiceModalOpen(false);
 
         if (moduleName === 'Input Matches Result') {
-            // Pindah ke halaman InputMatchResult dengan membawa data turnamen terpilih
             navigate('/input-match-result', { state: { tournament: selectedTournament } });
         } else if (moduleName === 'Input Match') {
-            // Karena file belum ada, kita berikan alert pencegahan sementara
             alert('⏳ Halaman Input Match (Jadwal Pertandingan) belum dibuat. Silakan pilih "Input Matches Result" untuk saat ini.');
         }
     };
 
-    // Navigasi fungsi untuk menu sidebar
     const handleMenuClick = (path) => {
         navigate(path);
     };

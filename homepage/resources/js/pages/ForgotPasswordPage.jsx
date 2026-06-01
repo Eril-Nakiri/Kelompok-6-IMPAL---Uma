@@ -3,17 +3,14 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 
 export default function ForgotPasswordPage() {
-    // --- STATE STEPPING ---
-    const [step, setStep] = useState(1); // Step 1: Verifikasi data & Captcha, Step 2: Form Password Baru
-    const [userId, setUserId] = useState(null); // Menyimpan ID user dari backend setelah sukses Step 1
+    const [step, setStep] = useState(1);
+    const [userId, setUserId] = useState(null);
 
-    // --- STATE STEP 1 (VERIFIKASI) ---
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [captchaInput, setCaptchaInput] = useState("");
     const [generatedCaptcha, setGeneratedCaptcha] = useState("");
 
-    // --- STATE STEP 2 (NEW PASSWORD) ---
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +32,6 @@ export default function ForgotPasswordPage() {
         generateNewCaptcha();
     }, []);
 
-    // --- PROSES TAHAP 1: VERIFIKASI AKUN ---
     const handleVerifyAccount = async () => {
         if (!username || !email || !captchaInput) {
             alert("Harap isi semua kolom input termasuk kode Captcha!");
@@ -62,8 +58,8 @@ export default function ForgotPasswordPage() {
 
             if (res.ok && data.success) {
                 alert("Akun Terverifikasi! Silakan buat password baru Anda.");
-                setUserId(data.user_id); // Ambil ID user dari backend
-                setStep(2); // Pindah otomatis ke form password baru (Step 2)
+                setUserId(data.user_id);
+                setStep(2);
             } else {
                 alert(data.message || "Data akun tidak cocok.");
                 generateNewCaptcha();
@@ -75,7 +71,6 @@ export default function ForgotPasswordPage() {
         }
     };
 
-    // --- PROSES TAHAP 2: UPDATE PASSWORD BARU ---
     const handleUpdatePassword = async () => {
         if (!newPassword || !confirmPassword) {
             alert("Kedua kolom password wajib diisi!");
@@ -87,7 +82,6 @@ export default function ForgotPasswordPage() {
             return;
         }
 
-        // Algoritma Validasi Kekuatan Password (Kriteria Kemarin)
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
         if (!passwordRegex.test(newPassword)) {
             alert(
@@ -117,7 +111,7 @@ export default function ForgotPasswordPage() {
 
             if (res.ok && data.success) {
                 alert(data.message);
-                window.location.href = "/login"; // Alihkan langsung ke login jika sukses sesungguhnya
+                window.location.href = "/login";
             } else {
                 alert(data.message || "Gagal memperbarui password.");
             }
@@ -134,12 +128,10 @@ export default function ForgotPasswordPage() {
             <div className="page-wrapper">
                 <div className="split-login-card">
 
-                    {/* Sisi Kiri Form Konten Dinamis */}
                     <div className="login-form-side">
                         <h1 className="brand-title">META.PORTAL</h1>
 
                         {step === 1 ? (
-                            /* ================= TAMPILAN STEP 1: VERIFIKASI ================= */
                             <div className="input-group">
                                 <p style={{ color: "#00E1D9", fontSize: "0.95rem", marginBottom: "15px" }}>
                                     Step 1: Account & Security Verification
@@ -191,13 +183,11 @@ export default function ForgotPasswordPage() {
                                 </div>
                             </div>
                         ) : (
-                            /* ================= TAMPILAN STEP 2: INPUT PASSWORD BARU ================= */
                             <div className="input-group">
                                 <p style={{ color: "#00E1D9", fontSize: "0.95rem", marginBottom: "15px" }}>
                                     Step 2: Create Your New Secure Password
                                 </p>
 
-                                {/* Input Password Baru dengan Fitur Mata */}
                                 <div className="password-input-container">
                                     <input
                                         className="login-input"
@@ -215,7 +205,6 @@ export default function ForgotPasswordPage() {
                                     </button>
                                 </div>
 
-                                {/* Input Konfirmasi Password Baru */}
                                 <div className="password-input-container" style={{ marginTop: "10px" }}>
                                     <input
                                         className="login-input"
@@ -241,7 +230,6 @@ export default function ForgotPasswordPage() {
                         </div>
                     </div>
 
-                    {/* Sisi Kanan: Cyber Banner Esports */}
                     <div className="login-image-side">
                         <img
                             src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop"

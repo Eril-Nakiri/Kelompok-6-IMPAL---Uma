@@ -14,14 +14,11 @@ class MatchController extends Controller
             $tableName = (new GameMatch())->getTable();
 
             $matches = DB::table($tableName . ' as m')
-                // JOIN ke tabel tournament tunggal
                 ->leftJoin('tournaments as t', 'm.id_tournament', '=', 't.id_tournament')
-                // JOIN ke tabel teams untuk mendapatkan detail Team A
                 ->leftJoin('teams as team_a', 'm.id_team_a', '=', 'team_a.id_team')
-                // JOIN ke tabel teams untuk mendapatkan detail Team B
                 ->leftJoin('teams as team_b', 'm.id_team_b', '=', 'team_b.id_team')
                 ->select([
-                    'm.*', // Mengambil semua kolom bawaan dari tabel match utama
+                    'm.*',
                     't.nama_turnamen',
                     't.penyelenggara',
                     'team_a.nama_tim as nama_tim_a',
