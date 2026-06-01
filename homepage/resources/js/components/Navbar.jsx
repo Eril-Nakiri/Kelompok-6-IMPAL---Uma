@@ -160,7 +160,6 @@ export default function Navbar() {
 
                                 {open && (
                                     <div className="dropdown-menu">
-                                        <button className="dropdown-item">Settings</button>
                                         <button className="dropdown-item logout" onClick={handleLogout}>
                                             Logout
                                         </button>

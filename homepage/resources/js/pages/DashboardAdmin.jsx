@@ -134,7 +134,6 @@ export default function DashboardAdmin() {
                         <p>Silakan pilih turnamen yang tersedia atau buat turnamen baru untuk memulai pengaturan data.</p>
                     </div>
                     <div className="header-actions">
-                        <button style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer' }}>🔔</button>
                         <button className="action-btn" onClick={() => setIsModalOpen(true)}>＋ Tambah Turnamen Baru</button>
                     </div>
                 </header>
@@ -258,16 +257,14 @@ export default function DashboardAdmin() {
                                 className="action-btn"
                                 style={{ width: '100%', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 onClick={() => handleNavigateToModule('Input Match')}
-                            >
-                                <span>⚔️</span> Input Match (Jadwal Pertandingan)
+                            > Input Match (Jadwal Pertandingan)
                             </button>
 
                             <button
                                 className="action-btn"
                                 style={{ width: '100%', padding: '14px', backgroundColor: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 onClick={() => handleNavigateToModule('Input Matches Result')}
-                            >
-                                <span>🏆</span> Input Matches Result (Hasil Skor)
+                            > Input Matches Result (Hasil Skor)
                             </button>
                         </div>
 
