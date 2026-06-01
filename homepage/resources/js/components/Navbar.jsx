@@ -21,14 +21,14 @@ export default function Navbar() {
             const now = new Date();
 
             // Konfigurasi untuk Jam
-            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
             const timeString = now.toLocaleTimeString('en-US', timeOptions);
 
             // Konfigurasi untuk Hari dan Tanggal
             const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             const dateString = now.toLocaleDateString('en-US', dateOptions);
 
-            setCurrentTime(`${dateString}, ${timeString}`);
+            setCurrentTime(`${dateString} || ${timeString}`);
         };
 
         updateTime();
