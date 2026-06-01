@@ -54,6 +54,8 @@ Route::post('/match', [MatchController::class, 'store']);
 // Admin Tournament
 Route::post('/tournament', [TournamentController::class, 'store']);
 Route::get('/tournament', [TournamentController::class, 'index']);
+Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::class, 'destroy']);
 
 // Admin Team
 Route::get('/teams', [TeamController::class, 'index']);
+

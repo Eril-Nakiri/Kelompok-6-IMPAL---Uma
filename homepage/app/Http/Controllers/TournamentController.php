@@ -94,4 +94,27 @@ class TournamentController extends Controller
             ], 200);
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            $tournament = Tournament::findOrFail($id);
+
+            //bisa opsional untuk hapus turnament otomatis hapus match yang ada
+            $tournament->matches()->delete();
+
+            $tournament->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Turnamen berhasil dihapus!'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus database: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

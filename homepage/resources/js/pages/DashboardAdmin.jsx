@@ -5,7 +5,7 @@ import '../../css/DashboardAdmin.css';
 export default function DashboardAdmin() {
     const navigate = useNavigate();
 
-    const [user, setUser] = useState({ name: 'Loading...', email: 'Loading...' });
+    const [user, setUser] = useState({ username: 'Loading...', email: 'Loading...' });
 
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -19,50 +19,34 @@ export default function DashboardAdmin() {
         penyelenggara: ''
     });
 
-    const fetchUser = async () => {
+    const fetchUser = () => {
         try {
-            const token = localStorage.getItem('token');
+            const storedUser = localStorage.getItem('user');
 
-            const response = await fetch('/api/user', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
 
-            if (response.ok) {
-                const data = await response.json();
-                setUser(data);
+                setUser({
+                    username: parsedUser.username,
+                    email: parsedUser.email
+                });
             } else {
-                console.error("Sesi tidak valid atau token kadaluarsa.");
-                // Jika ingin otomatis logout saat sesi habis :
-
-                // handleLogout();
+                console.warn("Tidak ada data user, mengalihkan ke login...");
+                navigate('/login');
             }
         } catch (error) {
-            console.error("Gagal mengambil data user:", error);
+            console.error("Gagal membaca data user dari penyimpanan:", error);
+            setUser({ username: 'Error', email: 'Data rusak' });
         }
     };
 
-    const handleLogout = async () => {
-        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar?");
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar dari META Portal?");
         if (!confirmLogout) return;
 
-        try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-        } catch (error) {
-            console.error("Error saat logout dari server:", error);
-        } finally {
-            localStorage.removeItem('token');
+        localStorage.removeItem('user');
 
-            navigate('/login');
-        }
+        navigate('/login');
     };
 
     const fetchTournaments = async () => {
@@ -173,10 +157,10 @@ export default function DashboardAdmin() {
                 <div className="sidebar-profile">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div className="profile-avatar">
-                            {user.name && user.name !== 'Loading...' ? user.name.substring(0, 2).toUpperCase() : '??'}
+                            {user.username && user.username !== 'Loading...' ? user.username.substring(0, 2).toUpperCase() : '??'}
                         </div>
                         <div>
-                            <p style={{ fontSize: '14px', fontWeight: '600', margin: 0, color: '#FFF' }}>{user.name}</p>
+                            <p style={{ fontSize: '14px', fontWeight: '600', margin: 0, color: '#FFF' }}>{user.username}</p>
                             <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
                         </div>
                     </div>
@@ -314,7 +298,7 @@ export default function DashboardAdmin() {
                                 className="action-btn"
                                 style={{ width: '100%', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 onClick={() => handleNavigateToModule('Input Match')}
-                            > Input Match (Jadwal Pertandingan)
+                            > Input Match (Jadwal)
                             </button>
 
                             <button
@@ -322,6 +306,13 @@ export default function DashboardAdmin() {
                                 style={{ width: '100%', padding: '14px', backgroundColor: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 onClick={() => handleNavigateToModule('Input Matches Result')}
                             > Input Matches Result (Hasil Skor)
+                            </button>
+
+                            <button
+                                className="action-btn"
+                                style={{ width: '100%', padding: '14px', backgroundColor: '#EF4444', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                                onClick={handleDeleteTournament}
+                            > Hapus Turnamen
                             </button>
                         </div>
 
