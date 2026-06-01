@@ -236,6 +236,7 @@
     font-size: 13px;
     font-weight: 600;
     transition: 0.2s;
+    white-space: nowrap;
 }
 
 .user-trigger:hover {
@@ -299,7 +300,8 @@
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .login-btn-vlr:hover {
