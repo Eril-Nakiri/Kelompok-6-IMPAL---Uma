@@ -136,6 +136,7 @@
     font-size: 12px;
     font-weight: 600;
     user-select: none;
+    white-space: nowrap;
 }
 
 .nav-divider {
