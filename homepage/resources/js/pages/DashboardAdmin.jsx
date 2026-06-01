@@ -280,7 +280,7 @@ export default function DashboardAdmin() {
                                     name="nama_turnamen"
                                     value={formData.nama_turnamen}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: MPL ID Season 14"
+                                    placeholder="Contoh: VCT Champions 2026"
                                     required
                                 />
                             </div>
@@ -292,7 +292,7 @@ export default function DashboardAdmin() {
                                     name="penyelenggara"
                                     value={formData.penyelenggara}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: Moonton Indonesia"
+                                    placeholder="Contoh: Riot Games"
                                     required
                                 />
                             </div>
