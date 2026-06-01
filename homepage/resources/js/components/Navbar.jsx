@@ -19,12 +19,21 @@ export default function Navbar() {
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dayString = now.toLocaleDateString('en-US', { weekday: 'short' });
-            setCurrentTime(`${timeString} ${dayString}`);
+
+            // Konfigurasi untuk Jam
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            const timeString = now.toLocaleTimeString('id-ID', timeOptions);
+
+            // Konfigurasi untuk Hari dan Tanggal
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const dateString = now.toLocaleDateString('id-ID', dateOptions);
+
+            setCurrentTime(`${dateString}, ${timeString}`);
         };
+
         updateTime();
-        const timer = setInterval(updateTime, 60000);
+        // Update setiap detik agar titik dua pada jam sinkron dengan waktu sebenarnya
+        const timer = setInterval(updateTime, 1000);
         return () => clearInterval(timer);
     }, []);
 
@@ -144,6 +153,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="nav-right">
+                    {/* Waktu sudah berubah formatnya di sini */}
                     <div className="nav-time">{currentTime}</div>
 
                     <div className="nav-divider"></div>

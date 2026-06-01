@@ -35,10 +35,11 @@ export default function MatchesPage() {
         const matchDate = new Date(match.jadwal);
 
         if (activeTab === 'upcoming') {
-            return matchDate >= now && matchDate <= oneMonthLater && (match.skor_akhir_a === null || match.skor_akhir_a === undefined);
+            return matchDate >= now && matchDate <= oneMonthLater &&
+                (match.skor_akhir_a === null || match.skor_akhir_a === undefined || (match.skor_akhir_a === 0 && match.skor_akhir_b === 0));
         } else {
             return matchDate < now ||
-                (match.skor_akhir_a !== null && match.skor_akhir_a !== undefined);
+                (match.skor_akhir_a > 0 || match.skor_akhir_b > 0);
         }
     });
 
