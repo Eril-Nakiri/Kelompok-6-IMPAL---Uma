@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. IMPORT useNavigate di sini
 import '../../css/DashboardAdmin.css';
 
 export default function DashboardAdmin() {
+    const navigate = useNavigate(); // 2. INISIALISASI navigate
+
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,26 +72,33 @@ export default function DashboardAdmin() {
         setIsChoiceModalOpen(true);
     };
 
+    // 3. FUNGSI NAVIGASI YANG DIPERBARUI
     const handleNavigateToModule = (moduleName) => {
         setIsChoiceModalOpen(false); // Tutup popup pilihan
 
-        alert(`Mengalihkan Anda ke modul [${moduleName}] untuk turnamen: ${selectedTournament.name} (ID: ${selectedTournament.id})`);
+        if (moduleName === 'Input Matches Result') {
+            // Pindah ke halaman InputMatchResult dengan membawa data turnamen terpilih
+            navigate('/input-match-result', { state: { tournament: selectedTournament } });
+        } else if (moduleName === 'Input Match') {
+            // Karena file belum ada, kita berikan alert pencegahan sementara
+            alert('⏳ Halaman Input Match (Jadwal Pertandingan) belum dibuat. Silakan pilih "Input Matches Result" untuk saat ini.');
+        }
+    };
 
-        // Catatan: Jika nanti Anda sudah mengonfigurasi React Router Dom,
-        // Anda tinggal mengganti baris alert di atas dengan fungsi navigasi real seperti:
-        // navigate(`/admin/${moduleName.toLowerCase().replace(" ", "-")}?tournament_id=${selectedTournament.id}`);
+    // Navigasi fungsi untuk menu sidebar
+    const handleMenuClick = (path) => {
+        navigate(path);
     };
 
     const menuItems = [
-        { name: 'Dashboard Overview', icon: '📊', active: true },
-        { name: 'Manage News', icon: '📰', active: false },
-        { name: 'Input Match', icon: '⚔️', active: false },
-        { name: 'Input Matches Result', icon: '🏆', active: false },
+        { name: 'Dashboard Overview', icon: '📊', path: '/dashboard-admin', active: true },
+        { name: 'Manage News', icon: '📰', path: '#', active: false },
+        { name: 'Input Match', icon: '⚔️', path: '#', active: false },
+        { name: 'Input Matches Result', icon: '🏆', path: '/input-match-result', active: false },
     ];
 
     return (
         <div className="db-container">
-
             <aside className="db-sidebar">
                 <div>
                     <div className="sidebar-brand">
@@ -97,7 +107,11 @@ export default function DashboardAdmin() {
                     </div>
                     <nav className="sidebar-menu">
                         {menuItems.map((item, index) => (
-                            <button key={index} className={`menu-btn ${item.active ? 'active' : ''}`}>
+                            <button
+                                key={index}
+                                className={`menu-btn ${item.active ? 'active' : ''}`}
+                                onClick={() => handleMenuClick(item.path)}
+                            >
                                 <span style={{ fontSize: '16px' }}>{item.icon}</span>
                                 {item.name}
                             </button>
@@ -131,7 +145,6 @@ export default function DashboardAdmin() {
 
                 <div className="db-body">
                     <div className="panel-grid" style={{ gridTemplateColumns: '1fr' }}>
-
                         <div className="panel-box">
                             <div className="panel-header">
                                 <div>
@@ -186,7 +199,6 @@ export default function DashboardAdmin() {
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </main>
@@ -275,7 +287,6 @@ export default function DashboardAdmin() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
