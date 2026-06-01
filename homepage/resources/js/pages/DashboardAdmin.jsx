@@ -21,22 +21,47 @@ export default function DashboardAdmin() {
 
     const fetchUser = async () => {
         try {
+            const token = localStorage.getItem('token');
+
             const response = await fetch('/api/user', {
                 headers: {
                     'Accept': 'application/json',
-                    //hapus kalau butuh bearer token,
-                    // karena endpoint ini sudah menggunakan auth middleware yang otomatis
-                    // mengambil data user dari token yang dikirim di header request
-
-                    //'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
+
             if (response.ok) {
                 const data = await response.json();
                 setUser(data);
+            } else {
+                console.error("Sesi tidak valid atau token kadaluarsa.");
+                // Jika ingin otomatis logout saat sesi habis :
+
+                // handleLogout();
             }
         } catch (error) {
             console.error("Gagal mengambil data user:", error);
+        }
+    };
+
+    const handleLogout = async () => {
+        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar?");
+        if (!confirmLogout) return;
+
+        try {
+            await fetch('/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+        } catch (error) {
+            console.error("Error saat logout dari server:", error);
+        } finally {
+            localStorage.removeItem('token');
+
+            navigate('/login');
         }
     };
 
@@ -155,7 +180,7 @@ export default function DashboardAdmin() {
                             <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
                         </div>
                     </div>
-                    <button className="logout-btn" title="Keluar">🚪</button>
+                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪</button>
                 </div>
             </aside>
 

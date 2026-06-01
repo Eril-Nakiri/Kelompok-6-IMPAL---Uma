@@ -16,6 +16,7 @@ import PlayerPage from "./pages/PlayerPage.jsx";
 
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import InputMatchResult from "./pages/InputMatchResult.jsx";
+import InputMatch from "./pages/InputMatch.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -74,6 +75,13 @@ function App() {
                         <ProtectedRoute allowedRoles={[1]}> <InputMatchResult />
                         </ProtectedRoute>
                     } />
+
+                <Route
+                    path="/input-match" element={
+                        <ProtectedRoute allowedRoles={[1]}> <InputMatch />
+                        </ProtectedRoute>
+                    } />
+
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
     );
