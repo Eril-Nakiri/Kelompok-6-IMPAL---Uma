@@ -22,17 +22,16 @@ export default function Navbar() {
 
             // Konfigurasi untuk Jam
             const timeOptions = { hour: '2-digit', minute: '2-digit' };
-            const timeString = now.toLocaleTimeString('id-ID', timeOptions);
+            const timeString = now.toLocaleTimeString('en-US', timeOptions);
 
             // Konfigurasi untuk Hari dan Tanggal
             const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            const dateString = now.toLocaleDateString('id-ID', dateOptions);
+            const dateString = now.toLocaleDateString('en-US', dateOptions);
 
             setCurrentTime(`${dateString}, ${timeString}`);
         };
 
         updateTime();
-        // Update setiap detik agar titik dua pada jam sinkron dengan waktu sebenarnya
         const timer = setInterval(updateTime, 1000);
         return () => clearInterval(timer);
     }, []);
