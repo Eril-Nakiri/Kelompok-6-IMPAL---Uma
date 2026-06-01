@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\TeamController;
 
 
 // tes API
@@ -48,7 +49,11 @@ Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 
 // matches
 Route::get('/matches', [MatchController::class, 'index']);
+Route::post('/match', [MatchController::class, 'store']);
 
 // Admin Tournament
 Route::post('/tournament', [TournamentController::class, 'store']);
 Route::get('/tournament', [TournamentController::class, 'index']);
+
+// Admin Team
+Route::get('/teams', [TeamController::class, 'index']);

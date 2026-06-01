@@ -5,16 +5,40 @@ import '../../css/DashboardAdmin.css';
 export default function DashboardAdmin() {
     const navigate = useNavigate();
 
+    const [user, setUser] = useState({ name: 'Loading...', email: 'Loading...' });
+
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChoiceModalOpen, setIsChoiceModalOpen] = useState(false);
-    const [selectedTournament, setSelectedTournament] = useState({ id: null, name: '' });
+
+    const [selectedTournament, setSelectedTournament] = useState(null);
 
     const [formData, setFormData] = useState({
         nama_turnamen: '',
         penyelenggara: ''
     });
+
+    const fetchUser = async () => {
+        try {
+            const response = await fetch('/api/user', {
+                headers: {
+                    'Accept': 'application/json',
+                    //hapus kalau butuh bearer token,
+                    // karena endpoint ini sudah menggunakan auth middleware yang otomatis
+                    // mengambil data user dari token yang dikirim di header request
+
+                    //'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUser(data);
+            }
+        } catch (error) {
+            console.error("Gagal mengambil data user:", error);
+        }
+    };
 
     const fetchTournaments = async () => {
         try {
@@ -27,6 +51,7 @@ export default function DashboardAdmin() {
     };
 
     useEffect(() => {
+        fetchUser();
         fetchTournaments();
     }, []);
 
@@ -67,8 +92,8 @@ export default function DashboardAdmin() {
         }
     };
 
-    const handleSelectTournament = (id, name) => {
-        setSelectedTournament({ id: id, name: name });
+    const handleSelectTournament = (tournament) => {
+        setSelectedTournament(tournament);
         setIsChoiceModalOpen(true);
     };
 
@@ -76,9 +101,14 @@ export default function DashboardAdmin() {
         setIsChoiceModalOpen(false);
 
         if (moduleName === 'Input Matches Result') {
-            navigate('/input-match-result', { state: { tournament: selectedTournament } });
+            if (!selectedTournament.matches_count || selectedTournament.matches_count === 0) {
+                alert('Turnamen ini belum memiliki pertandingan. Anda diarahkan ke halaman Input Match untuk membuatnya terlebih dahulu.');
+                navigate('/input-match', { state: { tournament: selectedTournament } });
+            } else {
+                navigate('/input-match-result', { state: { tournament: selectedTournament } });
+            }
         } else if (moduleName === 'Input Match') {
-            alert('⏳ Halaman Input Match (Jadwal Pertandingan) belum dibuat. Silakan pilih "Input Matches Result" untuk saat ini.');
+            navigate('/input-match', { state: { tournament: selectedTournament } });
         }
     };
 
@@ -89,7 +119,7 @@ export default function DashboardAdmin() {
     const menuItems = [
         { name: 'Dashboard Overview', icon: '📊', path: '/dashboard-admin', active: true },
         { name: 'Manage News', icon: '📰', path: '#', active: false },
-        { name: 'Input Match', icon: '⚔️', path: '#', active: false },
+        { name: 'Input Match', icon: '⚔️', path: '/input-match', active: false },
         { name: 'Input Matches Result', icon: '🏆', path: '/input-match-result', active: false },
     ];
 
@@ -117,10 +147,12 @@ export default function DashboardAdmin() {
 
                 <div className="sidebar-profile">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div className="profile-avatar">FX</div>
+                        <div className="profile-avatar">
+                            {user.name && user.name !== 'Loading...' ? user.name.substring(0, 2).toUpperCase() : '??'}
+                        </div>
                         <div>
-                            <p style={{ fontSize: '14px', fontWeight: '600', margin: 0, color: '#FFF' }}>Felix</p>
-                            <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>Super Admin</p>
+                            <p style={{ fontSize: '14px', fontWeight: '600', margin: 0, color: '#FFF' }}>{user.name}</p>
+                            <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
                         </div>
                     </div>
                     <button className="logout-btn" title="Keluar">🚪</button>
@@ -182,7 +214,7 @@ export default function DashboardAdmin() {
                                                     <td style={{ textAlign: 'right' }}>
                                                         <button
                                                             className="manage-btn"
-                                                            onClick={() => handleSelectTournament(tournament.id_tournament, tournament.nama_turnamen)}
+                                                            onClick={() => handleSelectTournament(tournament)}
                                                         >
                                                             ➔ Pilih Turnamen
                                                         </button>
@@ -242,13 +274,13 @@ export default function DashboardAdmin() {
                 </div>
             )}
 
-            {isChoiceModalOpen && (
+            {isChoiceModalOpen && selectedTournament && (
                 <div className="modal-overlay">
                     <div className="modal-content" style={{ maxWidth: '440px', textAlign: 'center' }}>
                         <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚙️</div>
                         <h3 style={{ marginBottom: '6px' }}>Pengaturan Turnamen</h3>
                         <p style={{ fontSize: '14px', color: '#CBD5E1', marginBottom: '24px' }}>
-                            Anda memilih <strong style={{ color: '#10B981' }}>{selectedTournament.name}</strong>.<br />
+                            Anda memilih <strong style={{ color: '#10B981' }}>{selectedTournament.nama_turnamen}</strong>.<br />
                             Silakan pilih aksi yang ingin Anda lakukan:
                         </p>
 

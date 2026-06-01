@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GameMatch;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Exception;
 
 class MatchController extends Controller
@@ -45,7 +46,6 @@ class MatchController extends Controller
                 ])
                 ->get();
 
-            // Mengubah teks string JSON dari PostgreSQL menjadi Array objek
             $matches = collect($matches)->map(function ($match) {
                 if (isset($match->maps) && is_string($match->maps)) {
                     $match->maps = json_decode($match->maps);
@@ -61,6 +61,43 @@ class MatchController extends Controller
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
+            ], 500);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'id_tournament' => 'required|integer',
+            'id_team_a' => 'required|integer',
+            'id_team_b' => 'required|integer|different:id_team_a',
+            'match_format' => 'required|string',
+            'jadwal' => 'required|date',
+            'skor_akhir_a' => 'required|integer',
+            'skor_akhir_b' => 'required|integer'
+        ]);
+
+        try {
+            $match = GameMatch::create([
+                'id_tournament' => $request->id_tournament,
+                'id_team_a' => $request->id_team_a,
+                'id_team_b' => $request->id_team_b,
+                'match_format' => $request->match_format,
+                'jadwal' => $request->jadwal,
+                'skor_akhir_a' => $request->skor_akhir_a,
+                'skor_akhir_b' => $request->skor_akhir_b,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Jadwal berhasil dibuat!',
+                'data' => $match
+            ], 201);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal input database: ' . $e->getMessage()
             ], 500);
         }
     }

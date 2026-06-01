@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Team extends Model
+{
+    use HasFactory;
+
+    protected $table = 'teams';
+
+    protected $primaryKey = 'id_team';
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_team',
+        'nama_tim',
+        'singkatan',
+        'logo_url'
+    ];
+}

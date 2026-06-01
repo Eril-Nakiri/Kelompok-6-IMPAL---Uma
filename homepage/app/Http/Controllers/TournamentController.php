@@ -11,7 +11,7 @@ class TournamentController extends Controller
     public function index()
     {
         try {
-            $tournaments = Tournament::all();
+            $tournaments = Tournament::withCount('matches')->get();
 
             return response()->json($tournaments, 200);
         } catch (\Exception $e) {
@@ -21,6 +21,7 @@ class TournamentController extends Controller
             ], 500);
         }
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -62,6 +63,7 @@ class TournamentController extends Controller
             return response()->json([], 200);
         }
     }
+
     public function getStats()
     {
         try {
