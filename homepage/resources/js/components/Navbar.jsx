@@ -145,14 +145,12 @@ export default function Navbar() {
                     <div className="menu">
                         <Link to="/forum" className="nav-link">forum</Link>
                         <Link to="/matches" className="nav-link">matches</Link>
-                        <Link to="/events" className="nav-link">events</Link>
                         <Link to="/stats" className="nav-link">stats</Link>
                         <Link to="/news" className="nav-link">news</Link>
                     </div>
                 </div>
 
                 <div className="nav-right">
-                    {/* Waktu sudah berubah formatnya di sini */}
                     <div className="nav-time">{currentTime}</div>
 
                     <div className="nav-divider"></div>
