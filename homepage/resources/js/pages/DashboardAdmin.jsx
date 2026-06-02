@@ -152,9 +152,7 @@ export default function DashboardAdmin() {
 
     const menuItems = [
         { name: 'Dashboard Overview', icon: '📊', path: '/dashboard-admin', active: true },
-        { name: 'Manage News', icon: '📰', path: '#', active: false },
-        { name: 'Input Match', icon: '⚔️', path: '/input-match', active: false },
-        { name: 'Input Matches Result', icon: '🏆', path: '/input-match-result', active: false },
+        { name: 'Manage News', icon: '📰', path: '#', active: false }
     ];
 
     return (

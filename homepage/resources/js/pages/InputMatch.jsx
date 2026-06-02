@@ -11,6 +11,9 @@ export default function InputMatch() {
     const [isLoading, setIsLoading] = useState(false);
     const [teams, setTeams] = useState([]);
 
+    const [existingMatches, setExistingMatches] = useState([]);
+    const [isLoadingMatches, setIsLoadingMatches] = useState(true);
+
     const [formData, setFormData] = useState({
         id_tournament: tournament?.id_tournament || '',
         id_team_a: '',
@@ -23,7 +26,7 @@ export default function InputMatch() {
 
     useEffect(() => {
         if (!tournament) {
-            alert('Akses tidak valid. Silakan pilih turnamen terlebih dahulu.');
+            alert('Akses tidak valid. Silakan pilih turnamen terlebih dahulu dari Dashboard.');
             navigate('/dashboard-admin');
             return;
         }
@@ -38,7 +41,23 @@ export default function InputMatch() {
             }
         };
 
+        const fetchMatches = async () => {
+            try {
+                const response = await fetch('/api/matches');
+                const data = await response.json();
+                const allMatches = Array.isArray(data) ? data : (data.data || []);
+
+                const filteredMatches = allMatches.filter(m => m.id_tournament === tournament.id_tournament);
+                setExistingMatches(filteredMatches);
+            } catch (error) {
+                console.error("Gagal mengambil data pertandingan:", error);
+            } finally {
+                setIsLoadingMatches(false);
+            }
+        };
+
         fetchTeams();
+        fetchMatches();
     }, [tournament, navigate]);
 
     const handleInputChange = (e) => {
@@ -82,6 +101,11 @@ export default function InputMatch() {
         }
     };
 
+    const formatWaktu = (jadwal) => {
+        const date = new Date(jadwal);
+        return date.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+    };
+
     return (
         <div className="db-container" style={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#FFF', padding: '32px' }}>
             <div style={{ maxWidth: '900px', margin: '0 auto' }}>
@@ -95,14 +119,13 @@ export default function InputMatch() {
                     </div>
                 </div>
 
-                <div style={{ backgroundColor: '#1e293b', padding: '32px', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div style={{ backgroundColor: '#1e293b', padding: '32px', borderRadius: '8px', border: '1px solid #334155', marginBottom: '32px' }}>
                     <h3 style={{ marginTop: 0, marginBottom: '8px' }}>Buat Jadwal Baru</h3>
                     <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '32px' }}>
                         Silakan pilih tim yang akan bertanding dan tentukan jadwalnya. Skor awal akan otomatis diatur menjadi 0.
                     </p>
 
                     <form onSubmit={handleSubmit}>
-
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '24px', alignItems: 'center', marginBottom: '24px' }}>
                             <div className="form-group" style={{ display: 'flex', flexDirection: 'column' }}>
                                 <label style={{ marginBottom: '8px', fontSize: '14px' }}>Tim A</label>
@@ -167,7 +190,17 @@ export default function InputMatch() {
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/dashboard-admin')}
+                                style={{
+                                    backgroundColor: '#475569', color: '#FFF', padding: '12px 24px',
+                                    border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer'
+                                }}
+                            >
+                                🔙 Kembali
+                            </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -181,6 +214,39 @@ export default function InputMatch() {
                         </div>
                     </form>
                 </div>
+
+                <div style={{ backgroundColor: '#1e293b', padding: '32px', borderRadius: '8px', border: '1px solid #334155' }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '20px' }}>Jadwal Pertandingan di Turnamen Ini</h3>
+                    {isLoadingMatches ? (
+                        <p style={{ color: '#94a3b8' }}>Memuat jadwal...</p>
+                    ) : existingMatches.length > 0 ? (
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid #334155', color: '#94a3b8' }}>
+                                        <th style={{ padding: '12px 8px' }}>Jadwal</th>
+                                        <th style={{ padding: '12px 8px' }}>Tim A</th>
+                                        <th style={{ padding: '12px 8px' }}>Tim B</th>
+                                        <th style={{ padding: '12px 8px' }}>Format</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {existingMatches.map(m => (
+                                        <tr key={m.id_match} style={{ borderBottom: '1px solid #334155' }}>
+                                            <td style={{ padding: '12px 8px' }}>{formatWaktu(m.jadwal)}</td>
+                                            <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{m.nama_tim_a || `Tim ID ${m.id_team_a}`}</td>
+                                            <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{m.nama_tim_b || `Tim ID ${m.id_team_b}`}</td>
+                                            <td style={{ padding: '12px 8px', color: '#10b981' }}>{m.match_format}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Belum ada pertandingan yang dijadwalkan untuk turnamen ini.</p>
+                    )}
+                </div>
+
             </div>
         </div>
     );
