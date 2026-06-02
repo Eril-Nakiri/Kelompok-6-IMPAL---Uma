@@ -82,8 +82,9 @@ body {
 
 .sidebar-profile {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
     padding-top: 16px;
     border-top: 1px solid #334155;
 }
@@ -103,27 +104,16 @@ body {
 .logout-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: none;
-    color: #EF4444; /* Memberikan warna merah pada teks agar identik dengan aksi keluar */
-    font-size: 14px; /* Mengecilkan huruf agar proporsional dan tidak raksasa */
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}.logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: none;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     color: #EF4444;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    padding: 8px 14px;
+    padding: 10px;
     border-radius: 6px;
     transition: all 0.2s ease;
 }
@@ -131,6 +121,7 @@ body {
 .logout-btn:hover {
     background-color: #EF4444;
     color: #FFFFFF;
+    border-color: #EF4444;
 }
 
 .db-main {

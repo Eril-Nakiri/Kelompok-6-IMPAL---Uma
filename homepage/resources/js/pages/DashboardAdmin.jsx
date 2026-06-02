@@ -187,7 +187,7 @@ export default function DashboardAdmin() {
                             <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
                         </div>
                     </div>
-                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪Logout</button>
+                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪 Logout</button>
                 </div>
             </aside>
 
