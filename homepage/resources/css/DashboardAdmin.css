@@ -101,17 +101,36 @@ body {
 }
 
 .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: transparent;
     border: none;
-    font-size: 20px;
+    color: #EF4444; /* Memberikan warna merah pada teks agar identik dengan aksi keluar */
+    font-size: 14px; /* Mengecilkan huruf agar proporsional dan tidak raksasa */
+    font-weight: 600;
     cursor: pointer;
-    padding: 8px;
+    padding: 8px 14px;
     border-radius: 6px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+}.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: #EF4444;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
     background-color: #EF4444;
+    color: #FFFFFF;
 }
 
 .db-main {
