@@ -51,7 +51,6 @@ export default function ThreadDetail() {
                 },
                 body: JSON.stringify({
                     content: replyContent,
-                    title: `Re: ${thread?.title || 'Thread'}`,
                     id_user: finalUserId
                 })
             });

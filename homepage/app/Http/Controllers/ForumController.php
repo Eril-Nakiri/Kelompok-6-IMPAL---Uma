@@ -43,7 +43,7 @@ class ForumController extends Controller
         }
     }
 
-    public function getThreadDetail(int $id)
+    public function getThreadDetail($id)
     {
         try {
             $thread = DB::table('forum_threads')->where('id_thread', $id)->first();
@@ -69,7 +69,7 @@ class ForumController extends Controller
         }
     }
 
-    public function storeReply(Request $request, int $id)
+    public function storeReply(Request $request, $id)
     {
         $threadId = $id ?? $request->route('id');
 
@@ -86,7 +86,6 @@ class ForumController extends Controller
 
             DB::table('forum_replies')->insert([
                 'id_thread' => (int) $threadId,
-                'title' => $request->input('title', 'Re: Thread ' . $threadId),
                 'content' => $request->input('content'),
                 'id_user' => (int) $id_user,
                 'created_at' => now()
