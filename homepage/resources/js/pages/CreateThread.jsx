@@ -40,7 +40,7 @@ export default function CreateThread() {
         <>
             <Navbar />
 
-            <div className="mr-container">
+            <div className="mr-container forum-navbar-spacer">
                 <header className="mr-header">
                     <h2>Start a New Thread</h2>
                     <p className="sub-text">Buat topik diskusi baru untuk komunitas.</p>

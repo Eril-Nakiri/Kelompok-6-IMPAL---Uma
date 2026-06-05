@@ -54,13 +54,13 @@ export default function ThreadDetail() {
         }
     };
 
-    if (!thread) return <div className="mr-container"><p style={{color: 'white'}}>Loading...</p></div>;
+    if (!thread) return <div className="mr-container forum-navbar-spacer"><p style={{color: 'white'}}>Loading...</p></div>;
 
     return (
         <>
             <Navbar />
 
-            <div className="mr-container">
+            <div className="mr-container forum-navbar-spacer">
                 <button
                     className="forum-btn forum-btn-secondary thread-back-btn"
                     onClick={() => navigate('/forum')}

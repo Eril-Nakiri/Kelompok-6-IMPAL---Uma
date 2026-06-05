@@ -33,7 +33,7 @@ export default function ForumDashboard() {
         <>
             <Navbar />
 
-            <div className="mr-container">
+            <div className="mr-container forum-navbar-spacer">
                 <header className="mr-header forum-header-flex">
                     <div className="mr-title-area">
                         <h2>Community Forum</h2>
