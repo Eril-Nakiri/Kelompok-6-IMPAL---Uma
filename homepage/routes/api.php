@@ -8,6 +8,7 @@ use App\Http\Controllers\MatchController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\ForumController;
 
 // tes API
 Route::get('/ping', function () {
@@ -51,3 +52,9 @@ Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::cl
 Route::get('/teams', [TeamController::class, 'index']);
 Route::get('/teams/{id}/players', [TeamController::class, 'getPlayers']);
 Route::get('/agents', [AgentController::class, 'index']);
+
+// Forum Routes
+Route::get('/forum/threads', [ForumController::class, 'getThreads']);
+Route::post('/forum/threads', [ForumController::class, 'storeThread']);
+Route::get('/forum/threads/{id}', [ForumController::class, 'getThreadDetail']);
+Route::post('/forum/threads/{id}/replies', [ForumController::class, 'storeReply']);

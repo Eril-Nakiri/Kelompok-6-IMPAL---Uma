@@ -9,10 +9,12 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import StatsPage from "./pages/StatsPage.jsx";
 import NewsPage from "./pages/NewsPage.jsx";
-import ForumPage from "./pages/ForumPage.jsx";
 import MatchesPage from "./pages/MatchesPage.jsx";
 import TeamPage from "./pages/TeamPage.jsx";
 import PlayerPage from "./pages/PlayerPage.jsx";
+import ForumDashboard from './pages/ForumDashboard.jsx';
+import CreateThread from './pages/CreateThread.jsx';
+import ThreadDetail from './pages/ThreadDetail.jsx';
 
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import InputMatchResult from "./pages/InputMatchResult.jsx";
@@ -81,6 +83,24 @@ function App() {
                         <ProtectedRoute allowedRoles={[1]}> <InputMatch />
                         </ProtectedRoute>
                     } />
+
+                <Route
+                    path="/forum" element={
+                        <ProtectedRoute><ForumDashboard />
+                        </ProtectedRoute>}
+                    />
+
+                <Route
+                    path="/forum/create" element={
+                        <ProtectedRoute><CreateThread />
+                        </ProtectedRoute>}
+                    />
+
+                <Route
+                    path="/forum/thread/:id" element={
+                        <ProtectedRoute><ThreadDetail />
+                        </ProtectedRoute>}
+                    />
 
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
