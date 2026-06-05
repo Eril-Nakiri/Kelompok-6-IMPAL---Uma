@@ -28,7 +28,7 @@ class TeamController extends Controller
     public function getPlayers(int $id)
     {
         try {
-            $players = DB::table('players')->where('id_team', $id)->get();
+            $players = DB::table('players')->where('id_teams', $id)->get();
 
             return response()->json([
                 'status' => 'success',
