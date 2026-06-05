@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Navbar from "../components/Navbar";
 import '../../css/Forum.css';
 
 export default function ThreadDetail() {
@@ -57,53 +57,57 @@ export default function ThreadDetail() {
     if (!thread) return <div className="mr-container"><p style={{color: 'white'}}>Loading...</p></div>;
 
     return (
-        <div className="mr-container">
-            <button
-                className="forum-btn forum-btn-secondary thread-back-btn"
-                onClick={() => navigate('/forum')}
-            >
-                🔙 Kembali ke Forum
-            </button>
+        <>
+            <Navbar />
 
-            <div className="mr-form-card thread-main-card">
-                <h2 className="thread-title-heading">{thread.title}</h2>
-                <span className="thread-meta-text">Dibuat pada: {new Date(thread.created_at).toLocaleString('id-ID')}</span>
-                <div className="thread-content-text">
-                    {thread.content}
-                </div>
-            </div>
-
-            <h3 className="reply-section-title">Balasan ({replies.length})</h3>
-            {replies.length > 0 ? (
-                replies.map((reply, idx) => (
-                    <div key={idx} className="mr-form-card thread-reply-card">
-                        <span className="thread-meta-text">Dibalas pada: {new Date(reply.created_at).toLocaleString('id-ID')}</span>
-                        <div className="thread-reply-content">
-                            {reply.content}
-                        </div>
-                    </div>
-                ))
-            ) : (
-                <p className="forum-empty-state" style={{ padding: '0', textAlign: 'left', marginBottom: '24px' }}>
-                    Belum ada balasan. Jadilah yang pertama membalas!
-                </p>
-            )}
-
-            <form className="mr-form-card thread-reply-form" onSubmit={handleReplySubmit}>
-                <h4 className="reply-form-title">Tulis Balasan</h4>
-                <textarea
-                    className="forum-textarea"
-                    style={{ marginBottom: '16px' }}
-                    value={replyContent}
-                    onChange={(e) => setReplyContent(e.target.value)}
-                    placeholder="Tulis pendapat Anda di sini..."
-                    rows="4"
-                    required
-                />
-                <button type="submit" className="forum-btn forum-btn-success forum-btn-full">
-                    Kirim Balasan
+            <div className="mr-container">
+                <button
+                    className="forum-btn forum-btn-secondary thread-back-btn"
+                    onClick={() => navigate('/forum')}
+                >
+                    🔙 Kembali ke Forum
                 </button>
-            </form>
-        </div>
+
+                <div className="mr-form-card thread-main-card">
+                    <h2 className="thread-title-heading">{thread.title}</h2>
+                    <span className="thread-meta-text">Dibuat pada: {new Date(thread.created_at).toLocaleString('id-ID')}</span>
+                    <div className="thread-content-text">
+                        {thread.content}
+                    </div>
+                </div>
+
+                <h3 className="reply-section-title">Balasan ({replies.length})</h3>
+                {replies.length > 0 ? (
+                    replies.map((reply, idx) => (
+                        <div key={idx} className="mr-form-card thread-reply-card">
+                            <span className="thread-meta-text">Dibalas pada: {new Date(reply.created_at).toLocaleString('id-ID')}</span>
+                            <div className="thread-reply-content">
+                                {reply.content}
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="forum-empty-state" style={{ padding: '0', textAlign: 'left', marginBottom: '24px' }}>
+                        Belum ada balasan. Jadilah yang pertama membalas!
+                    </p>
+                )}
+
+                <form className="mr-form-card thread-reply-form" onSubmit={handleReplySubmit}>
+                    <h4 className="reply-form-title">Tulis Balasan</h4>
+                    <textarea
+                        className="forum-textarea"
+                        style={{ marginBottom: '16px' }}
+                        value={replyContent}
+                        onChange={(e) => setReplyContent(e.target.value)}
+                        placeholder="Tulis pendapat Anda di sini..."
+                        rows="4"
+                        required
+                    />
+                    <button type="submit" className="forum-btn forum-btn-success forum-btn-full">
+                        Kirim Balasan
+                    </button>
+                </form>
+            </div>
+        </>
     );
 }
