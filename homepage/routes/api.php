@@ -59,6 +59,7 @@ Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::cl
 
 // Admin Team
 Route::get('/teams', [TeamController::class, 'index']);
+Route::get('/teams/{id}/players', [TeamController::class, 'getPlayers']);
 
 // Daftar Agent
 Route::get('/agents', [AgentController::class, 'index']);

@@ -133,7 +133,7 @@ class MatchController extends Controller
             foreach ($teams as $team) {
                 if (isset($request->player_stats[$team])) {
                     foreach ($request->player_stats[$team] as $player) {
-                        if (!empty($player['playerName'])) {
+                        if (!empty($player['id_player'])) {
 
                             $idAgent = !empty($player['agent']) ? (int) $player['agent'] : null;
                             $agentUsed = $idAgent && isset($agentsMap[$idAgent]) ? $agentsMap[$idAgent] : null;
@@ -142,7 +142,7 @@ class MatchController extends Controller
                                 [
                                     'id_match' => $request->id_match,
                                     'map_number' => $mapNumber,
-                                    'id_player' => $player['playerName'],
+                                    'id_player' => (int) $player['id_player'],
                                 ],
                                 [
                                     'map_name' => $request->game_data['mapName'],

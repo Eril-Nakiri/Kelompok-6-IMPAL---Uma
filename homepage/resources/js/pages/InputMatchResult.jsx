@@ -22,6 +22,9 @@ export default function InputMatchResult() {
 
     const [agents, setAgents] = useState([]);
 
+    const [rosterA, setRosterA] = useState([]);
+    const [rosterB, setRosterB] = useState([]);
+
     const [gameData, setGameData] = useState({
         scoreA: '',
         scoreB: '',
@@ -29,7 +32,7 @@ export default function InputMatchResult() {
         mvpPlayer: '',
     });
 
-    const emptyPlayer = { playerName: '', agent: '', kills: '', deaths: '', assists: '', acs: '', rating: '', hs: '', fk: '', fd: '' };
+    const emptyPlayer = { id_player: '', agent: '', kills: '', deaths: '', assists: '', acs: '', rating: '', hs: '', fk: '', fd: '' };
     const [teamAStats, setTeamAStats] = useState(Array.from({ length: 5 }, () => ({ ...emptyPlayer })));
     const [teamBStats, setTeamBStats] = useState(Array.from({ length: 5 }, () => ({ ...emptyPlayer })));
 
@@ -62,7 +65,7 @@ export default function InputMatchResult() {
         fetchData();
     }, [tournamentTerpilih, navigate]);
 
-    const handleSelectMatch = (match) => {
+    const handleSelectMatch = async (match) => {
         setSelectedMatch(match);
         const format = match.match_format || 'BO3';
 
@@ -73,6 +76,18 @@ export default function InputMatchResult() {
         const generatedTabs = Array.from({ length: mapCount }, (_, i) => `Map ${i + 1}`);
         setMapTabs(generatedTabs);
         setActiveMap('Map 1');
+
+        try {
+            const resA = await fetch(`/api/teams/${match.id_team_a}/players`);
+            const dataA = await resA.json();
+            setRosterA(dataA.data || []);
+
+            const resB = await fetch(`/api/teams/${match.id_team_b}/players`);
+            const dataB = await resB.json();
+            setRosterB(dataB.data || []);
+        } catch (error) {
+            console.error("Gagal mengambil daftar pemain:", error);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -293,7 +308,7 @@ export default function InputMatchResult() {
                                 <table className="player-stats-table">
                                     <thead>
                                         <tr>
-                                            <th className="left-align">Pemain</th>
+                                            <th className="left-align" style={{ width: '200px' }}>Pemain</th>
                                             <th>Agent</th>
                                             <th>K</th>
                                             <th>D</th>
@@ -308,7 +323,16 @@ export default function InputMatchResult() {
                                     <tbody>
                                         {teamAStats.map((player, idx) => (
                                             <tr key={`teamA-${idx}`}>
-                                                <td className="left-align"><input type="text" className="player-stat-input left-align" value={player.playerName} onChange={e => handleTeamAChange(idx, 'playerName', e.target.value)} placeholder="Nickname" /></td>
+                                                <td className="left-align">
+                                                    <select className="player-stat-input left-align" value={player.id_player} onChange={e => handleTeamAChange(idx, 'id_player', e.target.value)}>
+                                                        <option value="">-- Pilih Pemain --</option>
+                                                        {rosterA.map(p => (
+                                                            <option key={p.id_player} value={p.id_player}>
+                                                                {p.ingame_name || p.nama_player || p.nickname || `Player ${p.id_player}`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </td>
                                                 <td>
                                                     <select className="agent-select" value={player.agent} onChange={e => handleTeamAChange(idx, 'agent', e.target.value)}>
                                                         <option value="">Pilih...</option>
@@ -336,7 +360,7 @@ export default function InputMatchResult() {
                                 <table className="player-stats-table">
                                     <thead>
                                         <tr>
-                                            <th className="left-align">Pemain</th>
+                                            <th className="left-align" style={{ width: '200px' }}>Pemain</th>
                                             <th>Agent</th>
                                             <th>K</th>
                                             <th>D</th>
@@ -351,7 +375,16 @@ export default function InputMatchResult() {
                                     <tbody>
                                         {teamBStats.map((player, idx) => (
                                             <tr key={`teamB-${idx}`}>
-                                                <td className="left-align"><input type="text" className="player-stat-input left-align" value={player.playerName} onChange={e => handleTeamBChange(idx, 'playerName', e.target.value)} placeholder="Nickname" /></td>
+                                                <td className="left-align">
+                                                    <select className="player-stat-input left-align" value={player.id_player} onChange={e => handleTeamBChange(idx, 'id_player', e.target.value)}>
+                                                        <option value="">-- Pilih Pemain --</option>
+                                                        {rosterB.map(p => (
+                                                            <option key={p.id_player} value={p.id_player}>
+                                                                {p.ingame_name || p.nama_player || p.nickname || `Player ${p.id_player}`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </td>
                                                 <td>
                                                     <select className="agent-select" value={player.agent} onChange={e => handleTeamBChange(idx, 'agent', e.target.value)}>
                                                         <option value="">Pilih...</option>
