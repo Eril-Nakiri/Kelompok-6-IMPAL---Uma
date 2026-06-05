@@ -11,55 +11,43 @@ use App\Http\Controllers\AgentController;
 
 // tes API
 Route::get('/ping', function () {
-    return response()->json([
-        'message' => 'Laravel API hidup 🔥'
-    ]);
+    return response()->json(['message' => 'Laravel API hidup 🔥']);
 });
-
 
 Route::get('/dashboard', function () {
     return response()->json([
-        "app" => "META Portal",
-        "status" => "Connected to Laravel",
-        "user" => "Felix (soon 😎)",
-        "version" => "1.0"
+        "app" => "META Portal", "status" => "Connected to Laravel", "user" => "Felix (soon 😎)", "version" => "1.0"
     ]);
 });
 
-
-// Login
+// Login & Register
 Route::post('/login', [AuthController::class, 'login']);
-
-// Register
 Route::post('/register', [AuthController::class, 'register']);
 
 // Forgot Password
 Route::post('/forgot-password-verify', [AuthController::class, 'verifyForgotAccount']);
 Route::post('/forgot-password-update', [AuthController::class, 'updateForgotPassword']);
 
-// User Search //fitur gak kepake
+// Search & Stats
 Route::get('/users/search', [UserController::class, 'search']);
 Route::get('/players/{id}', [StatsController::class, 'getPlayerDetail']);
 Route::get('/teams/{id}', [StatsController::class, 'getTeamDetail']);
 Route::get('/search', [StatsController::class, 'globalSearch']);
-
-// Stats
 Route::get('/stats', [StatsController::class, 'getStats']);
 Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 
-// matches
+// Matches
 Route::get('/matches', [MatchController::class, 'index']);
 Route::post('/match', [MatchController::class, 'store']);
-Route::post('/match-result', [MatchController::class, 'storeResult']);
+Route::post('/match-result', [MatchController::class, 'storeResult']); // Untuk simpan skor map & statistik
+Route::post('/matches/update-series', [MatchController::class, 'updateSeriesScore']); // Untuk simpan skor series (2-0, 2-1)
 
 // Admin Tournament
 Route::post('/tournament', [TournamentController::class, 'store']);
 Route::get('/tournament', [TournamentController::class, 'index']);
 Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::class, 'destroy']);
 
-// Admin Team
+// Admin Team & Agent
 Route::get('/teams', [TeamController::class, 'index']);
 Route::get('/teams/{id}/players', [TeamController::class, 'getPlayers']);
-
-// Daftar Agent
 Route::get('/agents', [AgentController::class, 'index']);

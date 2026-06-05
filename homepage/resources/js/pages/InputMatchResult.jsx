@@ -15,21 +15,21 @@ export default function InputMatchResult() {
     const [activeMap, setActiveMap] = useState('Map 1');
     const [mapTabs, setMapTabs] = useState(['Map 1', 'Map 2', 'Map 3']);
 
+    const [seriesScoreA, setSeriesScoreA] = useState('');
+    const [seriesScoreB, setSeriesScoreB] = useState('');
+
     const [maps] = useState([
         "Ascent", "Bind", "Breeze", "Abyss", "Fracture",
         "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
     ]);
 
     const [agents, setAgents] = useState([]);
-
     const [rosterA, setRosterA] = useState([]);
     const [rosterB, setRosterB] = useState([]);
 
     const [gameData, setGameData] = useState({
-        matchScoreA: '', // Tambahan untuk update skor_akhir_a di tabel matches
-        matchScoreB: '', // Tambahan untuk update skor_akhir_b di tabel matches
-        scoreA: '',
-        scoreB: '',
+        mapScoreA: '',
+        mapScoreB: '',
         mapName: '',
         mvpPlayer: '',
     });
@@ -45,26 +45,25 @@ export default function InputMatchResult() {
             return;
         }
 
-        const fetchData = async () => {
+        const fetchMatches = async () => {
             try {
-                const resMatches = await fetch('/api/matches');
-                const dataMatches = await resMatches.json();
-                const allMatches = Array.isArray(dataMatches) ? dataMatches : (dataMatches.data || []);
+                const response = await fetch('/api/matches');
+                const data = await response.json();
+                const allMatches = Array.isArray(data) ? data : (data.data || []);
                 const filteredMatches = allMatches.filter(m => m.id_tournament === tournamentTerpilih.id_tournament || m.id_tournament === tournamentTerpilih.id);
                 setExistingMatches(filteredMatches);
 
                 const resAgents = await fetch('/api/agents');
                 const dataAgents = await resAgents.json();
                 setAgents(dataAgents.data || []);
-
             } catch (error) {
-                console.error("Gagal mengambil data dari server:", error);
+                console.error("Gagal mengambil data pertandingan:", error);
             } finally {
                 setIsLoadingMatches(false);
             }
         };
 
-        fetchData();
+        fetchMatches();
     }, [tournamentTerpilih, navigate]);
 
     const handleSelectMatch = async (match) => {
@@ -79,24 +78,15 @@ export default function InputMatchResult() {
         setMapTabs(generatedTabs);
         setActiveMap('Map 1');
 
-        // Mengambil skor yang sudah ada untuk ditampilkan otomatis
-        setGameData({
-            matchScoreA: match.skor_akhir_a || '',
-            matchScoreB: match.skor_akhir_b || '',
-            scoreA: '',
-            scoreB: '',
-            mapName: '',
-            mvpPlayer: '',
-        });
+        setSeriesScoreA(match.skor_akhir_a ?? '');
+        setSeriesScoreB(match.skor_akhir_b ?? '');
 
         try {
             const resA = await fetch(`/api/teams/${match.id_team_a}/players`);
-            const dataA = await resA.json();
-            setRosterA(dataA.data || []);
+            setRosterA((await resA.json()).data || []);
 
             const resB = await fetch(`/api/teams/${match.id_team_b}/players`);
-            const dataB = await resB.json();
-            setRosterB(dataB.data || []);
+            setRosterB((await resB.json()).data || []);
         } catch (error) {
             console.error("Gagal mengambil daftar pemain:", error);
         }
@@ -119,42 +109,52 @@ export default function InputMatchResult() {
         setTeamBStats(newStats);
     };
 
-    const handleSubmitResult = async (e) => {
-        e.preventDefault();
-
+    const handleSaveSeriesScore = async () => {
         const payload = {
             id_match: selectedMatch.id_match || selectedMatch.id,
-            match_format: selectedMatch.match_format,
-            current_map: activeMap,
-            team_a: selectedMatch.nama_tim_a,
-            team_b: selectedMatch.nama_tim_b,
-            game_data: gameData,
-            player_stats: {
-                teamA: teamAStats,
-                teamB: teamBStats
+            scoreA: seriesScoreA,
+            scoreB: seriesScoreB
+        };
+        try {
+            const response = await fetch('/api/matches/update-series', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (response.ok || result.status === 'success') {
+                alert(`✅ Skor Series Keseluruhan berhasil di-update: ${seriesScoreA} - ${seriesScoreB}`);
+            } else {
+                alert(`Gagal menyimpan: ${result.message}`);
             }
+        } catch (error) {
+            alert("Gagal terhubung ke server.");
+        }
+    };
+
+    const handleSubmitMapResult = async (e) => {
+        e.preventDefault();
+        const payload = {
+            id_match: selectedMatch.id_match || selectedMatch.id,
+            current_map: activeMap,
+            game_data: gameData,
+            player_stats: { teamA: teamAStats, teamB: teamBStats }
         };
 
         try {
             const response = await fetch('/api/match-result', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(payload)
             });
-
             const result = await response.json();
-
             if (response.ok || result.status === 'success') {
-                alert(`🎉 Skor Series & Hasil Map ${activeMap} berhasil direkam ke database!`);
+                alert(`🎉 Data Statistik untuk ${activeMap} berhasil direkam ke database!`);
             } else {
-                alert(`Gagal menyimpan data: ${result.message || 'Kesalahan server'}`);
+                alert(`Gagal menyimpan data map: ${result.message}`);
             }
         } catch (error) {
-            console.error("Gagal mengirim hasil match ke server:", error);
-            alert("Gagal terhubung ke server backend.");
+            alert("Gagal terhubung ke server.");
         }
     };
 
@@ -168,7 +168,7 @@ export default function InputMatchResult() {
             <header className="mr-header">
                 <div className="mr-title-area">
                     <h2>Input Match Result</h2>
-                    <p className="sub-text">Turnamen Aktif: <strong>{tournamentTerpilih?.nama_turnamen || tournamentTerpilih?.name || 'Belum Memilih Turnamen'}</strong></p>
+                    <p className="sub-text">Turnamen Aktif: <strong>{tournamentTerpilih?.name || tournamentTerpilih?.nama_turnamen || 'Belum Memilih Turnamen'}</strong></p>
                 </div>
 
                 {selectedMatch && (
@@ -235,6 +235,50 @@ export default function InputMatchResult() {
                 </div>
             ) : (
                 <>
+                    <div className="mr-form-card" style={{ marginBottom: '24px', borderColor: '#3B82F6', borderTopWidth: '4px' }}>
+                        <div className="form-section-title" style={{ textAlign: 'center', marginBottom: '16px' }}>
+                            <h3 style={{ fontSize: '20px' }}>Skor Series Keseluruhan</h3>
+                            <p>Update skor kemenangan format {selectedMatch.match_format} (Contoh: 2 - 1)</p>
+                        </div>
+
+                        <div className="form-row flex-score-row" style={{ marginTop: '0' }}>
+                            <div className="form-group-score">
+                                <label style={{ color: '#FFF' }}>Total Menang {selectedMatch.nama_tim_a}</label>
+                                <input
+                                    type="number"
+                                    value={seriesScoreA}
+                                    onChange={(e) => setSeriesScoreA(e.target.value)}
+                                    placeholder="0"
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="score-separator">-</div>
+
+                            <div className="form-group-score">
+                                <label style={{ color: '#FFF' }}>Total Menang {selectedMatch.nama_tim_b}</label>
+                                <input
+                                    type="number"
+                                    value={seriesScoreB}
+                                    onChange={(e) => setSeriesScoreB(e.target.value)}
+                                    placeholder="0"
+                                    min="0"
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                            <button
+                                type="button"
+                                className="save-result-btn"
+                                style={{ backgroundColor: '#3B82F6' }}
+                                onClick={handleSaveSeriesScore}
+                            >
+                                💾 Simpan Skor Series
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="bo3-selector-tabs">
                         {mapTabs.map((map) => (
                             <button
@@ -248,53 +292,21 @@ export default function InputMatchResult() {
                         ))}
                     </div>
 
-                    <form onSubmit={handleSubmitResult} className="mr-form-card">
+                    <form onSubmit={handleSubmitMapResult} className="mr-form-card">
                         <div className="form-section-title">
                             <h3>Input Data Pertandingan - {activeMap}</h3>
-                            <p>Silakan lengkapi perolehan skor akhir dan statistik ronde game di bawah ini untuk <strong>{selectedMatch.match_format}</strong>.</p>
+                            <p>Lengkapi skor perolehan ronde dan statistik pemain khusus untuk map ini.</p>
                         </div>
 
-                        {/* INPUT SKOR SERIES (KESELURUHAN) */}
-                        <div className="form-row flex-score-row" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', padding: '16px', borderRadius: '8px', border: '1px dashed #3b82f6', marginBottom: '20px' }}>
-                            <div className="form-group-score">
-                                <label style={{ color: '#93c5fd' }}>Skor Series Keseluruhan {selectedMatch.nama_tim_a}</label>
-                                <input
-                                    type="number"
-                                    name="matchScoreA"
-                                    value={gameData.matchScoreA}
-                                    onChange={handleInputChange}
-                                    placeholder="2"
-                                    min="0"
-                                    required
-                                />
-                            </div>
-
-                            <div className="score-separator" style={{ color: '#93c5fd' }}>VS</div>
-
-                            <div className="form-group-score">
-                                <label style={{ color: '#93c5fd' }}>Skor Series Keseluruhan {selectedMatch.nama_tim_b}</label>
-                                <input
-                                    type="number"
-                                    name="matchScoreB"
-                                    value={gameData.matchScoreB}
-                                    onChange={handleInputChange}
-                                    placeholder="1"
-                                    min="0"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {/* INPUT SKOR PER MAP */}
                         <div className="form-row flex-score-row">
                             <div className="form-group-score">
-                                <label>Skor Map {selectedMatch.nama_tim_a} ({activeMap})</label>
+                                <label>Skor Map {selectedMatch.nama_tim_a}</label>
                                 <input
                                     type="number"
-                                    name="scoreA"
-                                    value={gameData.scoreA}
+                                    name="mapScoreA"
+                                    value={gameData.mapScoreA}
                                     onChange={handleInputChange}
-                                    placeholder="13"
+                                    placeholder="0"
                                     min="0"
                                     required
                                 />
@@ -303,13 +315,13 @@ export default function InputMatchResult() {
                             <div className="score-separator">VS</div>
 
                             <div className="form-group-score">
-                                <label>Skor Map {selectedMatch.nama_tim_b} ({activeMap})</label>
+                                <label>Skor Map {selectedMatch.nama_tim_b}</label>
                                 <input
                                     type="number"
-                                    name="scoreB"
-                                    value={gameData.scoreB}
+                                    name="mapScoreB"
+                                    value={gameData.mapScoreB}
                                     onChange={handleInputChange}
-                                    placeholder="11"
+                                    placeholder="0"
                                     min="0"
                                     required
                                 />
@@ -352,16 +364,16 @@ export default function InputMatchResult() {
                                 <table className="player-stats-table">
                                     <thead>
                                         <tr>
-                                            <th className="left-align" style={{ width: '200px' }}>Pemain</th>
-                                            <th>Agent</th>
-                                            <th>K</th>
-                                            <th>D</th>
-                                            <th>A</th>
-                                            <th>ACS</th>
-                                            <th>Rating</th>
-                                            <th>HS%</th>
-                                            <th>FK</th>
-                                            <th>FD</th>
+                                            <th className="left-align" style={{ width: '22%' }}>Nama Pemain (Nickname)</th>
+                                            <th style={{ width: '18%' }}>Agent</th>
+                                            <th style={{ width: '8%' }}>Kills</th>
+                                            <th style={{ width: '8%' }}>Deaths</th>
+                                            <th style={{ width: '8%' }}>Assists</th>
+                                            <th style={{ width: '8%' }}>ACS</th>
+                                            <th style={{ width: '8%' }}>Rating</th>
+                                            <th style={{ width: '8%' }}>HS%</th>
+                                            <th style={{ width: '8%' }}>FK</th>
+                                            <th style={{ width: '8%' }}>FD</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -370,11 +382,7 @@ export default function InputMatchResult() {
                                                 <td className="left-align">
                                                     <select className="player-stat-input left-align" value={player.id_player} onChange={e => handleTeamAChange(idx, 'id_player', e.target.value)}>
                                                         <option value="">-- Pilih Pemain --</option>
-                                                        {rosterA.map(p => (
-                                                            <option key={p.id_player} value={p.id_player}>
-                                                                {p.nama}
-                                                            </option>
-                                                        ))}
+                                                        {rosterA.map(p => <option key={p.id_player} value={p.id_player}>{p.nama}</option>)}
                                                     </select>
                                                 </td>
                                                 <td>
@@ -404,16 +412,16 @@ export default function InputMatchResult() {
                                 <table className="player-stats-table">
                                     <thead>
                                         <tr>
-                                            <th className="left-align" style={{ width: '200px' }}>Pemain</th>
-                                            <th>Agent</th>
-                                            <th>K</th>
-                                            <th>D</th>
-                                            <th>A</th>
-                                            <th>ACS</th>
-                                            <th>Rating</th>
-                                            <th>HS%</th>
-                                            <th>FK</th>
-                                            <th>FD</th>
+                                            <th className="left-align" style={{ width: '22%' }}>Nama Pemain (Nickname)</th>
+                                            <th style={{ width: '18%' }}>Agent</th>
+                                            <th style={{ width: '8%' }}>Kills</th>
+                                            <th style={{ width: '8%' }}>Deaths</th>
+                                            <th style={{ width: '8%' }}>Assists</th>
+                                            <th style={{ width: '8%' }}>ACS</th>
+                                            <th style={{ width: '8%' }}>Rating</th>
+                                            <th style={{ width: '8%' }}>HS%</th>
+                                            <th style={{ width: '8%' }}>FK</th>
+                                            <th style={{ width: '8%' }}>FD</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -422,11 +430,7 @@ export default function InputMatchResult() {
                                                 <td className="left-align">
                                                     <select className="player-stat-input left-align" value={player.id_player} onChange={e => handleTeamBChange(idx, 'id_player', e.target.value)}>
                                                         <option value="">-- Pilih Pemain --</option>
-                                                        {rosterB.map(p => (
-                                                            <option key={p.id_player} value={p.id_player}>
-                                                                {p.nama}
-                                                            </option>
-                                                        ))}
+                                                        {rosterB.map(p => <option key={p.id_player} value={p.id_player}>{p.nama}</option>)}
                                                     </select>
                                                 </td>
                                                 <td>
