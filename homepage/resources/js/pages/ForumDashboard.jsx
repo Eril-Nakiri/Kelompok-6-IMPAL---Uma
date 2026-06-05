@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import '../../css/Forum.css';
 
 export default function ForumDashboard() {
@@ -21,11 +22,12 @@ export default function ForumDashboard() {
         fetchThreads();
     }, []);
 
+    // PERBAIKAN: Menggunakan parameter 'dateString' dan menambahkan 'return'
     const formatDate = (dateString) => {
-        new Date(thread.created_at).toLocaleString('id-ID', {
+        return new Date(dateString).toLocaleString('id-ID', {
             dateStyle: 'medium',
             timeStyle: 'short'
-        })
+        });
     };
 
     return (
