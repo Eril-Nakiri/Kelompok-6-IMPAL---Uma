@@ -263,7 +263,7 @@ export default function InputMatchResult() {
                                     name="matchScoreA"
                                     value={gameData.matchScoreA}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: 2"
+                                    placeholder="2"
                                     min="0"
                                     required
                                 />
@@ -278,7 +278,7 @@ export default function InputMatchResult() {
                                     name="matchScoreB"
                                     value={gameData.matchScoreB}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: 1"
+                                    placeholder="1"
                                     min="0"
                                     required
                                 />
@@ -294,7 +294,7 @@ export default function InputMatchResult() {
                                     name="scoreA"
                                     value={gameData.scoreA}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: 13"
+                                    placeholder="13"
                                     min="0"
                                     required
                                 />
@@ -309,7 +309,7 @@ export default function InputMatchResult() {
                                     name="scoreB"
                                     value={gameData.scoreB}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: 11"
+                                    placeholder="11"
                                     min="0"
                                     required
                                 />
@@ -346,7 +346,6 @@ export default function InputMatchResult() {
                             </div>
                         </div>
 
-                        {/* STATISTIK TIM A */}
                         <div className="player-stats-wrapper">
                             <h3 style={{ color: '#3B82F6', marginBottom: '16px', fontSize: '16px' }}>Statistik Pemain - {selectedMatch.nama_tim_a}</h3>
                             <div className="stats-table-container">
@@ -399,7 +398,6 @@ export default function InputMatchResult() {
                             </div>
                         </div>
 
-                        {/* STATISTIK TIM B */}
                         <div className="player-stats-wrapper">
                             <h3 style={{ color: '#EF4444', marginBottom: '16px', fontSize: '16px' }}>Statistik Pemain - {selectedMatch.nama_tim_b}</h3>
                             <div className="stats-table-container" style={{ marginBottom: 0 }}>
