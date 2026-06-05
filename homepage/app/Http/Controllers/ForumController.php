@@ -30,10 +30,15 @@ class ForumController extends Controller
         ]);
 
         try {
+            $id_user = $request->input('id_user');
+            if (empty($id_user)) {
+                $id_user = 1;
+            }
+
             DB::table('forum_threads')->insert([
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
-                'id_user' => (int) $request->input('id_user'),
+                'id_user' => (int) $id_user,
                 'created_at' => now()
             ]);
 
@@ -43,7 +48,7 @@ class ForumController extends Controller
         }
     }
 
-    public function getThreadDetail($id)
+    public function getThreadDetail(int $id)
     {
         try {
             $thread = DB::table('forum_threads')->where('id_thread', $id)->first();
@@ -69,7 +74,7 @@ class ForumController extends Controller
         }
     }
 
-    public function storeReply(Request $request, $id)
+    public function storeReply(Request $request, int $id)
     {
         $threadId = $id ?? $request->route('id');
 
@@ -84,7 +89,11 @@ class ForumController extends Controller
                 $id_user = 1;
             }
 
+            $lastReply = DB::table('forum_replies')->max('id_reply');
+            $nextReplyId = $lastReply ? $lastReply + 1 : 1;
+
             DB::table('forum_replies')->insert([
+                'id_reply' => $nextReplyId,
                 'id_thread' => (int) $threadId,
                 'content' => $request->input('content'),
                 'id_user' => (int) $id_user,
