@@ -13,33 +13,39 @@ export default function CreateThread() {
 
         const userStr = localStorage.getItem('user');
         const userData = userStr ? JSON.parse(userStr) : { id_user: 1 };
+        const finalUserId = parseInt(userData.id_user || userData.id || 1);
 
         try {
             const res = await fetch('/api/forum/threads', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({
                     title: title,
                     content: content,
-                    id_user: userData.id_user || userData.id || 1
+                    id_user: finalUserId
                 })
             });
 
-            if (res.ok) {
-                alert('Thread berhasil dibuat!');
+            const result = await res.json();
+
+            if (res.ok && result.status === 'success') {
+                alert('🎉 Thread berhasil dibuat!');
                 navigate('/forum');
             } else {
-                alert('Gagal membuat thread.');
+                alert(`Gagal membuat thread:\n${result.message || 'Kesalahan pada server.'}`);
             }
         } catch (error) {
             console.error(error);
+            alert("Gagal terhubung ke server backend.");
         }
     };
 
     return (
         <>
             <Navbar />
-
             <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
                 <div className="mr-container">
                     <header className="mr-header">

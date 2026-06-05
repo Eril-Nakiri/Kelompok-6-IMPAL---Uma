@@ -26,20 +26,20 @@ class ForumController extends Controller
         $request->validate([
             'title' => 'required|string',
             'content' => 'required|string',
-            'id_user' => 'required|integer'
+            'id_user' => 'required'
         ]);
 
         try {
             DB::table('forum_threads')->insert([
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
-                'id_user' => $request->input('id_user'),
+                'id_user' => (int) $request->input('id_user'),
                 'created_at' => now()
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Thread berhasil dibuat!'], 201);
         } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
         }
     }
 
@@ -73,21 +73,21 @@ class ForumController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'id_user' => 'required|integer'
+            'id_user' => 'required'
         ]);
 
         try {
             DB::table('forum_replies')->insert([
                 'id_thread' => $id,
                 'title' => $request->input('title', 'Re: Thread ' . $id),
-                'content' => $request->input('content'), // Perbaikan: menggunakan method input()
-                'id_user' => $request->input('id_user'),
+                'content' => $request->input('content'),
+                'id_user' => (int) $request->input('id_user'),
                 'created_at' => now()
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Balasan berhasil dikirim!'], 201);
         } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
         }
     }
 }
