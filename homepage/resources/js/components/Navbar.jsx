@@ -146,7 +146,6 @@ export default function Navbar() {
                         <Link to="/forum" className="nav-link">forum</Link>
                         <Link to="/matches" className="nav-link">matches</Link>
                         <Link to="/stats" className="nav-link">stats</Link>
-                        <Link to="/news" className="nav-link">news</Link>
                     </div>
                 </div>
 
