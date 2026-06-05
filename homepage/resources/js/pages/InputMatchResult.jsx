@@ -328,7 +328,7 @@ export default function InputMatchResult() {
                                                         <option value="">-- Pilih Pemain --</option>
                                                         {rosterA.map(p => (
                                                             <option key={p.id_player} value={p.id_player}>
-                                                                {p.ingame_name || p.nama_player || p.nickname || `Player ${p.id_player}`}
+                                                                {p.nama}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -380,7 +380,7 @@ export default function InputMatchResult() {
                                                         <option value="">-- Pilih Pemain --</option>
                                                         {rosterB.map(p => (
                                                             <option key={p.id_player} value={p.id_player}>
-                                                                {p.ingame_name || p.nama_player || p.nickname || `Player ${p.id_player}`}
+                                                                {p.nama}
                                                             </option>
                                                         ))}
                                                     </select>
@@ -391,14 +391,14 @@ export default function InputMatchResult() {
                                                         {agents.map(ag => <option key={ag.id_agent} value={ag.id_agent}>{ag.nama_agent}</option>)}
                                                     </select>
                                                 </td>
-                                                <td><input type="number" className="player-stat-input" value={player.kills} onChange={e => handleTeamBChange(idx, 'kills', e.target.value)} min="0" placeholder="0" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.deaths} onChange={e => handleTeamBChange(idx, 'deaths', e.target.value)} min="0" placeholder="0" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.assists} onChange={e => handleTeamBChange(idx, 'assists', e.target.value)} min="0" placeholder="0" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.acs} onChange={e => handleTeamBChange(idx, 'acs', e.target.value)} min="0" placeholder="0" /></td>
-                                                <td><input type="number" step="0.1" className="player-stat-input" value={player.rating} onChange={e => handleTeamBChange(idx, 'rating', e.target.value)} min="0" placeholder="0.0" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.hs} onChange={e => handleTeamBChange(idx, 'hs', e.target.value)} min="0" max="100" placeholder="%" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.fk} onChange={e => handleTeamBChange(idx, 'fk', e.target.value)} min="0" placeholder="0" /></td>
-                                                <td><input type="number" className="player-stat-input" value={player.fd} onChange={e => handleTeamBChange(idx, 'fd', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.kills} onChange={e => handleTeamAChange(idx, 'kills', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.deaths} onChange={e => handleTeamAChange(idx, 'deaths', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.assists} onChange={e => handleTeamAChange(idx, 'assists', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.acs} onChange={e => handleTeamAChange(idx, 'acs', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" step="0.1" className="player-stat-input" value={player.rating} onChange={e => handleTeamAChange(idx, 'rating', e.target.value)} min="0" placeholder="0.0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.hs} onChange={e => handleTeamAChange(idx, 'hs', e.target.value)} min="0" max="100" placeholder="%" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fk} onChange={e => handleTeamAChange(idx, 'fk', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fd} onChange={e => handleTeamAChange(idx, 'fd', e.target.value)} min="0" placeholder="0" /></td>
                                             </tr>
                                         ))}
                                     </tbody>
