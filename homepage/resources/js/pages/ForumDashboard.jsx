@@ -22,7 +22,10 @@ export default function ForumDashboard() {
     }, []);
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+        new Date(thread.created_at).toLocaleString('id-ID', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        })
     };
 
     return (
