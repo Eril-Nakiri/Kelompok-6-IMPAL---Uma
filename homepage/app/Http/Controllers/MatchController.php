@@ -29,7 +29,6 @@ class MatchController extends Controller
                     'team_b.logo_url as logo_url_b',
                     'team_b.singkatan as singkatan_b',
 
-                    // Subquery PostgreSQL untuk menarik data maps
                     DB::raw("(
                         SELECT COALESCE(json_agg(
                             json_build_object(
@@ -98,6 +97,83 @@ class MatchController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal input database: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeResult(Request $request)
+    {
+        $request->validate([
+            'id_match' => 'required|integer',
+            'current_map' => 'required|string',
+            'game_data.scoreA' => 'required|integer',
+            'game_data.scoreB' => 'required|integer',
+            'game_data.mapName' => 'required|string',
+        ]);
+
+        try {
+            $mapNumber = (int) filter_var($request->current_map, FILTER_SANITIZE_NUMBER_INT);
+
+            DB::table('match_maps')->updateOrInsert(
+                [
+                    'id_match' => $request->id_match,
+                    'map_number' => $mapNumber
+                ],
+                [
+                    'map_name' => $request->game_data['mapName'],
+                    'team_a_score' => $request->game_data['scoreA'],
+                    'team_b_score' => $request->game_data['scoreB'],
+                ]
+            );
+
+            $teams = ['teamA', 'teamB'];
+
+            $agentsMap = DB::table('agents')->pluck('nama_agent', 'id_agent');
+
+            foreach ($teams as $team) {
+                if (isset($request->player_stats[$team])) {
+                    foreach ($request->player_stats[$team] as $player) {
+                        if (!empty($player['playerName'])) {
+
+                            $idAgent = !empty($player['agent']) ? (int) $player['agent'] : null;
+                            $agentUsed = $idAgent && isset($agentsMap[$idAgent]) ? $agentsMap[$idAgent] : null;
+
+                            DB::table('player_map_stats')->updateOrInsert(
+                                [
+                                    'id_match' => $request->id_match,
+                                    'map_number' => $mapNumber,
+                                    'id_player' => $player['playerName'],
+                                ],
+                                [
+                                    'map_name' => $request->game_data['mapName'],
+                                    'id_agent' => $idAgent,
+                                    'agent_used' => $agentUsed,
+                                    'kills' => $player['kills'] ?: 0,
+                                    'deaths' => $player['deaths'] ?: 0,
+                                    'assists' => $player['assists'] ?: 0,
+                                    'acs' => $player['acs'] ?: 0,
+                                    'rating' => $player['rating'] ?: 0,
+                                    'hs_percentage' => $player['hs'] ?: 0,
+                                    'first_kills' => $player['fk'] ?: 0,
+                                    'first_deaths' => $player['fd'] ?: 0,
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Hasil pertandingan map dan statistik pemain berhasil disimpan.'
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan hasil: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ], 500);
         }
     }

@@ -7,7 +7,7 @@ use App\Http\Controllers\StatsController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\TeamController;
-
+use App\Http\Controllers\AgentController;
 
 // tes API
 Route::get('/ping', function () {
@@ -50,6 +50,7 @@ Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 // matches
 Route::get('/matches', [MatchController::class, 'index']);
 Route::post('/match', [MatchController::class, 'store']);
+Route::post('/match-result', [MatchController::class, 'storeResult']);
 
 // Admin Tournament
 Route::post('/tournament', [TournamentController::class, 'store']);
@@ -59,3 +60,5 @@ Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::cl
 // Admin Team
 Route::get('/teams', [TeamController::class, 'index']);
 
+// Daftar Agent
+Route::get('/agents', [AgentController::class, 'index']);

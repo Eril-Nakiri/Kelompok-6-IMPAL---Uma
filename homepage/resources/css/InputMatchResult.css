@@ -162,7 +162,7 @@
 
 .form-grid-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
@@ -174,7 +174,8 @@
     margin-bottom: 8px;
 }
 
-.form-group-stats input {
+.form-group-stats input,
+.form-group-stats select {
     width: 100%;
     padding: 12px 14px;
     background-color: #0F172A;
@@ -183,16 +184,108 @@
     color: white;
     font-size: 14px;
     outline: none;
+    box-sizing: border-box;
 }
 
-.form-group-stats input:focus {
+.form-group-stats input:focus,
+.form-group-stats select:focus {
     border-color: #3B82F6;
+}
+
+.player-stats-wrapper {
+    margin-top: 32px;
+    background-color: #1E293B;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    padding: 24px;
+}
+
+.stats-table-container {
+    overflow-x: auto;
+    margin-bottom: 24px;
+}
+
+.player-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.player-stats-table th {
+    padding: 10px;
+    text-align: center;
+    color: #CBD5E1;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-bottom: 2px solid #334155;
+}
+
+.player-stats-table th.left-align,
+.player-stats-table td.left-align {
+    text-align: left;
+}
+
+.player-stats-table td {
+    padding: 8px 4px;
+}
+
+.player-stat-input {
+    width: 100%;
+    padding: 10px;
+    background-color: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #F8FAFC;
+    font-size: 13px;
+    text-align: center;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input.player-stat-input.left-align {
+    text-align: left;
+}
+
+.player-stat-input:focus {
+    border-color: #3B82F6;
+    background-color: #1E293B;
+}
+
+.agent-select {
+    width: 100%;
+    padding: 10px;
+    background-color: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #F8FAFC;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.agent-select:focus {
+    border-color: #3B82F6;
+}
+
+.player-stat-input::-webkit-outer-spin-button,
+.player-stat-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.player-stat-input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .form-actions-area {
     margin-top: 40px;
     display: flex;
     justify-content: flex-end;
+    gap: 12px;
 }
 
 .save-result-btn {

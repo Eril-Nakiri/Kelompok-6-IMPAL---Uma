@@ -13,15 +13,25 @@ export default function InputMatchResult() {
     const [isLoadingMatches, setIsLoadingMatches] = useState(true);
 
     const [activeMap, setActiveMap] = useState('Map 1');
-    const [mapTabs, setMapTabs] = useState(['Map 1', 'Map 2', 'Map 3']); // Default fallback
+    const [mapTabs, setMapTabs] = useState(['Map 1', 'Map 2', 'Map 3']);
+
+    const [maps] = useState([
+        "Ascent", "Bind", "Breeze", "Abyss", "Fracture",
+        "Haven", "Icebox", "Lotus", "Pearl", "Split", "Sunset"
+    ]);
+
+    const [agents, setAgents] = useState([]);
 
     const [gameData, setGameData] = useState({
         scoreA: '',
         scoreB: '',
         mapName: '',
         mvpPlayer: '',
-        mvpAgent: '',
     });
+
+    const emptyPlayer = { playerName: '', agent: '', kills: '', deaths: '', assists: '', acs: '', rating: '', hs: '', fk: '', fd: '' };
+    const [teamAStats, setTeamAStats] = useState(Array.from({ length: 5 }, () => ({ ...emptyPlayer })));
+    const [teamBStats, setTeamBStats] = useState(Array.from({ length: 5 }, () => ({ ...emptyPlayer })));
 
     useEffect(() => {
         if (!tournamentTerpilih) {
@@ -30,30 +40,35 @@ export default function InputMatchResult() {
             return;
         }
 
-        const fetchMatches = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('/api/matches');
-                const data = await response.json();
-                const allMatches = Array.isArray(data) ? data : (data.data || []);
-
-                const filteredMatches = allMatches.filter(m => m.id_tournament === tournamentTerpilih.id_tournament);
+                const resMatches = await fetch('/api/matches');
+                const dataMatches = await resMatches.json();
+                const allMatches = Array.isArray(dataMatches) ? dataMatches : (dataMatches.data || []);
+                const filteredMatches = allMatches.filter(m => m.id_tournament === tournamentTerpilih.id_tournament || m.id_tournament === tournamentTerpilih.id);
                 setExistingMatches(filteredMatches);
+
+                const resAgents = await fetch('/api/agents');
+                const dataAgents = await resAgents.json();
+                setAgents(dataAgents.data || []);
+
             } catch (error) {
-                console.error("Gagal mengambil data pertandingan:", error);
+                console.error("Gagal mengambil data dari server:", error);
             } finally {
                 setIsLoadingMatches(false);
             }
         };
 
-        fetchMatches();
+        fetchData();
     }, [tournamentTerpilih, navigate]);
 
     const handleSelectMatch = (match) => {
         setSelectedMatch(match);
+        const format = match.match_format || 'BO3';
 
         let mapCount = 3;
-        if (match.match_format?.includes('BO1')) mapCount = 1;
-        if (match.match_format?.includes('BO5')) mapCount = 5;
+        if (format.includes('BO1')) mapCount = 1;
+        if (format.includes('BO5')) mapCount = 5;
 
         const generatedTabs = Array.from({ length: mapCount }, (_, i) => `Map ${i + 1}`);
         setMapTabs(generatedTabs);
@@ -65,25 +80,54 @@ export default function InputMatchResult() {
         setGameData({ ...gameData, [name]: value });
     };
 
+    const handleTeamAChange = (index, field, value) => {
+        const newStats = [...teamAStats];
+        newStats[index][field] = value;
+        setTeamAStats(newStats);
+    };
+
+    const handleTeamBChange = (index, field, value) => {
+        const newStats = [...teamBStats];
+        newStats[index][field] = value;
+        setTeamBStats(newStats);
+    };
+
     const handleSubmitResult = async (e) => {
         e.preventDefault();
 
         const payload = {
-            ...gameData,
-            id_match: selectedMatch.id_match,
+            id_match: selectedMatch.id_match || selectedMatch.id,
             match_format: selectedMatch.match_format,
             current_map: activeMap,
             team_a: selectedMatch.nama_tim_a,
-            team_b: selectedMatch.nama_tim_b
+            team_b: selectedMatch.nama_tim_b,
+            game_data: gameData,
+            player_stats: {
+                teamA: teamAStats,
+                teamB: teamBStats
+            }
         };
 
         try {
-            console.log(`Mengirim hasil ${activeMap}:`, payload);
-            alert(`🎉 Skor untuk ${activeMap} (${selectedMatch.nama_tim_a} vs ${selectedMatch.nama_tim_b}) berhasil disimpan!`);
+            const response = await fetch('/api/match-result', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
 
-            setGameData({ scoreA: '', scoreB: '', mapName: '', mvpPlayer: '', mvpAgent: '' });
+            const result = await response.json();
+
+            if (response.ok || result.status === 'success') {
+                alert(`🎉 Skor, MVP, dan Statistik Pemain untuk ${activeMap} berhasil direkam di database!`);
+            } else {
+                alert(`Gagal menyimpan data: ${result.message || 'Kesalahan server'}`);
+            }
         } catch (error) {
-            console.error("Gagal menyimpan hasil match:", error);
+            console.error("Gagal mengirim hasil match ke server:", error);
+            alert("Gagal terhubung ke server backend.");
         }
     };
 
@@ -97,7 +141,7 @@ export default function InputMatchResult() {
             <header className="mr-header">
                 <div className="mr-title-area">
                     <h2>Input Match Result</h2>
-                    <p className="sub-text">Turnamen Aktif: <strong>{tournamentTerpilih?.nama_turnamen || 'Belum Memilih Turnamen'}</strong></p>
+                    <p className="sub-text">Turnamen Aktif: <strong>{tournamentTerpilih?.nama_turnamen || tournamentTerpilih?.name || 'Belum Memilih Turnamen'}</strong></p>
                 </div>
 
                 {selectedMatch && (
@@ -114,7 +158,7 @@ export default function InputMatchResult() {
             {!selectedMatch ? (
                 <div className="mr-form-card" style={{ marginTop: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h3 style={{ margin: 0 }}>Pilih Pertandingan untuk Diinput Hasilnya</h3>
+                        <h3 style={{ margin: 0, color: '#FFF' }}>Pilih Pertandingan untuk Diinput Hasilnya</h3>
                         <button
                             className="save-result-btn"
                             style={{ backgroundColor: '#475569', width: 'auto', padding: '8px 16px' }}
@@ -139,10 +183,10 @@ export default function InputMatchResult() {
                                 </thead>
                                 <tbody>
                                     {existingMatches.map(m => (
-                                        <tr key={m.id_match} style={{ borderBottom: '1px solid #334155', transition: '0.2s' }}>
+                                        <tr key={m.id_match} style={{ borderBottom: '1px solid #334155', transition: '0.2s', color: '#FFF' }}>
                                             <td style={{ padding: '16px 8px' }}>{formatWaktu(m.jadwal)}</td>
                                             <td style={{ padding: '16px 8px', fontWeight: 'bold' }}>
-                                                {m.nama_tim_a || `Tim A`} <span style={{ color: '#475569' }}>vs</span> {m.nama_tim_b || `Tim B`}
+                                                {m.nama_tim_a} <span style={{ color: '#475569' }}>vs</span> {m.nama_tim_b}
                                             </td>
                                             <td style={{ padding: '16px 8px', color: '#10b981' }}>{m.match_format}</td>
                                             <td style={{ padding: '16px 8px', textAlign: 'right' }}>
@@ -159,7 +203,7 @@ export default function InputMatchResult() {
                             </table>
                         </div>
                     ) : (
-                        <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Belum ada pertandingan di turnamen ini. Silakan buat jadwal terlebih dahulu di menu Input Match.</p>
+                        <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Belum ada jadwal pertandingan yang terdaftar di turnamen ini.</p>
                     )}
                 </div>
             ) : (
@@ -218,14 +262,17 @@ export default function InputMatchResult() {
                         <div className="form-grid-stats">
                             <div className="form-group-stats">
                                 <label>Nama Map Game</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="mapName"
                                     value={gameData.mapName}
                                     onChange={handleInputChange}
-                                    placeholder="Contoh: Ascent / Bind / Sunset"
                                     required
-                                />
+                                >
+                                    <option value="" disabled>-- Pilih Map --</option>
+                                    {maps.map(map => (
+                                        <option key={map} value={map}>{map}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="form-group-stats">
@@ -238,20 +285,95 @@ export default function InputMatchResult() {
                                     placeholder="Contoh: f0rsakeN / Chronicle"
                                 />
                             </div>
+                        </div>
 
-                            <div className="form-group-stats">
-                                <label>Karakter / Hero MVP</label>
-                                <input
-                                    type="text"
-                                    name="mvpAgent"
-                                    value={gameData.mvpAgent}
-                                    onChange={handleInputChange}
-                                    placeholder="Contoh: Jett / Neon / Omen"
-                                />
+                        <div className="player-stats-wrapper">
+                            <h3 style={{ color: '#3B82F6', marginBottom: '16px', fontSize: '16px' }}>Statistik Pemain - {selectedMatch.nama_tim_a}</h3>
+                            <div className="stats-table-container">
+                                <table className="player-stats-table">
+                                    <thead>
+                                        <tr>
+                                            <th className="left-align">Pemain</th>
+                                            <th>Agent</th>
+                                            <th>K</th>
+                                            <th>D</th>
+                                            <th>A</th>
+                                            <th>ACS</th>
+                                            <th>Rating</th>
+                                            <th>HS%</th>
+                                            <th>FK</th>
+                                            <th>FD</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {teamAStats.map((player, idx) => (
+                                            <tr key={`teamA-${idx}`}>
+                                                <td className="left-align"><input type="text" className="player-stat-input left-align" value={player.playerName} onChange={e => handleTeamAChange(idx, 'playerName', e.target.value)} placeholder="Nickname" /></td>
+                                                <td>
+                                                    <select className="agent-select" value={player.agent} onChange={e => handleTeamAChange(idx, 'agent', e.target.value)}>
+                                                        <option value="">Pilih...</option>
+                                                        {agents.map(ag => <option key={ag.id_agent} value={ag.id_agent}>{ag.nama_agent}</option>)}
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" className="player-stat-input" value={player.kills} onChange={e => handleTeamAChange(idx, 'kills', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.deaths} onChange={e => handleTeamAChange(idx, 'deaths', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.assists} onChange={e => handleTeamAChange(idx, 'assists', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.acs} onChange={e => handleTeamAChange(idx, 'acs', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" step="0.1" className="player-stat-input" value={player.rating} onChange={e => handleTeamAChange(idx, 'rating', e.target.value)} min="0" placeholder="0.0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.hs} onChange={e => handleTeamAChange(idx, 'hs', e.target.value)} min="0" max="100" placeholder="%" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fk} onChange={e => handleTeamAChange(idx, 'fk', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fd} onChange={e => handleTeamAChange(idx, 'fd', e.target.value)} min="0" placeholder="0" /></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <div className="form-actions-area" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
+                        <div className="player-stats-wrapper">
+                            <h3 style={{ color: '#EF4444', marginBottom: '16px', fontSize: '16px' }}>Statistik Pemain - {selectedMatch.nama_tim_b}</h3>
+                            <div className="stats-table-container" style={{ marginBottom: 0 }}>
+                                <table className="player-stats-table">
+                                    <thead>
+                                        <tr>
+                                            <th className="left-align">Pemain</th>
+                                            <th>Agent</th>
+                                            <th>K</th>
+                                            <th>D</th>
+                                            <th>A</th>
+                                            <th>ACS</th>
+                                            <th>Rating</th>
+                                            <th>HS%</th>
+                                            <th>FK</th>
+                                            <th>FD</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {teamBStats.map((player, idx) => (
+                                            <tr key={`teamB-${idx}`}>
+                                                <td className="left-align"><input type="text" className="player-stat-input left-align" value={player.playerName} onChange={e => handleTeamBChange(idx, 'playerName', e.target.value)} placeholder="Nickname" /></td>
+                                                <td>
+                                                    <select className="agent-select" value={player.agent} onChange={e => handleTeamBChange(idx, 'agent', e.target.value)}>
+                                                        <option value="">Pilih...</option>
+                                                        {agents.map(ag => <option key={ag.id_agent} value={ag.id_agent}>{ag.nama_agent}</option>)}
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" className="player-stat-input" value={player.kills} onChange={e => handleTeamBChange(idx, 'kills', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.deaths} onChange={e => handleTeamBChange(idx, 'deaths', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.assists} onChange={e => handleTeamBChange(idx, 'assists', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.acs} onChange={e => handleTeamBChange(idx, 'acs', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" step="0.1" className="player-stat-input" value={player.rating} onChange={e => handleTeamBChange(idx, 'rating', e.target.value)} min="0" placeholder="0.0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.hs} onChange={e => handleTeamBChange(idx, 'hs', e.target.value)} min="0" max="100" placeholder="%" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fk} onChange={e => handleTeamBChange(idx, 'fk', e.target.value)} min="0" placeholder="0" /></td>
+                                                <td><input type="number" className="player-stat-input" value={player.fd} onChange={e => handleTeamBChange(idx, 'fd', e.target.value)} min="0" placeholder="0" /></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div className="form-actions-area">
                             <button
                                 type="button"
                                 className="save-result-btn"
