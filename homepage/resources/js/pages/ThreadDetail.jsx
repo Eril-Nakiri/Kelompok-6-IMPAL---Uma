@@ -31,9 +31,16 @@ export default function ThreadDetail() {
     const handleReplySubmit = async (e) => {
         e.preventDefault();
 
-        const userStr = localStorage.getItem('user');
-        const userData = userStr ? JSON.parse(userStr) : { id_user: 1 };
-        const finalUserId = parseInt(userData.id_user || userData.id || 1);
+        let finalUserId = 1;
+        try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const userData = JSON.parse(userStr);
+                finalUserId = parseInt(userData.id_user || userData.id || 1);
+            }
+        } catch (error) {
+            console.error("Gagal memproses data user dari LocalStorage:", error);
+        }
 
         try {
             const res = await fetch(`/api/forum/threads/${id}/replies`, {
@@ -59,7 +66,7 @@ export default function ThreadDetail() {
                 alert(`Gagal mengirim balasan:\n${result.message || 'Terjadi kesalahan'}`);
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error Fetch:", error);
             alert("Gagal terhubung ke server backend.");
         }
     };

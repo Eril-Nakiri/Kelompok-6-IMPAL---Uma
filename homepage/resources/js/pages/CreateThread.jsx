@@ -11,9 +11,16 @@ export default function CreateThread() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const userStr = localStorage.getItem('user');
-        const userData = userStr ? JSON.parse(userStr) : { id_user: 1 };
-        const finalUserId = parseInt(userData.id_user || userData.id || 1);
+        let finalUserId = 1;
+        try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const userData = JSON.parse(userStr);
+                finalUserId = parseInt(userData.id_user || userData.id || 1);
+            }
+        } catch (error) {
+            console.error("Gagal memproses data user dari LocalStorage:", error);
+        }
 
         try {
             const res = await fetch('/api/forum/threads', {
@@ -38,7 +45,7 @@ export default function CreateThread() {
                 alert(`Gagal membuat thread:\n${result.message || 'Kesalahan pada server.'}`);
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error Fetch:", error);
             alert("Gagal terhubung ke server backend.");
         }
     };
