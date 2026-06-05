@@ -23,19 +23,17 @@ class ForumController extends Controller
 
     public function storeThread(Request $request)
     {
-        $title = $request->input('title');
-        $content = $request->input('content');
-        $id_user = $request->input('id_user');
-
-        if (empty($id_user)) {
-            $id_user = 1;
-        }
+        $request->validate([
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'id_user' => 'required'
+        ]);
 
         try {
             DB::table('forum_threads')->insert([
-                'title' => $title,
-                'content' => $content,
-                'id_user' => (int) $id_user,
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+                'id_user' => (int) $request->input('id_user'),
                 'created_at' => now()
             ]);
 
@@ -75,19 +73,21 @@ class ForumController extends Controller
     {
         $threadId = $id ?? $request->route('id');
 
-        $title = $request->input('title', 'Re: Thread ' . $threadId);
-        $content = $request->input('content');
-        $id_user = $request->input('id_user');
-
-        if (empty($id_user)) {
-            $id_user = 1;
-        }
+        $request->validate([
+            'content' => 'required|string',
+            'id_user' => 'required'
+        ]);
 
         try {
+            $id_user = $request->input('id_user');
+            if (empty($id_user)) {
+                $id_user = 1;
+            }
+
             DB::table('forum_replies')->insert([
                 'id_thread' => (int) $threadId,
-                'title' => $title,
-                'content' => $content,
+                'title' => $request->input('title', 'Re: Thread ' . $threadId),
+                'content' => $request->input('content'),
                 'id_user' => (int) $id_user,
                 'created_at' => now()
             ]);

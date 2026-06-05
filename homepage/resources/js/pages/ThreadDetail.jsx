@@ -56,7 +56,15 @@ export default function ThreadDetail() {
                 })
             });
 
-            const result = await res.json();
+            const rawText = await res.text();
+            let result;
+
+            try {
+                result = JSON.parse(rawText);
+            } catch (parseError) {
+                alert(`🚨 SERVER ERROR!\nLaravel mengembalikan error berikut:\n\n${rawText.substring(0, 300)}...`);
+                return;
+            }
 
             if (res.ok && result.status === 'success') {
                 alert('✅ Balasan berhasil dikirim!');
