@@ -47,11 +47,6 @@ function App() {
                     } />
 
                 <Route
-                    path="/forum" element={
-                        <ProtectedRoute><ForumPage /></ProtectedRoute>
-                    } />
-
-                <Route
                     path="/matches" element={
                         <ProtectedRoute><MatchesPage /></ProtectedRoute>
                     } />
