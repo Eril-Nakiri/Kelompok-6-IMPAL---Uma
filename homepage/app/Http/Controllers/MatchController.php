@@ -106,6 +106,8 @@ class MatchController extends Controller
         $request->validate([
             'id_match' => 'required|integer',
             'current_map' => 'required|string',
+            'game_data.matchScoreA' => 'required|integer',
+            'game_data.matchScoreB' => 'required|integer',
             'game_data.scoreA' => 'required|integer',
             'game_data.scoreB' => 'required|integer',
             'game_data.mapName' => 'required|string',
@@ -113,6 +115,11 @@ class MatchController extends Controller
 
         try {
             $mapNumber = (int) filter_var($request->current_map, FILTER_SANITIZE_NUMBER_INT);
+
+            GameMatch::where('id_match', $request->id_match)->update([
+                'skor_akhir_a' => $request->game_data['matchScoreA'],
+                'skor_akhir_b' => $request->game_data['matchScoreB'],
+            ]);
 
             DB::table('match_maps')->updateOrInsert(
                 [
@@ -127,7 +134,6 @@ class MatchController extends Controller
             );
 
             $teams = ['teamA', 'teamB'];
-
             $agentsMap = DB::table('agents')->pluck('nama_agent', 'id_agent');
 
             foreach ($teams as $team) {

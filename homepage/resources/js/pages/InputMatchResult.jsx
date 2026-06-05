@@ -26,6 +26,8 @@ export default function InputMatchResult() {
     const [rosterB, setRosterB] = useState([]);
 
     const [gameData, setGameData] = useState({
+        matchScoreA: '', // Tambahan untuk update skor_akhir_a di tabel matches
+        matchScoreB: '', // Tambahan untuk update skor_akhir_b di tabel matches
         scoreA: '',
         scoreB: '',
         mapName: '',
@@ -76,6 +78,16 @@ export default function InputMatchResult() {
         const generatedTabs = Array.from({ length: mapCount }, (_, i) => `Map ${i + 1}`);
         setMapTabs(generatedTabs);
         setActiveMap('Map 1');
+
+        // Mengambil skor yang sudah ada untuk ditampilkan otomatis
+        setGameData({
+            matchScoreA: match.skor_akhir_a || '',
+            matchScoreB: match.skor_akhir_b || '',
+            scoreA: '',
+            scoreB: '',
+            mapName: '',
+            mvpPlayer: '',
+        });
 
         try {
             const resA = await fetch(`/api/teams/${match.id_team_a}/players`);
@@ -136,7 +148,7 @@ export default function InputMatchResult() {
             const result = await response.json();
 
             if (response.ok || result.status === 'success') {
-                alert(`🎉 Skor, MVP, dan Statistik Pemain untuk ${activeMap} berhasil direkam di database!`);
+                alert(`🎉 Skor Series & Hasil Map ${activeMap} berhasil direkam ke database!`);
             } else {
                 alert(`Gagal menyimpan data: ${result.message || 'Kesalahan server'}`);
             }
@@ -242,15 +254,47 @@ export default function InputMatchResult() {
                             <p>Silakan lengkapi perolehan skor akhir dan statistik ronde game di bawah ini untuk <strong>{selectedMatch.match_format}</strong>.</p>
                         </div>
 
+                        {/* INPUT SKOR SERIES (KESELURUHAN) */}
+                        <div className="form-row flex-score-row" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', padding: '16px', borderRadius: '8px', border: '1px dashed #3b82f6', marginBottom: '20px' }}>
+                            <div className="form-group-score">
+                                <label style={{ color: '#93c5fd' }}>Skor Series Keseluruhan {selectedMatch.nama_tim_a}</label>
+                                <input
+                                    type="number"
+                                    name="matchScoreA"
+                                    value={gameData.matchScoreA}
+                                    onChange={handleInputChange}
+                                    placeholder="Contoh: 2"
+                                    min="0"
+                                    required
+                                />
+                            </div>
+
+                            <div className="score-separator" style={{ color: '#93c5fd' }}>VS</div>
+
+                            <div className="form-group-score">
+                                <label style={{ color: '#93c5fd' }}>Skor Series Keseluruhan {selectedMatch.nama_tim_b}</label>
+                                <input
+                                    type="number"
+                                    name="matchScoreB"
+                                    value={gameData.matchScoreB}
+                                    onChange={handleInputChange}
+                                    placeholder="Contoh: 1"
+                                    min="0"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* INPUT SKOR PER MAP */}
                         <div className="form-row flex-score-row">
                             <div className="form-group-score">
-                                <label>Skor Akhir {selectedMatch.nama_tim_a}</label>
+                                <label>Skor Map {selectedMatch.nama_tim_a} ({activeMap})</label>
                                 <input
                                     type="number"
                                     name="scoreA"
                                     value={gameData.scoreA}
                                     onChange={handleInputChange}
-                                    placeholder="0"
+                                    placeholder="Contoh: 13"
                                     min="0"
                                     required
                                 />
@@ -259,13 +303,13 @@ export default function InputMatchResult() {
                             <div className="score-separator">VS</div>
 
                             <div className="form-group-score">
-                                <label>Skor Akhir {selectedMatch.nama_tim_b}</label>
+                                <label>Skor Map {selectedMatch.nama_tim_b} ({activeMap})</label>
                                 <input
                                     type="number"
                                     name="scoreB"
                                     value={gameData.scoreB}
                                     onChange={handleInputChange}
-                                    placeholder="0"
+                                    placeholder="Contoh: 11"
                                     min="0"
                                     required
                                 />
