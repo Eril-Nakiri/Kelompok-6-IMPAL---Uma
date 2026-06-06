@@ -5,14 +5,8 @@ export default function Dashboard() {
     const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");
     const [isApiReady, setIsApiReady] = useState(false);
 
-    const newsList = [
-        { id: 1, title: 'DRX Calls up academy teams player "yong" to main rosters', comments: 23 },
-        { id: 2, title: 'M80 Statement', comments: 12 },
-        { id: 3, title: 'Nongshim Red Force make a legendary history', comments: 40 },
-        { id: 4, title: 'Paper Rex dominates NRG', comments: 21 },
-        { id: 5, title: 'FunPlusPhoenix sign "Sacy" to the squad', comments: 9 },
-        { id: 6, title: 'Tenz retirement', comments: 34 },
-    ];
+    const [featuredNews, setFeaturedNews] = useState(null);
+    const [newsList, setNewsList] = useState([]);
 
     const upcomingMatches = [
         { id: 1, team1: "BLG", team2: "TL", time: "5m", accent: "#a855f7" },
@@ -22,69 +16,107 @@ export default function Dashboard() {
     ];
 
     const liveEvents = [
-        { id: 1, name: "Masters Santiago", date: "10 Mar - 29 Mar", color: "#8b5cf6" },
-        { id: 2, name: "VCL Korea", date: "18 Mar - 27 Mar", color: "#14b8a6" },
+        { id: 1, name: "VCT Pacific Stage 1", date: "April 15 - May 12", color: "#ef4444" },
+        { id: 2, name: "VCT Americas Stage 1", date: "April 16 - May 13", color: "#3b82f6" },
     ];
 
     useEffect(() => {
-    fetch("https://kelompok6uma-impal.up.railway.app/api/status")
-        .then((res) => {
-            if (!res.ok) {
-                throw new Error("Network response was not ok");
+        fetch("/api/dashboard")
+            .then((res) => res.json())
+            .then((data) => {
+                setBackendStatus(`${data.app} v${data.version} - Status: ${data.status}`);
+                setIsApiReady(true);
+            })
+            .catch((err) => {
+                setBackendStatus("Gagal terhubung ke Laravel Backend ❌");
+                console.error(err);
+            });
+
+        const fetchNews = async () => {
+            try {
+                const res = await fetch("/api/news/dashboard");
+                const result = await res.json();
+                if (result.status === "success") {
+                    setFeaturedNews(result.data.featured);
+                    setNewsList(result.data.regular || []);
+                }
+            } catch (error) {
+                console.error("Gagal memuat berita:", error);
             }
-            return res.json();
-        })
-        .then((result) => {
-            setBackendStatus(`Berhasil Terhubung: ${result.app} (v${result.version}) - Status: ${result.status}`);
-            setIsApiReady(true);
-        })
-        .catch((err) => {
-            console.error(err);
-            setBackendStatus("Gagal menyambungkan ke API Laravel Railway.");
-            setIsApiReady(false);
-        });
+        };
+
+        fetchNews();
     }, []);
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-container">
             <Navbar />
 
-            <div className={`api-status-banner ${isApiReady ? "success" : "error"}`}>
-                📡 {backendStatus}
+            <div className={`api-status-banner ${isApiReady ? "ready" : "loading"}`}>
+                <span className="status-dot"></span>
+                <p className="status-text">{backendStatus}</p>
             </div>
 
-            <div className="dashboard-content-wrapper">
+            <div className="main-layout">
+                <div className="center-column">
 
-                <div className="dashboard-main-col">
-                    <div className="dashboard-hero-banner">
-                        <div className="hero-banner-title">
-                            Carlotta Sign With FNATIC
-                        </div>
-                    </div>
-
-                    <div className="news-feed-list">
-                        {newsList.map((news) => (
-                            <div key={news.id} className="news-item">
-                                <span className="news-title">{news.title}</span>
-                                <span className="news-comments">{news.comments}</span>
+                    {featuredNews ? (
+                        <div className="main-news-card">
+                            <div className="main-news-image-wrapper">
+                                <img
+                                    src={featuredNews.thumbnail_url || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600"}
+                                    alt={featuredNews.judul}
+                                    className="main-news-image"
+                                />
+                                <div className="main-news-badge">FEATURED</div>
                             </div>
-                        ))}
+                            <div className="main-news-content">
+                                <h1 className="main-news-title">{featuredNews.judul}</h1>
+                                <p className="main-news-meta">
+                                    By {featuredNews.publisher} • {new Date(featuredNews.tanggal).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="main-news-card" style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>
+                            <p>Belum ada berita utama (featured) yang disetel true.</p>
+                        </div>
+                    )}
+
+                    <div className="news-list-container">
+                        <h2 className="section-title">Latest Updates</h2>
+                        {newsList.length > 0 ? (
+                            newsList.map((news) => (
+                                <div key={news.id_news} className="news-row-item">
+                                    <div className="news-row-left">
+                                        <h3 className="news-row-title">{news.judul}</h3>
+                                        <p className="news-row-meta">
+                                            {news.publisher} • {new Date(news.tanggal).toLocaleDateString('id-ID', { dateStyle: 'short' })}
+                                        </p>
+                                    </div>
+                                    <div className="news-row-right">
+                                        <span className="comment-bubble">💬 12</span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p style={{ color: '#94a3b8', fontStyle: 'italic', padding: '10px' }}>Belum ada berita terbaru.</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="dashboard-sidebar-col">
-
+                <div className="right-column">
                     <div className="sidebar-widget">
-                        <h3 className="sidebar-section-title">Upcoming Match</h3>
+                        <h3 className="sidebar-section-title">Matches</h3>
                         {upcomingMatches.map((match) => (
                             <div
                                 key={match.id}
                                 className="match-card"
-                                style={{"--accent-color": match.accent}}
+                                style={{ "--accent-color": match.accent }}
                             >
                                 <div className="match-teams">
                                     <span>{match.team1}</span>
-                                    <span style={{color: "#cbd5e1", fontSize: "0.85rem"}}>-</span>
+                                    <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
                                     <span>{match.team2}</span>
                                 </div>
                                 {match.time && <div className="match-time">{match.time}</div>}
@@ -98,14 +130,13 @@ export default function Dashboard() {
                             <div
                                 key={event.id}
                                 className="live-event-card"
-                                style={{borderLeftColor: event.color}}
+                                style={{ borderLeftColor: event.color }}
                             >
                                 <div className="event-name">{event.name}</div>
                                 <div className="event-date">{event.date}</div>
                             </div>
                         ))}
                     </div>
-
                 </div>
 
             </div>
