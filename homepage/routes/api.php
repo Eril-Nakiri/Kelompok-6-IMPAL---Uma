@@ -33,6 +33,7 @@ Route::post('/forgot-password-update', [AuthController::class, 'updateForgotPass
 // Search & Stats
 Route::get('/users/search', [UserController::class, 'search']);
 Route::get('/players/{id}', [StatsController::class, 'getPlayerDetail']);
+Route::get('/teams/{id}', [StatsController::class, 'getTeamDetail']);
 Route::get('/search', [StatsController::class, 'globalSearch']);
 Route::get('/stats', [StatsController::class, 'getStats']);
 Route::get('/stats/filters', [StatsController::class, 'getFilters']);
