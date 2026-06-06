@@ -9,24 +9,50 @@ export default function TeamPage() {
     const API_URL = import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
-        fetch(`${API_URL}/api/teams/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.team) {
+        let isMounted = true;
+
+        async function fetchTeam() {
+            try {
+                setLoading(true);
+
+                const response = await fetch(`${API_URL}/api/teams/${id}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Gagal mengambil data team');
+                }
+
+                if (!data || !data.team) {
+                    throw new Error('Format data team tidak sesuai');
+                }
+
+                if (isMounted) {
                     setTeam({
                         name: data.team.nama_tim || "Unknown Team",
                         tag: data.team.singkatan || "",
                         logo: data.team.logo_url || "",
                         players: data.players || []
                     });
+                }
+
+            } catch (err) {
+                console.error("Error fetching team:", err);
+                if (isMounted) {
+                    setTeam(null);
+                }
+            } finally {
+                if (isMounted) {
                     setLoading(false);
                 }
-            })
-            .catch(err => {
-                console.error("Error fetching team:", err);
-                setLoading(false);
-            });
-    }, [id]);
+            }
+        }
+
+        fetchTeam();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [id, API_URL]);
 
     if (loading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Loading Team...</div>;
     if (!team) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Data tidak ditemukan.</div>;
