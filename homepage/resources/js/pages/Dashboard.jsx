@@ -7,7 +7,7 @@ export default function Dashboard() {
     const [isApiReady, setIsApiReady] = useState(false);
 
     const [featuredNews, setFeaturedNews] = useState(null);
-    const [newsList, setNewsList] = useState([]);
+    const [regularNews, setRegularNews] = useState([]);
 
     const upcomingMatches = [
         { id: 1, team1: "BLG", team2: "TL", time: "5m", accent: "#a855f7" },
@@ -25,119 +25,115 @@ export default function Dashboard() {
         fetch("/api/dashboard")
             .then((res) => res.json())
             .then((data) => {
-                setBackendStatus(`${data.app} v${data.version} - Status: ${data.status}`);
+                setBackendStatus(data.status || "Connected");
                 setIsApiReady(true);
             })
-            .catch((err) => {
-                setBackendStatus("Gagal terhubung ke Laravel Backend ❌");
-                console.error(err);
+            .catch(() => {
+                setBackendStatus("Gagal terhubung ke API");
+                setIsApiReady(false);
             });
 
-        const fetchNews = async () => {
-            try {
-                const res = await fetch("/api/news/dashboard");
-                const result = await res.json();
-                if (result.status === "success") {
-                    setFeaturedNews(result.data.featured);
-                    setNewsList(result.data.regular || []);
+        fetch("/api/news")
+            .then((res) => res.json())
+            .then((resData) => {
+                if (resData.status === 'success') {
+                    setFeaturedNews(resData.data.featured);
+                    setRegularNews(resData.data.regular || []);
                 }
-            } catch (error) {
-                console.error("Gagal memuat berita:", error);
-            }
-        };
-
-        fetchNews();
+            })
+            .catch((err) => console.error("Gagal mengambil berita:", err));
     }, []);
 
     return (
-        <div className="dashboard-container">
+        <div className="dashboard-page">
             <Navbar />
 
-            <div className={`api-status-banner ${isApiReady ? "ready" : "loading"}`}>
-                <span className="status-dot"></span>
-                <p className="status-text">{backendStatus}</p>
+            <div className={`api-status-banner ${isApiReady ? 'success' : 'error'}`}>
+                {backendStatus}
             </div>
 
-            <div className="main-layout">
+            <div className="dashboard-content-wrapper">
+
                 <div className="center-column">
+                    <h2 className="main-section-title">Berita Terbaru</h2>
 
                     {featuredNews ? (
-                        <div className="main-news-card">
-                            <div className="main-news-image-wrapper">
+                        <div className="featured-news-card">
+                            {featuredNews.thumbnail && (
                                 <img
-                                    src={featuredNews.thumbnail_url || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600"}
+                                    src={featuredNews.thumbnail}
                                     alt={featuredNews.judul}
-                                    className="main-news-image"
+                                    className="featured-thumbnail"
                                 />
-                                <div className="main-news-badge">FEATURED</div>
-                            </div>
-                            <div className="main-news-content">
-                                <h1 className="main-news-title">{featuredNews.judul}</h1>
-                                <p className="main-news-meta">
-                                    By {featuredNews.publisher} • {new Date(featuredNews.tanggal).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
-                                </p>
+                            )}
+                            <div className="featured-content">
+                                <span className="news-date">
+                                    {new Date(featuredNews.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </span>
+                                <h3 className="featured-title">{featuredNews.judul}</h3>
+                                <p className="featured-snippet">{featuredNews.isi_berita}</p>
                             </div>
                         </div>
                     ) : (
-                        <div className="main-news-card" style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>
-                            <p>Belum ada berita utama (featured) yang disetel true.</p>
-                        </div>
+                        <div className="no-news-info">Tidak ada berita utama saat ini.</div>
                     )}
 
-                    <div className="news-list-container">
-                        <h2 className="section-title">Latest Updates</h2>
-                        {newsList.length > 0 ? (
-                            newsList.map((news) => (
-                                <div key={news.id_news} className="news-row-item">
-                                    <div className="news-row-left">
-                                        <h3 className="news-row-title">{news.judul}</h3>
-                                        <p className="news-row-meta">
-                                            {news.publisher} • {new Date(news.tanggal).toLocaleDateString('id-ID', { dateStyle: 'short' })}
-                                        </p>
+                    <div className="regular-news-section">
+                        <h3 className="sub-section-title">Berita Lainnya</h3>
+                        <div className="regular-news-list">
+                            {regularNews.length > 0 ? (
+                                regularNews.map((news) => (
+                                    <div key={news.id} className="regular-news-item">
+                                        <span className="news-date">
+                                            {new Date(news.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                        </span>
+                                        <h4 className="regular-news-title">{news.judul}</h4>
                                     </div>
-                                    <div className="news-row-right">
-                                        <span className="comment-bubble">💬 12</span>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p style={{ color: '#94a3b8', fontStyle: 'italic', padding: '10px' }}>Belum ada berita terbaru.</p>
-                        )}
+                                ))
+                            ) : (
+                                <div className="no-news-info">Tidak ada berita reguler saat ini.</div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                <div className="right-column">
+                <div className="sidebar-column">
                     <div className="sidebar-widget">
-                        <h3 className="sidebar-section-title">Matches</h3>
-                        {upcomingMatches.map((match) => (
-                            <div
-                                key={match.id}
-                                className="match-card"
-                                style={{ "--accent-color": match.accent }}
-                            >
-                                <div className="match-teams">
-                                    <span>{match.team1}</span>
-                                    <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
-                                    <span>{match.team2}</span>
+                        <h3 className="sidebar-section-title">Upcoming Matches</h3>
+                        <div className="matches-container">
+                            {upcomingMatches.map((match) => (
+                                <div
+                                    key={match.id}
+                                    className="match-card"
+                                    style={{ "--accent-color": match.accent }}
+                                >
+                                    <div className="match-teams">
+                                        <span>{match.team1}</span>
+                                        <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
+                                        <span>{match.team2}</span>
+                                    </div>
+                                    {match.time && <div className="match-time">{match.time}</div>}
                                 </div>
-                                {match.time && <div className="match-time">{match.time}</div>}
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Live Event</h3>
-                        {liveEvents.map((event) => (
-                            <div
-                                key={event.id}
-                                className="live-event-card"
-                                style={{ borderLeftColor: event.color }}
-                            >
-                                <div className="event-name">{event.name}</div>
-                                <div className="event-date">{event.date}</div>
-                            </div>
-                        ))}
+                        <div className="events-container">
+                            {liveEvents.map((event) => (
+                                <div
+                                    key={event.id}
+                                    className="live-event-card"
+                                    style={{ borderLeft: `4px solid ${event.color}` }}
+                                >
+                                    <div className="event-name">{event.name}</div>
+                                    <div className="event-date">{event.date}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+
                 </div>
 
             </div>
