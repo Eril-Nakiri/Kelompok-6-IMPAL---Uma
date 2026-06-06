@@ -59,19 +59,26 @@ export default function Dashboard() {
 
                     {featuredNews ? (
                         <div className="featured-news-card">
-                            {featuredNews.thumbnail && (
-                                <img
-                                    src={featuredNews.thumbnail}
-                                    alt={featuredNews.judul}
-                                    className="featured-thumbnail"
-                                />
+                            {featuredNews.thumbnail_url && (
+                                <div className="featured-thumbnail-container">
+                                    <img
+                                        src={
+                                            featuredNews.thumbnail_url.startsWith('http')
+                                                ? featuredNews.thumbnail_url
+                                                : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${featuredNews.thumbnail_url}`
+                                        }
+                                        alt={featuredNews.judul}
+                                        className="featured-thumbnail-img"
+                                    />
+                                </div>
                             )}
-                            <div className="featured-content">
-                                <span className="news-date">
-                                    {new Date(featuredNews.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                </span>
-                                <h3 className="featured-title">{featuredNews.judul}</h3>
-                                <p className="featured-snippet">{featuredNews.isi_berita}</p>
+
+                            <div className="featured-news-details">
+                                <span className="featured-badge">🔥 BERITA UTAMA</span>
+                                <h1 className="featured-news-title">{featuredNews.judul}</h1>
+                                <div className="featured-news-meta">
+                                    By {featuredNews.publisher || 'Admin'} • {new Date(featuredNews.tanggal_post || featuredNews.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </div>
                             </div>
                         </div>
                     ) : (
@@ -83,9 +90,9 @@ export default function Dashboard() {
                         <div className="regular-news-list">
                             {regularNews.length > 0 ? (
                                 regularNews.map((news) => (
-                                    <div key={news.id} className="regular-news-item">
+                                    <div key={news.id_news || news.id} className="regular-news-item">
                                         <span className="news-date">
-                                            {new Date(news.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                            {new Date(news.tanggal_post || news.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                         </span>
                                         <h4 className="regular-news-title">{news.judul}</h4>
                                     </div>
