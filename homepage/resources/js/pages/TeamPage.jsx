@@ -28,9 +28,9 @@ export default function TeamPage() {
 
                 if (isMounted) {
                     setTeam({
-                        name: data.team.nama_tim || "Unknown Team",
-                        tag: data.team.singkatan || "",
-                        logo: data.team.logo_url || "",
+                        name: data.team.nama_tim,
+                        tag: data.team.singkatan,
+                        logo: data.team.logo_url,
                         players: data.players || []
                     });
                 }
@@ -88,7 +88,7 @@ export default function TeamPage() {
                                         {p.flag_url && (
                                             <img
                                                 src={p.flag_url}
-                                                alt={`Flag ${p.nama_negara || p.nama}`}
+                                                alt={p.nama_negara || p.nama}
                                                 className="player-flag"
                                             />
                                         )}
