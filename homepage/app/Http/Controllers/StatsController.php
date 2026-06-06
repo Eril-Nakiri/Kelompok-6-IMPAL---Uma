@@ -98,11 +98,15 @@ class StatsController extends Controller
             ->get();
 
         $teams = DB::table('teams')
-            ->where('nama_tim', 'ILIKE', '%' . $keyword . '%')
+            ->where(function ($query) use ($keyword) {
+                $query->where('nama_tim', 'ILIKE', '%' . $keyword . '%')
+                    ->orWhere('singkatan', 'ILIKE', '%' . $keyword . '%');
+            })
             ->select(
                 'id_team as id',
                 'nama_tim as name',
                 'logo_url as image',
+                'singkatan',
                 DB::raw("'team' as type")
             )
             ->limit(5)
@@ -128,18 +132,41 @@ class StatsController extends Controller
         ]);
     }
 
-    public function getTeamDetail(int $id) {
-        $team = DB::table('teams')
-            ->where('id_team', $id)
-            ->first();
+    public function getTeamDetail(int $id)
+    {
+        try {
+            $team = DB::table('teams')
+                ->select('id_team', 'nama_tim', 'logo_url', 'singkatan')
+                ->where('id_team', $id)
+                ->first();
 
-        $players = DB::table('players')
-            ->where('id_teams', $id)
-            ->get();
+            if (!$team) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team tidak ditemukan'
+                ], 404);
+            }
 
-        return response()->json([
-            'team' => $team,
-            'players' => $players
-        ]);
+            $players = DB::table('players')
+                ->leftJoin('countries', 'players.country', '=', 'countries.nama_negara')
+                ->where('players.id_teams', $id)
+                ->select(
+                    'players.*',
+                    'countries.flag_url as flag_url'
+                )
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'team' => $team,
+                'players' => $players
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail team: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -86,7 +86,7 @@ export default function TeamPage() {
                                         {p.flag_url && (
                                             <img
                                                 src={p.flag_url}
-                                                alt={p.nama_negara || p.nama}
+                                                alt={p.country || p.nama}
                                                 className="player-flag"
                                                 style={{
                                                     width: '22px',
