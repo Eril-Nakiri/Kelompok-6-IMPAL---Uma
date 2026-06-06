@@ -61,4 +61,4 @@ Route::get('/forum/threads/{id}', [ForumController::class, 'getThreadDetail']);
 Route::post('/forum/threads/{id}/replies', [ForumController::class, 'storeReply']);
 
 // News
-Route::get('/news/dashboard', [NewsController::class, 'getDashboardNews']);
+Route::get('/news', [NewsController::class, 'getDashboardNews']);
