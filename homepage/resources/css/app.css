@@ -761,18 +761,3 @@
     font-weight: bold;
     color: #ffffff;
 }
-
-/*Teams detail*/
-.player-name-with-flag {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.player-flag {
-    width: 22px;
-    height: 15px;
-    object-fit: cover;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
