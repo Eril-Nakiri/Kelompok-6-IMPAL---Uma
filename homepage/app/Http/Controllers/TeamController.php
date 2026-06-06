@@ -41,4 +41,27 @@ class TeamController extends Controller
             ], 500);
         }
     }
+
+    public function getTeamDetail(int $id)
+    {
+        $team = DB::table('teams')
+            ->select('id_team', 'nama_tim', 'logo_url', 'singkatan')
+            ->where('id_team', $id)
+            ->first();
+
+        $players = DB::table('players')
+            ->leftJoin('countries', 'players.nama_negara', '=', 'countries.nama_negara')
+            ->where('players.id_teams', $id)
+            ->select(
+                'players.*',
+                'countries.flag_url as flag_url'
+            )
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'team' => $team,
+            'players' => $players
+        ]);
+    }
 }

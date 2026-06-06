@@ -9,9 +9,25 @@ export default function TeamPage() {
     const API_URL = import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app";
 
     useEffect(() => {
-        fetch(`${API_URL}/api/teams/${id}`)
-            .then(res => res.json())
-            .then(data => {
+        async function fetchTeam() {
+            try {
+                setLoading(true);
+
+                const res = await fetch(`${API_URL}/api/teams/${id}`);
+                const text = await res.text();
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    console.error("Response bukan JSON:", text);
+                    throw new Error("Server mengirim HTML/error page, bukan JSON.");
+                }
+
+                if (!res.ok) {
+                    throw new Error(data.message || "Gagal mengambil detail team.");
+                }
+
                 if (data && data.team) {
                     setTeam({
                         name: data.team.nama_tim || "Unknown Team",
@@ -19,14 +35,19 @@ export default function TeamPage() {
                         logo: data.team.logo_url || "",
                         players: data.players || []
                     });
-                    setLoading(false);
+                } else {
+                    setTeam(null);
                 }
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error("Error fetching team:", err);
+                setTeam(null);
+            } finally {
                 setLoading(false);
-            });
-    }, [id]);
+            }
+        }
+
+        fetchTeam();
+    }, [id, API_URL]);
 
     if (loading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Loading Team...</div>;
     if (!team) return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>Data tidak ditemukan.</div>;
@@ -51,15 +72,32 @@ export default function TeamPage() {
                     <h3 className="roster-category">PLAYERS</h3>
                     <div className="roster-grid">
                         {team.players.map((p, idx) => (
-                            <div className="roster-item" key={idx}>
+                            <div className="roster-item" key={p.id_player || idx}>
                                 <img
                                     src={p.photo_url || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
                                     alt={p.nama}
                                     className="roster-photo"
                                 />
                                 <div className="roster-info">
-                                    <div className="roster-ingame-name">
-                                        {p.nama}
+                                    <div
+                                        className="roster-ingame-name player-name-with-flag"
+                                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                                    >
+                                        {p.flag_url && (
+                                            <img
+                                                src={p.flag_url}
+                                                alt={p.nama_negara || p.nama}
+                                                className="player-flag"
+                                                style={{
+                                                    width: '22px',
+                                                    height: '15px',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '2px',
+                                                    flexShrink: 0
+                                                }}
+                                            />
+                                        )}
+                                        <span>{p.nama}</span>
                                     </div>
                                     <div className="roster-role-tag">{p.role}</div>
                                 </div>
