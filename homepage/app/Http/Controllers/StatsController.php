@@ -117,19 +117,95 @@ class StatsController extends Controller
         return response()->json($results);
     }
 
-    public function getPlayerDetail(int $id) {
-        $player = DB::table('players')
-            ->where('id_player', $id)
-            ->first();
+    public function getPlayerDetail(int $id)
+    {
+        try {
+            $player = DB::table('players')
+                ->leftJoin('countries', 'players.country', '=', 'countries.nama_negara')
+                ->leftJoin('teams', 'players.id_teams', '=', 'teams.id_team')
+                ->where('players.id_player', $id)
+                ->select(
+                    'players.id_player',
+                    'players.id_teams',
+                    'players.nama',
+                    'players.country',
+                    'players.role',
+                    'players.photo_url',
+                    'countries.flag_url as flag_url',
+                    'teams.logo_url as team_logo'
+                )
+                ->first();
 
-        $stats = DB::table('player_map_stats')
-            ->where('id_player', $id)
-            ->get();
+            if (!$player) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Player tidak ditemukan'
+                ], 404);
+            }
 
-        return response()->json([
-            'player' => $player,
-            'stats' => $stats
-        ]);
+            $rawStats = DB::table('player_map_stats')
+                ->leftJoin('agents', function ($join) {
+                    $join->on('player_map_stats.id_agent', '=', 'agents.id_agent')
+                        ->orOn('player_map_stats.agent_used', '=', 'agents.nama_agent');
+                })
+                ->where('player_map_stats.id_player', $id)
+                ->select(
+                    'player_map_stats.*',
+                    'agents.nama_agent as agent_name',
+                    'agents.icon_url as icon_url'
+                )
+                ->get();
+
+            $totalMaps = max($rawStats->count(), 1);
+
+            $stats = $rawStats
+                ->groupBy(function ($row) {
+                    return $row->id_agent ?: ($row->agent_used ?: 'unknown');
+                })
+                ->map(function ($rows) use ($totalMaps) {
+                    $first = $rows->first();
+                    $mapsUsed = $rows->count();
+
+                    $kills = (int) $rows->sum('kills');
+                    $deaths = (int) $rows->sum('deaths');
+                    $assists = (int) $rows->sum('assists');
+                    $firstKills = (int) $rows->sum('first_kills');
+                    $firstDeaths = (int) $rows->sum('first_deaths');
+
+                    return [
+                        'name' => $first->agent_name ?: $first->agent_used,
+                        'img' => $first->icon_url,
+
+                        'use' => '(' . $mapsUsed . ') ' . round(($mapsUsed / $totalMaps) * 100) . '%',
+
+                        'rtg' => round((float) $rows->avg('rating'), 2),
+                        'acs' => round((float) $rows->avg('acs'), 1),
+
+                        'kd' => $deaths > 0 ? round($kills / $deaths, 2) : $kills,
+
+                        'hs' => round((float) $rows->avg('hs_percentage'), 1) . '%',
+
+                        'k' => $kills,
+                        'd' => $deaths,
+                        'a' => $assists,
+                        'fk' => $firstKills,
+                        'fd' => $firstDeaths,
+                    ];
+                })
+                ->values();
+
+            return response()->json([
+                'status' => 'success',
+                'player' => $player,
+                'stats' => $stats
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail player: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getTeamDetail(int $id)

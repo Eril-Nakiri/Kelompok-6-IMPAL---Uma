@@ -14,8 +14,11 @@ export default function PlayerPage() {
                 setPlayer({
                     name: data.player.nama,
                     country: data.player.country,
+                    flag: data.player.flag_url,
                     photo: data.player.photo_url,
-                    agents: data.stats
+                    team_logo: data.player.team_logo,
+                    role: data.player.role,
+                    agents: data.stats || []
                 });
             })
             .catch(err => console.error("Error fetching player:", err));
@@ -36,7 +39,25 @@ export default function PlayerPage() {
                         <h1>{player.name}</h1>
                         <span className="player-real-name">{player.realName}</span>
                         <div className="player-country">
-                            <span className="roster-flag">🇮🇩</span> {player.country}
+                            <div
+                                className="player-country"
+                                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                            >
+                                {player.flag && (
+                                    <img
+                                        src={player.flag}
+                                        alt={player.country}
+                                        className="player-country-flag"
+                                        style={{
+                                            width: '30px',
+                                            height: '20px',
+                                            objectFit: 'cover',
+                                            flexShrink: 0
+                                        }}
+                                    />
+                                )}
+                                <span>{player.country}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -49,16 +70,10 @@ export default function PlayerPage() {
                             <tr>
                                 <th></th>
                                 <th>USE</th>
-                                <th>RND</th>
                                 <th>RATING</th>
                                 <th>ACS</th>
                                 <th>K:D</th>
-                                <th>ADR</th>
-                                <th>KAST</th>
-                                <th>KPR</th>
-                                <th>APR</th>
-                                <th>FKPR</th>
-                                <th>FDPR</th>
+                                <th>HS%</th>
                                 <th>K</th>
                                 <th>D</th>
                                 <th>A</th>
@@ -73,16 +88,10 @@ export default function PlayerPage() {
                                         <img src={ag.img} alt={ag.name} className="table-agent-icon" />
                                     </td>
                                     <td>{ag.use}</td>
-                                    <td>{ag.rnd}</td>
-                                    <td className="highlight-stat">{ag.rtg}</td>
+                                    <td>{ag.rtg}</td>
                                     <td>{ag.acs}</td>
                                     <td>{ag.kd}</td>
-                                    <td>{ag.adr}</td>
-                                    <td>{ag.kast}</td>
-                                    <td>{ag.kpr}</td>
-                                    <td>{ag.apr}</td>
-                                    <td>{ag.fkpr}</td>
-                                    <td>{ag.fdpr}</td>
+                                    <td>{ag.hs}</td>
                                     <td>{ag.k}</td>
                                     <td>{ag.d}</td>
                                     <td>{ag.a}</td>
