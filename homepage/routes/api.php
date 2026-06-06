@@ -62,3 +62,8 @@ Route::post('/forum/threads/{id}/replies', [ForumController::class, 'storeReply'
 
 // News
 Route::get('/news', [NewsController::class, 'getDashboardNews']);
+
+//Teams Detail
+Route::get('/teams', [TeamController::class, 'index']);
+Route::get('/teams/{id}', [TeamController::class, 'show']);
+Route::get('/teams/{id}/players', [TeamController::class, 'getPlayers']);

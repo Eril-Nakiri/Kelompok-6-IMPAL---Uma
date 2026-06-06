@@ -58,9 +58,17 @@ export default function TeamPage() {
                                     className="roster-photo"
                                 />
                                 <div className="roster-info">
-                                    <div className="roster-ingame-name">
-                                        {p.nama}
+                                    <div className="roster-ingame-name player-name-with-flag">
+                                        {p.flag_url && (
+                                            <img
+                                                src={p.flag_url}
+                                                alt={`Flag ${p.nama_negara || p.nama}`}
+                                                className="player-flag"
+                                            />
+                                        )}
+                                        <span>{p.nama}</span>
                                     </div>
+
                                     <div className="roster-role-tag">{p.role}</div>
                                 </div>
                             </div>

@@ -28,16 +28,61 @@ class TeamController extends Controller
     public function getPlayers(int $id)
     {
         try {
-            $players = DB::table('players')->where('id_teams', $id)->get();
+            $players = DB::table('players')
+                ->leftJoin('countries', 'players.nama_negara', '=', 'countries.nama_negara')
+                ->where('players.id_teams', $id)
+                ->select(
+                    'players.*',
+                    'countries.flag_url as flag_url'
+                )
+                ->get();
 
             return response()->json([
                 'status' => 'success',
                 'data' => $players
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data pemain: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show(int $id)
+    {
+        try {
+            $team = DB::table('teams')
+                ->where('id', $id)
+                ->first();
+
+            if (!$team) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tim tidak ditemukan'
+                ], 404);
+            }
+
+            $players = DB::table('players')
+                ->leftJoin('countries', 'players.nama_negara', '=', 'countries.nama_negara')
+                ->where('players.id_teams', $id)
+                ->select(
+                    'players.*',
+                    'countries.flag_url as flag_url'
+                )
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'team' => $team,
+                'players' => $players
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail tim: ' . $e->getMessage()
             ], 500);
         }
     }
