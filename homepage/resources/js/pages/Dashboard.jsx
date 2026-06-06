@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import "../../css/Dashboard.css";
+import '../../css/Dashboard.css';
 
 export default function Dashboard() {
     const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");

@@ -1,27 +1,11 @@
+/* resources/css/Dashboard.css */
+
 .dashboard-page {
     background-color: #1e1e2f;
     min-height: 100vh;
     padding-top: 80px;
     font-family: 'Segoe UI', Roboto, sans-serif;
     color: #ffffff;
-}
-
-.api-status-banner {
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-.api-status-banner.success {
-    background-color: #064e3b;
-    color: #34d399;
-    border-bottom: 1px solid #047857;
-}
-.api-status-banner.error {
-    background-color: #7f1d1d;
-    color: #fca5a5;
-    border-bottom: 1px solid #b91c1c;
 }
 
 .dashboard-content-wrapper {
@@ -39,6 +23,13 @@
     gap: 20px;
 }
 
+.dashboard-sidebar-col {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .dashboard-hero-banner {
     position: relative;
     width: 100%;
@@ -49,17 +40,27 @@
     background-size: cover;
     background-repeat: no-repeat;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: flex-end;
 }
 
 .hero-banner-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
     padding: 20px;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
     font-size: 1.5rem;
     font-weight: 700;
     text-transform: uppercase;
+    color: white;
+}
+
+.hero-meta {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-top: 5px;
+    text-transform: none;
+    font-weight: 400;
 }
 
 .hero-badge {
@@ -73,22 +74,6 @@
     font-weight: bold;
     font-size: 0.8rem;
     letter-spacing: 1px;
-}
-
-.hero-meta {
-    font-size: 0.85rem;
-    color: #cbd5e1;
-    margin-top: 5px;
-    text-transform: none;
-    font-weight: 400;
-}
-
-.dashboard-section-title {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #fff;
-    text-transform: uppercase;
 }
 
 .news-feed-list {
@@ -108,6 +93,7 @@
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid #3a3a5a;
 }
+
 .news-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -119,22 +105,17 @@
     font-weight: 600;
     color: #e2e8f0;
 }
+
 .news-meta {
     font-size: 0.75rem;
     color: #94a3b8;
     margin-top: 5px;
 }
+
 .news-comments {
     font-size: 0.85rem;
     color: #94a3b8;
     font-weight: bold;
-}
-
-.dashboard-sidebar-col {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
 }
 
 .sidebar-section-title {
@@ -176,6 +157,7 @@
     gap: 15px;
     font-size: 1.1rem;
 }
+
 .match-time {
     font-size: 0.75rem;
     color: #64748b;
@@ -193,6 +175,7 @@
     cursor: pointer;
     transition: 0.2s;
 }
+
 .live-event-card:hover {
     filter: brightness(0.95);
 }
@@ -202,13 +185,13 @@
     font-weight: 800;
     margin-bottom: 3px;
 }
+
 .event-date {
     font-size: 0.75rem;
     color: #475569;
     font-weight: 600;
 }
 
-/* Responsif HP */
 @media (max-width: 900px) {
     .dashboard-content-wrapper {
         flex-direction: column;
