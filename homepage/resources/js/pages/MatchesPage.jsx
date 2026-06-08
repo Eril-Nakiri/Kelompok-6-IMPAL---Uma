@@ -1,172 +1,126 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../../css/MatchesPage.css';
 
 export default function MatchesPage() {
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('UPCOMING'); // UPCOMING atau RESULTS
     const [matches, setMatches] = useState([]);
-    const [activeTab, setActiveTab] = useState('upcoming');
-    const [loading, setLoading] = useState(true);
+    const [teamsMap, setTeamsMap] = useState({});
+    const [tournamentsMap, setTournamentsMap] = useState({});
 
-    const API_URL = "https://kelompok6uma-impal.up.railway.app";
-
-    useEffect(() => {
-        const fetchMatches = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`${API_URL}/api/matches`);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                setMatches(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error("Gagal mengambil data:", error);
-                setMatches([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchMatches();
-    }, []);
-
-    const filteredMatches = matches.filter(match => {
-        const now = new Date();
-        const oneMonthLater = new Date();
-        oneMonthLater.setMonth(now.getMonth() + 1);
-
-        const matchDate = new Date(match.jadwal);
-
-        if (activeTab === 'upcoming') {
-            return matchDate >= now && matchDate <= oneMonthLater &&
-                (match.skor_akhir_a === null || match.skor_akhir_a === undefined || (match.skor_akhir_a === 0 && match.skor_akhir_b === 0));
-        } else {
-            return matchDate < now ||
-                (match.skor_akhir_a > 0 || match.skor_akhir_b > 0);
-        }
-    });
-
-    const groupedMatches = filteredMatches.reduce((acc, match) => {
-        const id_tournament = match.id_tournament || 'unknown';
-        if (!acc[id_tournament]) {
-            acc[id_tournament] = {
-                id_tournament,
-                nama_turnamen: match.nama_turnamen || "Turnamen Tanpa Nama",
-                penyelenggara: match.penyelenggara || "Penyelenggara",
-                matches: []
-            };
-        }
-        acc[id_tournament].matches.push(match);
-        return acc;
-    }, {});
-
-    const formatTime = (datetimeStr) => {
-        const date = new Date(datetimeStr);
-        if (isNaN(date.getTime())) return "-";
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const resolveMediaUrl = (url) => {
+        if (!url) return "https://via.placeholder.com/32";
+        if (url.startsWith('http')) return url;
+        return `${import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app"}/${url}`;
     };
 
+    useEffect(() => {
+        fetch("/api/teams")
+            .then((res) => res.json())
+            .then((resData) => {
+                const arr = Array.isArray(resData) ? resData : (resData.data || []);
+                const map = {};
+                arr.forEach(t => { map[t.id_team] = t; });
+                setTeamsMap(map);
+            }).catch(err => console.error(err));
+
+        fetch("/api/tournament")
+            .then((res) => res.json())
+            .then((resData) => {
+                const arr = Array.isArray(resData) ? resData : (resData.data || []);
+                const map = {};
+                arr.forEach(t => { map[t.id_tournament] = t; });
+                setTournamentsMap(map);
+            }).catch(err => console.error(err));
+
+        fetch("/api/matches")
+            .then((res) => res.json())
+            .then((resData) => {
+                setMatches(Array.isArray(resData) ? resData : (resData.data || []));
+            }).catch(err => console.error(err));
+    }, []);
+
+    const now = new Date();
+
+    const filteredMatches = matches.filter(match => {
+        if (!match.jadwal) return activeTab === 'UPCOMING';
+        const isPast = new Date(match.jadwal) < now;
+        return activeTab === 'UPCOMING' ? !isPast : isPast;
+    });
+
     return (
-        <div className="matches-page-container">
+        <div style={{ backgroundColor: '#1e1e2f', minHeight: '100vh', color: 'white', fontFamily: 'Segoe UI, sans-serif' }}>
             <Navbar />
 
-            <div className="matches-content">
-                <div className="matches-header">
+            <div style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '100px', paddingBottom: '50px' }}>
+
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', borderBottom: '1px solid #3a3a5a', paddingBottom: '12px' }}>
                     <button
-                        className={`tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('upcoming')}
+                        onClick={() => setActiveTab('UPCOMING')}
+                        style={{ background: activeTab === 'UPCOMING' ? '#ff4654' : 'transparent', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     >
-                        Upcoming
+                        Upcoming Matches
                     </button>
                     <button
-                        className={`tab-btn ${activeTab === 'results' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('results')}
+                        onClick={() => setActiveTab('RESULTS')}
+                        style={{ background: activeTab === 'RESULTS' ? '#10b981' : 'transparent', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     >
-                        Results
+                        Match Results
                     </button>
                 </div>
 
-                {loading ? (
-                    <p style={{ textAlign: 'center' }}>Memuat pertandingan...</p>
-                ) : Object.keys(groupedMatches).length > 0 ? (
-                    Object.values(groupedMatches).map(tournament => (
-                        <div key={tournament.id_tournament} className="tournament-group">
-                            <div className="tournament-header">
-                                <h3 className="tournament-name">{tournament.nama_turnamen}</h3>
-                                <span className="tournament-organizer">| {tournament.penyelenggara}</span>
-                            </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {filteredMatches.length > 0 ? (
+                        filteredMatches.map((match) => {
+                            const teamA = teamsMap[match.id_team_a];
+                            const teamB = teamsMap[match.id_team_b];
+                            const tournament = tournamentsMap[match.id_tournament];
 
-                            {tournament.matches.map(match => (
-                                <div key={match.id_match} className="match-card-wrapper" style={{ marginBottom: '15px' }}>
-                                    <div className="match-row">
-                                        <div className="match-time">{formatTime(match.jadwal)}</div>
-                                        <div className="match-teams-container">
-
-                                            <div className="team left">
-                                                {match.logo_url_a && (
-                                                    <img
-                                                        src={match.logo_url_a}
-                                                        alt={match.nama_tim_a}
-                                                        className="team-logo"
-                                                        style={{ width: '30px', height: '30px', marginRight: '10px', objectFit: 'contain' }}
-                                                    />
-                                                )}
-                                                <span className="team-name">
-                                                    {match.nama_tim_a
-                                                        ? `${match.nama_tim_a} ${match.singkatan_a ? `(${match.singkatan_a})` : ''}`
-                                                        : `Team ${match.id_team_a}`
-                                                    }
-                                                </span>
-                                            </div>
-
-                                            <div className="match-center">
-                                                {activeTab === 'upcoming' ? (
-                                                    <span className="match-vs">vs</span>
-                                                ) : (
-                                                    <span className="match-score">
-                                                        {match.skor_akhir_a ?? 0} : {match.skor_akhir_b ?? 0}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="team right">
-                                                <span className="team-name">
-                                                    {match.nama_tim_b
-                                                        ? `${match.nama_tim_b} ${match.singkatan_b ? `(${match.singkatan_b})` : ''}`
-                                                        : `Team ${match.id_team_b}`
-                                                    }
-                                                </span>
-                                                {match.logo_url_b && (
-                                                    <img
-                                                        src={match.logo_url_b}
-                                                        alt={match.nama_tim_b}
-                                                        className="team-logo"
-                                                        style={{ width: '30px', height: '30px', marginLeft: '10px', objectFit: 'contain' }}
-                                                    />
-                                                )}
-                                            </div>
-
+                            return (
+                                <div
+                                    key={match.id_match}
+                                    onClick={() => navigate(`/matches/${match.id_match}`)}
+                                    style={{ background: 'linear-gradient(135deg, #2b2b40, #1c1c2e)', padding: '20px', borderRadius: '12px', border: '1px solid #3a3a5a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: '0.2s' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff4654'}
+                                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#3a3a5a'}
+                                >
+                                    <div>
+                                        <div style={{ fontSize: '12px', color: '#10b981', fontWeight: 'bold', marginBottom: '6px' }}>
+                                            🏆 {tournament?.nama_turnamen || "Tournament VCT"}
                                         </div>
-                                        <div className="match-format">{match.match_format || "-"}</div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <img src={resolveMediaUrl(teamA?.logo_url)} alt="A" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                                                <span style={{ fontWeight: 'bold' }}>{teamA?.nama_tim || "TBD"}</span>
+                                            </div>
+                                            <span style={{ color: '#ff4654', fontWeight: '900' }}>
+                                                {activeTab === 'RESULTS' ? `${match.skor_akhir_a} - ${match.skor_akhir_b}` : 'VS'}
+                                            </span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <img src={resolveMediaUrl(teamB?.logo_url)} alt="B" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                                                <span style={{ fontWeight: 'bold' }}>{teamB?.nama_tim || "TBD"}</span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {activeTab === 'results' && match.maps && match.maps.length > 0 && (
-                                        <div className="match-maps-box" style={{ background: '#1e1e24', padding: '5px 15px', borderRadius: '0 0 8px 8px', fontSize: '12px', color: '#bbb', display: 'flex', gap: '15px', justifyContent: 'center', borderTop: '1px solid #2d2d35' }}>
-                                            {match.maps.map((map) => (
-                                                <span key={map.id_match_map}>
-                                                    Map {map.map_number} ({map.map_name}): <strong>{map.team_a_score}-{map.team_b_score}</strong>
-                                                </span>
-                                            ))}
+                                    <div style={{ textAlign: 'right', fontSize: '13px', color: '#94a3b8' }}>
+                                        <div>{match.match_format || 'BO3'} Series</div>
+                                        <div style={{ marginTop: '4px', color: 'white', fontWeight: '600' }}>
+                                            🕒 {new Date(match.jadwal).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })} WIB
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
-                            ))}
+                            );
+                        })
+                    ) : (
+                        <div style={{ textStyle: 'italic', color: '#64748b', padding: '20px', textAlign: 'center' }}>
+                            Tidak ada pertandingan di kategori ini.
                         </div>
-                    ))
-                ) : (
-                    <p style={{ textAlign: 'center', marginTop: '20px', color: '#888' }}>
-                        {activeTab === 'upcoming'
-                            ? "Tidak Ada Pertandingan Terdekat..."
-                            : "Tidak ada hasil pertandingan ditemukan."}
-                    </p>
-                )}
+                    )}
+                </div>
+
             </div>
         </div>
     );

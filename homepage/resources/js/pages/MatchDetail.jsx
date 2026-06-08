@@ -10,11 +10,12 @@ export default function MatchDetail() {
     const [matchData, setMatchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeMapFilter, setActiveMapFilter] = useState('ALL');
+    const [availableMaps, setAvailableMaps] = useState([]);
 
     const resolveMediaUrl = (url) => {
         if (!url) return "https://via.placeholder.com/100";
         if (url.startsWith('http')) return url;
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${url}`;
+        return `${import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app"}/${url}`;
     };
 
     useEffect(() => {
@@ -24,6 +25,10 @@ export default function MatchDetail() {
                 const result = await res.json();
                 if (result.status === 'success') {
                     setMatchData(result.data);
+
+                    const statsArr = result.data.stats || [];
+                    const uniqueMaps = [...new Set(statsArr.map(s => s.map_name).filter(Boolean))];
+                    setAvailableMaps(uniqueMaps);
                 } else {
                     alert('Gagal mengambil data pertandingan');
                     navigate('/dashboard');
@@ -43,41 +48,92 @@ export default function MatchDetail() {
 
     if (!matchData) return null;
 
-    const { match, tournament, team_a, team_b, players_a, players_b } = matchData;
+    const { match, tournament, team_a, team_b, players_a, players_b, stats } = matchData;
 
-    const renderPlayerRow = (player, teamName) => {
-        return (
-            <tr key={player.id_player || player.id}>
+    const getCalculatedStats = (players) => {
+        return players.map(player => {
+            const playerAllStats = (stats || []).filter(s => s.id_player === player.id_player);
+
+            if (playerAllStats.length === 0) {
+                return {
+                    ...player, agent: 'TBA', k: 0, d: 0, a: 0, kdDiff: 0,
+                    acs: 0, rating: 0.00, hs: '0%', fk: 0, fd: 0, fkfdDiff: 0
+                };
+            }
+
+            const filteredStats = activeMapFilter === 'ALL'
+                ? playerAllStats
+                : playerAllStats.filter(s => s.map_name === activeMapFilter);
+
+            if (filteredStats.length === 0) {
+                return {
+                    ...player, agent: 'TBA', k: 0, d: 0, a: 0, kdDiff: 0,
+                    acs: 0, rating: 0.00, hs: '0%', fk: 0, fd: 0, fkfdDiff: 0
+                };
+            }
+
+            const k = filteredStats.reduce((sum, s) => sum + parseInt(s.kills || 0), 0);
+            const d = filteredStats.reduce((sum, s) => sum + parseInt(s.deaths || 0), 0);
+            const a = filteredStats.reduce((sum, s) => sum + parseInt(s.assists || 0), 0);
+            const fk = filteredStats.reduce((sum, s) => sum + parseInt(s.first_kills || 0), 0);
+            const fd = filteredStats.reduce((sum, s) => sum + parseInt(s.first_deaths || 0), 0);
+
+            const kdDiff = k - d;
+            const fkfdDiff = fk - fd;
+
+            const totalPlayed = filteredStats.length;
+            const acs = Math.round(filteredStats.reduce((sum, s) => sum + parseFloat(s.acs || 0), 0) / totalPlayed);
+            const rating = (filteredStats.reduce((sum, s) => sum + parseFloat(s.rating || 0), 0) / totalPlayed).toFixed(2);
+            const hs = Math.round(filteredStats.reduce((sum, s) => sum + parseFloat(s.hs_percentage || 0), 0) / totalPlayed) + "%";
+
+            const agent = activeMapFilter === 'ALL' ? '⭐ Multi' : (filteredStats[0].id_agent || 'Used');
+
+            return { ...player, agent, k, d, a, kdDiff, acs, rating, hs, fk, fd, fkfdDiff };
+        });
+    };
+
+    const renderDiffClass = (val) => {
+        if (val > 0) return "diff-positive";
+        if (val < 0) return "diff-negative";
+        return "diff-neutral";
+    };
+
+    const processedPlayersA = getCalculatedStats(players_a);
+    const processedPlayersB = getCalculatedStats(players_b);
+
+    const renderRows = (processedPlayers, teamSingkatan) => {
+        return processedPlayers.map(p => (
+            <tr key={p.id_player}>
                 <td>
                     <div className="md-player-cell">
                         <img
-                            src={resolveMediaUrl(player.photo_url)}
-                            alt={player.nama}
-                            className="md-player-photo"
-                            onError={(e) => { e.target.src = "https://via.placeholder.com/36" }}
+                            src={resolveMediaUrl(p.photo_url)} alt="p-img" className="md-player-photo"
+                            onError={(e) => { e.target.src = "https://via.placeholder.com/36"; }}
                         />
                         <div>
-                            <span className="md-player-name">{player.nama}</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                                    {player.country ? `🎌 ${player.country}` : '🏳️ TBA'} • {teamName}
-                                </span>
+                            <span className="md-player-name">{p.nama}</span>
+                            <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+                                {p.country ? `🎌 ${p.country}` : '🏳️ TBA'} • {teamSingkatan}
                             </div>
                         </div>
                     </div>
                 </td>
-                <td style={{ textAlign: 'center' }}><span className="md-agent-placeholder">TBA</span></td>
-                <td style={{ fontWeight: 'bold' }}>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td style={{ color: '#94a3b8' }}>-</td>
-                <td style={{ color: '#10b981', fontWeight: 'bold' }}>0.00</td>
-                <td>0.0</td>
-                <td>-</td>
-                <td style={{ color: '#64748b' }}>0</td>
-                <td style={{ color: '#64748b' }}>0</td>
+                <td style={{ textAlign: 'center' }}><span className="md-agent-placeholder">{p.agent}</span></td>
+                <td style={{ fontWeight: '600' }}>{p.k}</td>
+                <td>{p.d}</td>
+                <td>{p.a}</td>
+
+                <td className={renderDiffClass(p.kdDiff)}>{p.kdDiff > 0 ? `+${p.kdDiff}` : p.kdDiff}</td>
+
+                <td style={{ color: '#cbd5e1' }}>{p.acs}</td>
+                <td style={{ color: '#10b981', fontWeight: 'bold' }}>{p.rating}</td>
+                <td>{p.hs}</td>
+                <td style={{ color: '#a855f7' }}>{p.fk}</td>
+                <td style={{ color: '#f43f5e' }}>{p.fd}</td>
+
+                <td className={renderDiffClass(p.fkfdDiff)}>{p.fkfdDiff > 0 ? `+${p.fkfdDiff}` : p.fkfdDiff}</td>
             </tr>
-        );
+        ));
     };
 
     return (
@@ -85,8 +141,8 @@ export default function MatchDetail() {
             <Navbar />
 
             <div className="md-container">
-                <button className="back-portal-btn" onClick={() => navigate('/dashboard')}>
-                    🔙 Kembali ke Dashboard
+                <button className="back-portal-btn" onClick={() => navigate('/matches')}>
+                    🔙 Kembali ke Menu Matches
                 </button>
 
                 <div className="md-header-card">
@@ -96,12 +152,19 @@ export default function MatchDetail() {
 
                     <div className="md-vs-row">
                         <div className="md-team-block">
-                            <img src={resolveMediaUrl(team_a?.logo_url)} alt="Logo A" className="md-team-logo" />
+                            <img src={resolveMediaUrl(team_a?.logo_url)} alt="L-A" className="md-team-logo" />
                             <span className="md-team-name">{team_a?.nama_tim || "TEAM A"}</span>
                         </div>
-                        <div className="md-vs-circle">VS</div>
+
+                        <div className="md-vs-circle">
+                            {match?.skor_akhir_a !== null && new Date(match?.jadwal) < new Date()
+                                ? `${match?.skor_akhir_a} : ${match?.skor_akhir_b}`
+                                : "VS"
+                            }
+                        </div>
+
                         <div className="md-team-block">
-                            <img src={resolveMediaUrl(team_b?.logo_url)} alt="Logo B" className="md-team-logo" />
+                            <img src={resolveMediaUrl(team_b?.logo_url)} alt="L-B" className="md-team-logo" />
                             <span className="md-team-name">{team_b?.nama_tim || "TEAM B"}</span>
                         </div>
                     </div>
@@ -116,18 +179,37 @@ export default function MatchDetail() {
                 <div className="md-stats-section">
 
                     <div className="md-filter-row">
-                        <button className={`md-filter-btn ${activeMapFilter === 'ALL' ? 'active' : ''}`} onClick={() => setActiveMapFilter('ALL')}>ALL MAPS</button>
-                        <button className="md-filter-btn" disabled>MAP 1 (TBA)</button>
-                        <button className="md-filter-btn" disabled>MAP 2 (TBA)</button>
-                        <button className="md-filter-btn" disabled>MAP 3 (TBA)</button>
+                        <button
+                            className={`md-filter-btn ${activeMapFilter === 'ALL' ? 'active' : ''}`}
+                            onClick={() => setActiveMapFilter('ALL')}
+                        >
+                            ALL MAPS
+                        </button>
+
+                        {availableMaps.map((mapName, index) => (
+                            <button
+                                key={index}
+                                className={`md-filter-btn ${activeMapFilter === mapName ? 'active' : ''}`}
+                                onClick={() => setActiveMapFilter(mapName)}
+                            >
+                                Map {index + 1} ({mapName})
+                            </button>
+                        ))}
+
+                        {availableMaps.length === 0 && (
+                            <>
+                                <button className="md-filter-btn" disabled>Map 1 (TBA)</button>
+                                <button className="md-filter-btn" disabled>Map 2 (TBA)</button>
+                            </>
+                        )}
                     </div>
 
                     <div style={{ overflowX: 'auto' }}>
                         <table className="md-table">
                             <thead>
                                 <tr>
-                                    <th style={{ width: '25%' }}>Player</th>
-                                    <th style={{ textTransform: 'uppercase', textAlign: 'center' }}>Agent</th>
+                                    <th style={{ width: '22%' }}>Player</th>
+                                    <th style={{ textAlign: 'center' }}>Agent</th>
                                     <th>K</th>
                                     <th>D</th>
                                     <th>A</th>
@@ -137,30 +219,23 @@ export default function MatchDetail() {
                                     <th>HS%</th>
                                     <th>FK</th>
                                     <th>FD</th>
+                                    <th>+/-</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colSpan="11" className="team-header-divider">
-                                        🟢 KELOMPOK PEMAIN: {team_a?.nama_tim || "TEAM A"}
+                                    <td colSpan="12" className="team-header-divider">
+                                        🟢 ROSTER SQUAD: {team_a?.nama_tim}
                                     </td>
                                 </tr>
-                                {players_a.length > 0 ? (
-                                    players_a.map(player => renderPlayerRow(player, team_a?.singkatan || "TM A"))
-                                ) : (
-                                    <tr><td colSpan="11" className="no-news-info">Belum ada roster terdaftar di tim ini.</td></tr>
-                                )}
+                                {renderRows(processedPlayersA, team_a?.singkatan || "TIM A")}
 
                                 <tr>
-                                    <td colSpan="11" className="team-header-divider">
-                                        🔵 KELOMPOK PEMAIN: {team_b?.nama_tim || "TEAM B"}
+                                    <td colSpan="12" className="team-header-divider">
+                                        🔵 ROSTER SQUAD: {team_b?.nama_tim}
                                     </td>
                                 </tr>
-                                {players_b.length > 0 ? (
-                                    players_b.map(player => renderPlayerRow(player, team_b?.singkatan || "TM B"))
-                                ) : (
-                                    <tr><td colSpan="11" className="no-news-info">Belum ada roster terdaftar di tim ini.</td></tr>
-                                )}
+                                {renderRows(processedPlayersB, team_b?.singkatan || "TIM B")}
                             </tbody>
                         </table>
                     </div>

@@ -78,12 +78,12 @@
 }
 
 .md-vs-circle {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 900;
     color: #ff4654;
     background-color: #1e1e2f;
-    padding: 10px 14px;
-    border-radius: 50%;
+    padding: 12px 18px;
+    border-radius: 8px;
     border: 2px solid #ff4654;
 }
 
@@ -118,6 +118,12 @@
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    transition: 0.2s;
+}
+
+.md-filter-btn:hover:not(:disabled) {
+    background-color: #3a3a5a;
+    color: white;
 }
 
 .md-filter-btn.active {
@@ -172,11 +178,18 @@
     font-weight: 600;
 }
 
-.md-flag-icon {
-    width: 18px;
-    height: 12px;
-    object-fit: cover;
-    border-radius: 1px;
+.diff-positive {
+    color: #10b981 !important;
+    font-weight: bold;
+}
+
+.diff-negative {
+    color: #ef4444 !important;
+    font-weight: bold;
+}
+
+.diff-neutral {
+    color: #94a3b8 !important;
 }
 
 .md-agent-placeholder {
