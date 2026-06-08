@@ -93,7 +93,7 @@ export default function ManageNews() {
                                                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                                                     <button
                                                         className="manage-btn"
-                                                        onClick={() => alert("Halaman edit segera menyusul! 😎")}
+                                                        onClick={() => navigate(`/admin/news/edit/${news.id_news}`)}
                                                     >
                                                         ✏️ Edit
                                                     </button>

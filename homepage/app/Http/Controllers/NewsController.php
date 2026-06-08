@@ -91,4 +91,31 @@ class NewsController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function update(Request $request, int $id)
+    {
+        try {
+            $isFeatured = filter_var($request->input('featured', false), FILTER_VALIDATE_BOOLEAN);
+
+            $updated = DB::table('news')->where('id_news', $id)->update([
+                'judul' => $request->input('judul'),
+                'isi_berita' => $request->input('isi_berita'),
+                'publisher' => $request->input('publisher'),
+                'tanggal' => $request->input('tanggal'),
+                'featured' => $isFeatured,
+                'thumbnail_url' => $request->input('thumbnail_url', null)
+            ]);
+
+            if ($updated === 0) {
+                $exists = DB::table('news')->where('id_news', $id)->exists();
+                if (!$exists) {
+                    return response()->json(['status' => 'error', 'message' => 'Berita tidak ditemukan!'], 404);
+                }
+            }
+
+            return response()->json(['status' => 'success', 'message' => 'Berita berhasil diperbarui!'], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
+        }
+    }
 }

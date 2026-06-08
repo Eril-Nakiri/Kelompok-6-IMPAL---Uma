@@ -22,6 +22,7 @@ import InputMatchResult from "./pages/InputMatchResult.jsx";
 import InputMatch from "./pages/InputMatch.jsx";
 import ManageNews from "./pages/ManageNews.jsx";
 import AddNews from "./pages/AddNews.jsx";
+import EditNews from "./pages/EditNews.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -118,6 +119,11 @@ function App() {
                 <Route
                     path="/matches/:id" element={
                         <ProtectedRoute><MatchDetail /></ProtectedRoute>
+                    } />
+
+                <Route
+                    path="/admin/news/edit/:id" element={
+                        <ProtectedRoute allowedRoles={[1]}><EditNews /></ProtectedRoute>
                     } />
 
                 <Route path="*" element={<Navigate to="/login" replace />} />

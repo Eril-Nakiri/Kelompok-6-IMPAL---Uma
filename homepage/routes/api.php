@@ -69,3 +69,4 @@ Route::get('/news/{id}', [NewsController::class, 'getNewsDetail']);
 Route::get('/admin/news', [NewsController::class, 'index']);
 Route::post('/admin/news', [NewsController::class, 'store']);
 Route::delete('/admin/news/{id}', [NewsController::class, 'destroy']);
+Route::put('/admin/news/{id}', [NewsController::class, 'update']);
