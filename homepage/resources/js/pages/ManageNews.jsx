@@ -81,8 +81,11 @@ export default function ManageNews() {
                                     newsList.map(news => (
                                         <tr key={news.id_news}>
                                             <td style={{ fontWeight: '600', color: '#FFF' }}>{news.judul}</td>
+
                                             <td style={{ color: '#CBD5E1' }}>{news.publisher}</td>
+
                                             <td style={{ color: '#CBD5E1' }}>{new Date(news.tanggal).toLocaleDateString('id-ID')}</td>
+
                                             <td style={{ color: news.featured ? '#10B981' : '#64748B', fontWeight: 'bold' }}>
                                                 {news.featured ? '⭐ Yes' : 'No'}
                                             </td>

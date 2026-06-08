@@ -29,10 +29,7 @@ class NewsController extends Controller
                 ]
             ], 200);
         } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal mengambil berita: ' . $e->getMessage()
-            ], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -64,15 +61,19 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         try {
-            $featured = filter_var($request->input('featured', false), FILTER_VALIDATE_BOOLEAN);
+            $lastNews = DB::table('news')->max('id_news');
+            $nextNewsId = $lastNews ? $lastNews + 1 : 1;
+
+            $isFeatured = filter_var($request->input('featured', false), FILTER_VALIDATE_BOOLEAN);
 
             DB::table('news')->insert([
+                'id_news' => $nextNewsId,
                 'judul' => $request->input('judul'),
                 'isi_berita' => $request->input('isi_berita'),
                 'publisher' => $request->input('publisher', 'Admin'),
                 'tanggal' => $request->input('tanggal') ?? now(),
-                'featured' => $featured,
-                'thumbnail_url' => $request->input('thumbnail_url', '')
+                'featured' => $isFeatured,
+                'thumbnail_url' => $request->input('thumbnail_url', null)
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Berita berhasil ditambahkan!'], 201);
