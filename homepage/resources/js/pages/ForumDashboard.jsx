@@ -54,6 +54,7 @@ export default function ForumDashboard() {
                                 <thead>
                                     <tr>
                                         <th>Topik (Title)</th>
+                                        <th>Pembuat</th>
                                         <th>Dibuat Pada</th>
                                         <th style={{ textAlign: 'right' }}>Aksi</th>
                                     </tr>
@@ -61,7 +62,12 @@ export default function ForumDashboard() {
                                 <tbody>
                                     {threads.map(thread => (
                                         <tr key={thread.id_thread}>
-                                            <td className="thread-title-cell">{thread.title}</td>
+                                            <td className="thread-title-cell">
+                                                <strong>{thread.title}</strong>
+                                            </td>
+                                            <td className="thread-author-cell" style={{ color: '#00E1D9' }}>
+                                                👤 {thread.username || `User ${thread.id_user}`}
+                                            </td>
                                             <td className="thread-date-cell">{formatDate(thread.created_at)}</td>
                                             <td style={{ textAlign: 'right' }}>
                                                 <button

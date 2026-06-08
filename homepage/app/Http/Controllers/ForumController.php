@@ -12,6 +12,8 @@ class ForumController extends Controller
     {
         try {
             $threads = DB::table('forum_threads')
+                ->join('users', 'forum_threads.id_user', '=', 'users.id_user')
+                ->select('forum_threads.*', 'users.username')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -51,13 +53,15 @@ class ForumController extends Controller
     public function getThreadDetail(int $id)
     {
         try {
-            $thread = DB::table('forum_threads')->where('id_thread', $id)->first();
-
-            if (!$thread) {
-                return response()->json(['status' => 'error', 'message' => 'Thread tidak ditemukan'], 404);
-            }
+            $thread = DB::table('forum_threads')
+                ->join('users', 'forum_threads.id_user', '=', 'users.id_user')
+                ->select('forum_threads.*', 'users.username')
+                ->where('id_thread', $id)
+                ->first();
 
             $replies = DB::table('forum_replies')
+                ->join('users', 'forum_replies.id_user', '=', 'users.id_user')
+                ->select('forum_replies.*', 'users.username')
                 ->where('id_thread', $id)
                 ->orderBy('created_at', 'asc')
                 ->get();
