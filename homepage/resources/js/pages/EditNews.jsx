@@ -119,11 +119,32 @@ export default function EditNews() {
                         </div>
 
                         <div className="form-group">
-                            <label>Thumbnail URL (Paste Direct Link dari Postimages / Imgur di sini)</label>
+                            <label>Isi Lengkap Berita</label>
+                            <textarea
+                                required
+                                value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                            <input
+                                type="checkbox"
+                                id="featuredCheck"
+                                checked={isFeatured}
+                                onChange={(e) => setIsFeatured(e.target.checked)}
+                                style={{ width: '18px', height: '18px', margin: '0', padding: '0', cursor: 'pointer' }}
+                            />
+                            <label htmlFor="featuredCheck" style={{ marginLeft: '10px', cursor: 'pointer', color: '#10B981', fontSize: '14px', fontWeight: 'bold', marginBottom: '0' }}>
+                                ⭐ Jadikan sebagai Featured News (Muncul Besar di Dashboard)
+                            </label>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Thumbnail URL (Paste Direct Link dari ImgBB / Postimages di sini)</label>
                             <input
                                 type="url"
                                 value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)}
-                                placeholder="Contoh: https://i.ibb.co.com/f7V4C45/IMG-20240530-164327-1.png"
+                                placeholder="Contoh: https://i.ibb.co.com/gambar-anda.png"
                             />
                             {thumbnailUrl && (
                                 <div style={{ marginTop: '10px' }}>
@@ -131,24 +152,6 @@ export default function EditNews() {
                                     <img src={thumbnailUrl} alt="Preview" style={{ height: '100px', borderRadius: '6px', marginTop: '6px', border: '1px solid #334155' }} />
                                 </div>
                             )}
-                        </div>
-
-                        <div className="form-group">
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)}
-                                />
-                                ⭐ Jadikan sebagai Featured News (Muncul Besar di Dashboard)
-                            </label>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Isi Lengkap Berita</label>
-                            <textarea
-                                required
-                                value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)}
-                            />
                         </div>
 
                         <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
