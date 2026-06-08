@@ -172,10 +172,28 @@
     border-radius: 4px;
     background-color: #1e1e2f;
     border: 1px solid #475569;
+    flex-shrink: 0;
+}
+
+.md-player-photo-empty {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 1px dashed #475569;
+    flex-shrink: 0;
 }
 
 .md-player-name {
     font-weight: 600;
+}
+
+.md-flag-real {
+    width: 18px;
+    height: 12px;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
 }
 
 .diff-positive {
@@ -196,6 +214,23 @@
     font-size: 12px;
     color: #64748b;
     font-style: italic;
+}
+
+.agent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #1e1e2f;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #3a3a5a;
+    margin: 2px;
+}
+
+.agent-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
 }
 
 .team-header-divider {

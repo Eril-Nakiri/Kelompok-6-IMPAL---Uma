@@ -116,7 +116,7 @@ class MatchController extends Controller
         }
     }
 
-    public function getMatchDetail(int $id)
+    public function getMatchDetail($id)
     {
         try {
             $match = DB::table('matches')->where('id_match', $id)->first();
@@ -125,7 +125,6 @@ class MatchController extends Controller
             }
 
             $tournament = DB::table('tournaments')->where('id_tournament', $match->id_tournament)->first();
-
             $teamA = DB::table('teams')->where('id_team', $match->id_team_a)->first();
             $teamB = DB::table('teams')->where('id_team', $match->id_team_b)->first();
 
@@ -134,6 +133,9 @@ class MatchController extends Controller
 
             $stats = DB::table('player_map_stats')->where('id_match', $id)->get();
             $maps = DB::table('match_maps')->where('id_match', $id)->get();
+
+            $agents = DB::table('agents')->get();
+            $countries = DB::table('countries')->get();
 
             return response()->json([
                 'status' => 'success',
@@ -145,10 +147,12 @@ class MatchController extends Controller
                     'players_a' => $playersA,
                     'players_b' => $playersB,
                     'stats' => $stats,
-                    'maps' => $maps
+                    'maps' => $maps,
+                    'agents' => $agents,
+                    'countries' => $countries
                 ]
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }

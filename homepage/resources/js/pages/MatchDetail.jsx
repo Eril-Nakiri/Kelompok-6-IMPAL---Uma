@@ -13,9 +13,9 @@ export default function MatchDetail() {
     const [availableMaps, setAvailableMaps] = useState([]);
 
     const resolveMediaUrl = (url) => {
-        if (!url) return "https://via.placeholder.com/100";
+        if (!url) return null;
         if (url.startsWith('http')) return url;
-        return `${import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app"}/${url}`;
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${url}`;
     };
 
     useEffect(() => {
@@ -48,7 +48,15 @@ export default function MatchDetail() {
 
     if (!matchData) return null;
 
-    const { match, tournament, team_a, team_b, players_a, players_b, stats } = matchData;
+    const { match, tournament, team_a, team_b, players_a, players_b, stats, agents, countries } = matchData;
+
+    const agentsMap = {};
+    (agents || []).forEach(ag => { agentsMap[ag.id_agent] = ag; });
+
+    const countriesMap = {};
+    (countries || []).forEach(c => {
+        if(c.nama_negara) countriesMap[c.nama_negara.toLowerCase()] = c;
+    });
 
     const getCalculatedStats = (players) => {
         return players.map(player => {
@@ -56,7 +64,7 @@ export default function MatchDetail() {
 
             if (playerAllStats.length === 0) {
                 return {
-                    ...player, agent: 'TBA', k: 0, d: 0, a: 0, kdDiff: 0,
+                    ...player, usedAgents: [], k: 0, d: 0, a: 0, kdDiff: 0,
                     acs: 0, rating: 0.00, hs: '0%', fk: 0, fd: 0, fkfdDiff: 0
                 };
             }
@@ -67,7 +75,7 @@ export default function MatchDetail() {
 
             if (filteredStats.length === 0) {
                 return {
-                    ...player, agent: 'TBA', k: 0, d: 0, a: 0, kdDiff: 0,
+                    ...player, usedAgents: [], k: 0, d: 0, a: 0, kdDiff: 0,
                     acs: 0, rating: 0.00, hs: '0%', fk: 0, fd: 0, fkfdDiff: 0
                 };
             }
@@ -86,9 +94,9 @@ export default function MatchDetail() {
             const rating = (filteredStats.reduce((sum, s) => sum + parseFloat(s.rating || 0), 0) / totalPlayed).toFixed(2);
             const hs = Math.round(filteredStats.reduce((sum, s) => sum + parseFloat(s.hs_percentage || 0), 0) / totalPlayed) + "%";
 
-            const agent = activeMapFilter === 'ALL' ? '⭐ Multi' : (filteredStats[0].id_agent || 'Used');
+            const usedAgents = [...new Set(filteredStats.map(s => s.id_agent).filter(Boolean))];
 
-            return { ...player, agent, k, d, a, kdDiff, acs, rating, hs, fk, fd, fkfdDiff };
+            return { ...player, usedAgents, k, d, a, kdDiff, acs, rating, hs, fk, fd, fkfdDiff };
         });
     };
 
@@ -102,38 +110,77 @@ export default function MatchDetail() {
     const processedPlayersB = getCalculatedStats(players_b);
 
     const renderRows = (processedPlayers, teamSingkatan) => {
-        return processedPlayers.map(p => (
-            <tr key={p.id_player}>
-                <td>
-                    <div className="md-player-cell">
-                        <img
-                            src={resolveMediaUrl(p.photo_url)} alt="p-img" className="md-player-photo"
-                            onError={(e) => { e.target.src = "https://via.placeholder.com/36"; }}
-                        />
-                        <div>
-                            <span className="md-player-name">{p.nama}</span>
-                            <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
-                                {p.country ? `🎌 ${p.country}` : '🏳️ TBA'} • {teamSingkatan}
+        return processedPlayers.map(p => {
+            const photoSrc = resolveMediaUrl(p.photo_url);
+
+            const countryName = p.country || "TBA";
+            const cData = p.country ? countriesMap[p.country.toLowerCase()] : null;
+            const flagSrc = cData ? resolveMediaUrl(cData.flag_url) : null;
+
+            return (
+                <tr key={p.id_player}>
+                    <td>
+                        <div className="md-player-cell">
+                            {photoSrc ? (
+                                <img
+                                    src={photoSrc} alt="P" className="md-player-photo"
+                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                />
+                            ) : (
+                                <div className="md-player-photo-empty"></div>
+                            )}
+
+                            <div>
+                                <span className="md-player-name">{p.nama}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                    {flagSrc ? (
+                                        <img src={flagSrc} alt="flag" className="md-flag-real" title={countryName} />
+                                    ) : (
+                                        <span style={{ fontSize: '11px' }}>🏳️</span>
+                                    )}
+                                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                        {countryName} • {teamSingkatan}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-                <td style={{ textAlign: 'center' }}><span className="md-agent-placeholder">{p.agent}</span></td>
-                <td style={{ fontWeight: '600' }}>{p.k}</td>
-                <td>{p.d}</td>
-                <td>{p.a}</td>
+                    </td>
 
-                <td className={renderDiffClass(p.kdDiff)}>{p.kdDiff > 0 ? `+${p.kdDiff}` : p.kdDiff}</td>
+                    <td style={{ textAlign: 'center' }}>
+                        {p.usedAgents && p.usedAgents.length > 0 ? (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                {p.usedAgents.map(agId => {
+                                    const ag = agentsMap[agId];
+                                    if (!ag) return null;
+                                    return (
+                                        <div key={agId} className="agent-badge">
+                                            {ag.icon_url && <img src={resolveMediaUrl(ag.icon_url)} alt="Agent" className="agent-icon" />}
+                                            <span style={{ fontSize: '11px', color: '#cbd5e1', fontWeight: 'bold' }}>{ag.nama_agent}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <span className="md-agent-placeholder">TBA</span>
+                        )}
+                    </td>
 
-                <td style={{ color: '#cbd5e1' }}>{p.acs}</td>
-                <td style={{ color: '#10b981', fontWeight: 'bold' }}>{p.rating}</td>
-                <td>{p.hs}</td>
-                <td style={{ color: '#a855f7' }}>{p.fk}</td>
-                <td style={{ color: '#f43f5e' }}>{p.fd}</td>
+                    <td style={{ fontWeight: '600' }}>{p.k}</td>
+                    <td>{p.d}</td>
+                    <td>{p.a}</td>
 
-                <td className={renderDiffClass(p.fkfdDiff)}>{p.fkfdDiff > 0 ? `+${p.fkfdDiff}` : p.fkfdDiff}</td>
-            </tr>
-        ));
+                    <td className={renderDiffClass(p.kdDiff)}>{p.kdDiff > 0 ? `+${p.kdDiff}` : p.kdDiff}</td>
+
+                    <td style={{ color: '#cbd5e1' }}>{p.acs}</td>
+                    <td style={{ color: '#10b981', fontWeight: 'bold' }}>{p.rating}</td>
+                    <td>{p.hs}</td>
+                    <td style={{ color: '#a855f7' }}>{p.fk}</td>
+                    <td style={{ color: '#f43f5e' }}>{p.fd}</td>
+
+                    <td className={renderDiffClass(p.fkfdDiff)}>{p.fkfdDiff > 0 ? `+${p.fkfdDiff}` : p.fkfdDiff}</td>
+                </tr>
+            );
+        });
     };
 
     return (
