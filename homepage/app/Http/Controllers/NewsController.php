@@ -35,7 +35,7 @@ class NewsController extends Controller
         }
     }
 
-    public function getNewsDetail($id)
+    public function getNewsDetail(int $id)
     {
         try {
             $news = DB::table('news')->where('id_news', $id)->first();
