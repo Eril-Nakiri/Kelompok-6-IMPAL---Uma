@@ -200,7 +200,8 @@ body {
     background-color: #1E293B;
     border: 1px solid #334155;
     border-radius: 12px;
-    padding: 24px;
+    padding: 32px;
+    width: 100%;
 }
 
 .panel-header {
@@ -317,6 +318,14 @@ body {
     margin: 0;
 }
 
+.form-container-full {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -327,6 +336,11 @@ body {
     font-weight: 600;
     color: #CBD5E1;
     margin-bottom: 8px;
+}
+
+.form-group textarea {
+    min-height: 200px;
+    resize: vertical;
 }
 
 .form-group input, .form-group textarea {
@@ -341,13 +355,26 @@ body {
     transition: border 0.2s;
 }
 
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    background-color: #0F172A;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: white;
+    font-size: 15px;
+    display: block;
+}
+
 .form-group input:focus, .form-group textarea:focus {
     border-color: #10B981;
 }
 
 .form-row {
     display: flex;
-    gap: 20px;
+    gap: 24px;
+    width: 100%;
 }
 
 .form-row > .form-group {

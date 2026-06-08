@@ -49,12 +49,11 @@ export default function AddNews() {
             <header className="db-header">
                 <div className="header-title">
                     <h1>Tambah News Baru</h1>
-                    <p>Lengkapi informasi berita di bawah ini.</p>
                 </div>
             </header>
 
             <div className="db-body">
-                <div className="panel-box form-container">
+                <div className="panel-box form-container-full">
                     <form onSubmit={handleSubmit}>
 
                         <div className="form-group">
@@ -62,19 +61,19 @@ export default function AddNews() {
                             <input
                                 type="text" required
                                 value={judul} onChange={(e) => setJudul(e.target.value)}
-                                placeholder="Tuliskan judul berita yang menarik..."
+                                placeholder="Masukkan judul..."
                             />
                         </div>
 
                         <div className="form-row">
-                            <div className="form-group">
-                                <label>Nama Publisher</label>
+                            <div className="form-group" style={{ flex: 1 }}>
+                                <label>Publisher</label>
                                 <input
                                     type="text" required
                                     value={publisher} onChange={(e) => setPublisher(e.target.value)}
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group" style={{ flex: 1 }}>
                                 <label>Tanggal Terbit</label>
                                 <input
                                     type="date" required
@@ -88,35 +87,36 @@ export default function AddNews() {
                             <input
                                 type="url"
                                 value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)}
-                                placeholder="https://example.com/image.jpg"
+                                placeholder="https://..."
                             />
                         </div>
 
-                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <input
-                                type="checkbox" id="featuredCheck"
-                                checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)}
-                            />
-                            <label htmlFor="featuredCheck" style={{ margin: 0, cursor: 'pointer', color: '#10B981' }}>
-                                ⭐ Jadikan Featured News
+                        <div className="form-group">
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)}
+                                    style={{ width: 'auto', margin: 0 }}
+                                />
+                                ⭐ Jadikan sebagai Featured News
                             </label>
                         </div>
 
                         <div className="form-group">
                             <label>Isi Lengkap Berita</label>
                             <textarea
-                                rows="12" required
+                                required
                                 value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)}
-                                placeholder="Tuliskan isi berita di sini..."
+                                placeholder="Tuliskan isi berita..."
                             />
                         </div>
 
-                        <div className="modal-actions" style={{ marginTop: '20px' }}>
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                             <button type="button" className="btn-secondary" onClick={() => navigate('/admin/news')}>
                                 Batal
                             </button>
                             <button type="submit" className="action-btn" disabled={isLoading}>
-                                {isLoading ? 'Menyimpan...' : 'Terbitkan Berita'}
+                                {isLoading ? 'Menyimpan...' : '🚀 Terbitkan Berita'}
                             </button>
                         </div>
 
