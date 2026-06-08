@@ -19,6 +19,8 @@ import ThreadDetail from './pages/ThreadDetail.jsx';
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import InputMatchResult from "./pages/InputMatchResult.jsx";
 import InputMatch from "./pages/InputMatch.jsx";
+import ManageNews from "./pages/ManageNews.jsx";
+import AddNews from "./pages/AddNews.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -101,6 +103,16 @@ function App() {
                         <ProtectedRoute><ThreadDetail />
                         </ProtectedRoute>}
                     />
+
+                <Route
+                    path="/admin/news" element={
+                        <ProtectedRoute allowedRoles={[1]}><ManageNews /></ProtectedRoute>
+                    } />
+
+                <Route
+                    path="/admin/news/add" element={
+                        <ProtectedRoute allowedRoles={[1]}><AddNews /></ProtectedRoute>
+                    } />
 
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>

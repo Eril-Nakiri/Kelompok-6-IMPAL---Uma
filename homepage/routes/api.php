@@ -63,3 +63,8 @@ Route::post('/forum/threads/{id}/replies', [ForumController::class, 'storeReply'
 // News
 Route::get('/news', [NewsController::class, 'getDashboardNews']);
 Route::get('/news/{id}', [NewsController::class, 'getNewsDetail']);
+
+//Admin News
+Route::get('/admin/news', [NewsController::class, 'index']);
+Route::post('/admin/news', [NewsController::class, 'store']);
+Route::delete('/admin/news/{id}', [NewsController::class, 'destroy']);
