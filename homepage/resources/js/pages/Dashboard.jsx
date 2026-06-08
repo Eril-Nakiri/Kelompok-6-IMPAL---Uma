@@ -207,12 +207,16 @@ export default function Dashboard() {
                                         <div
                                             key={match.id_match || idx}
                                             className="match-card"
-                                            style={{ borderLeft: `5px solid ${matchBorderColor}` }}
+                                            style={{
+                                                borderLeft: `5px solid ${matchBorderColor}`,
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => navigate(`/matches/${match.id_match}`)}
                                         >
                                             <div className="match-teams-logos">
-                                                <img src={logoA} alt="Team A" className="match-team-logo-img" title={`Team ID: ${match.id_team_a}`} />
+                                                <img src={logoA} alt="Team A" className="match-team-logo-img" />
                                                 <span className="match-vs-text">vs</span>
-                                                <img src={logoB} alt="Team B" className="match-team-logo-img" title={`Team ID: ${match.id_team_b}`} />
+                                                <img src={logoB} alt="Team B" className="match-team-logo-img" />
                                             </div>
 
                                             <div className="match-info-block">

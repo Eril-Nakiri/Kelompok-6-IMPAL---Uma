@@ -15,6 +15,7 @@ import PlayerPage from "./pages/PlayerPage.jsx";
 import ForumDashboard from './pages/ForumDashboard.jsx';
 import CreateThread from './pages/CreateThread.jsx';
 import ThreadDetail from './pages/ThreadDetail.jsx';
+import MatchDetail from "./pages/MatchDetail.jsx";
 
 import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import InputMatchResult from "./pages/InputMatchResult.jsx";
@@ -112,6 +113,11 @@ function App() {
                 <Route
                     path="/admin/news/add" element={
                         <ProtectedRoute allowedRoles={[1]}><AddNews /></ProtectedRoute>
+                    } />
+
+                <Route
+                    path="/matches/:id" element={
+                        <ProtectedRoute><MatchDetail /></ProtectedRoute>
                     } />
 
                 <Route path="*" element={<Navigate to="/login" replace />} />

@@ -40,6 +40,7 @@ Route::get('/stats/filters', [StatsController::class, 'getFilters']);
 
 // Matches
 Route::get('/matches', [MatchController::class, 'index']);
+Route::get('/matches/{id}', [MatchController::class, 'getMatchDetail']);
 Route::post('/match', [MatchController::class, 'store']);
 Route::post('/match-result', [MatchController::class, 'storeResult']); // Untuk simpan skor map & statistik
 Route::post('/matches/update-series', [MatchController::class, 'updateSeriesScore']); // Untuk simpan skor series (2-0, 2-1)

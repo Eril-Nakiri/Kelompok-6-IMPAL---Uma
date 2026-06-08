@@ -115,4 +115,41 @@ class MatchController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getMatchDetail(int $id)
+    {
+        try {
+            $match = DB::table('matches')->where('id_match', $id)->first();
+            if (!$match) {
+                return response()->json(['status' => 'error', 'message' => 'Pertandingan tidak ditemukan'], 404);
+            }
+
+            $tournament = DB::table('tournaments')->where('id_tournament', $match->id_tournament)->first();
+
+            $teamA = DB::table('teams')->where('id_team', $match->id_team_a)->first();
+            $teamB = DB::table('teams')->where('id_team', $match->id_team_b)->first();
+
+            $playersA = $teamA ? DB::table('players')->where('id_team', $teamA->id_team)->get() : [];
+            $playersB = $teamB ? DB::table('players')->where('id_team', $teamB->id_team)->get() : [];
+
+            $stats = DB::table('player_map_stats')->where('id_match', $id)->get();
+            $maps = DB::table('match_maps')->where('id_match', $id)->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'match' => $match,
+                    'tournament' => $tournament,
+                    'team_a' => $teamA,
+                    'team_b' => $teamB,
+                    'players_a' => $playersA,
+                    'players_b' => $playersB,
+                    'stats' => $stats,
+                    'maps' => $maps
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
 }
