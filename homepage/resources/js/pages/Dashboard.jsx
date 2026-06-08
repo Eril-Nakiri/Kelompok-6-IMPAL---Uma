@@ -11,20 +11,34 @@ export default function Dashboard() {
     const [featuredNews, setFeaturedNews] = useState(null);
     const [regularNews, setRegularNews] = useState([]);
 
-    const [upcomingMatches, setUpcomingMatches] = useState([]);
-    const [liveEvents, setLiveEvents] = useState([]);
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const upcomingMatches = [
+        { id: 1, team1: "BLG", team2: "TL", time: "5m", accent: "#a855f7" },
+        { id: 2, team1: "PRX", team2: "T1", time: "55m", accent: "#ef4444" },
+        { id: 3, team1: "C9", team2: "SEN", time: "1hour 25m", accent: "#3b82f6" },
+        { id: 4, team1: "VIT", team2: "NRG", accent: "#a855f7" },
+    ];
 
-    const getTournamentColor = (name) => {
+    const liveEvents = [
+        { id: 1, name: "VCT Pacific Stage 1", date: "April 15 - May 12", color: "#ef4444" },
+        { id: 2, name: "VCT Americas Stage 1", date: "April 16 - May 13", color: "#3b82f6" },
+    ];
+
+    const [matchesList, setMatchesList] = useState([]);
+    const [liveList, setLiveList] = useState([]);
+    const [upcomingList, setUpcomingList] = useState([]);
+
+    const [teamsMap, setTeamsMap] = useState({});
+
+    const getTournamentBranding = (name) => {
         if (!name) return "#64748b";
-        const lowerName = name.toLowerCase();
+        const lower = name.toLowerCase();
 
-        if (lowerName.includes("masters")) return "#a855f7";
-        if (lowerName.includes("champions")) return "#eab308";
-        if (lowerName.includes("china")) return "#ef4444";
-        if (lowerName.includes("america")) return "#f97316";
-        if (lowerName.includes("pacific")) return "#3b82f6";
-        if (lowerName.includes("emea")) return "#facc15";
+        if (lower.includes("master santiago 2026")) return "#a855f7";
+        if (lower.includes("vct champions 2026")) return "#eab308";
+        if (lower.includes("vct cn stage 1 2026")) return "#ef4444";
+        if (lower.includes("vct americas stage 1 2026")) return "#f97316";
+        if (lower.includes("vct pacific stage 1 2026")) return "#3b82f6";
+        if (lower.includes("vct emea stage 1 2026")) return "#facc15";
 
         return "#10b981";
     };
@@ -54,23 +68,31 @@ export default function Dashboard() {
             })
             .catch((err) => console.error("Gagal mengambil berita:", err));
 
+        fetch("/api/teams")
+            .then((res) => res.json())
+            .then((resData) => {
+                const arr = Array.isArray(resData) ? resData : (resData.data || []);
+                const map = {};
+                arr.forEach(team => {
+                    map[team.id_team] = team.singkatan || team.nama_tim;
+                });
+                setTeamsMap(map);
+            })
+            .catch((err) => console.error("Gagal memuat kamus singkatan tim:", err));
+
         fetch("/api/matches")
             .then((res) => res.json())
             .then((resData) => {
                 const arr = Array.isArray(resData) ? resData : (resData.data || []);
                 const now = new Date();
 
-                const filterUpcoming = arr.filter(match => {
-                    const matchSchedule = match.jadwal;
-                    if (!matchSchedule) return false;
-                    return new Date(matchSchedule) >= now;
-                }).sort((a, b) => {
-                    return new Date(a.jadwal) - new Date(b.jadwal);
-                });
+                const filtered = arr.filter(m => {
+                    return m.jadwal && new Date(m.jadwal) >= now;
+                }).sort((a, b) => new Date(a.jadwal) - new Date(b.jadwal));
 
-                setUpcomingMatches(filterUpcoming.slice(0, 4));
+                setMatchesList(filtered.slice(0, 4));
             })
-            .catch((err) => console.error("Gagal memuat matches:", err));
+            .catch((err) => console.error("Gagal memuat matches database:", err));
 
         fetch("/api/tournament")
             .then((res) => res.json())
@@ -85,16 +107,14 @@ export default function Dashboard() {
                 });
 
                 const upcoming = arr.filter(t => {
-                    const start = new Date(t.start_date);
-                    return start > now;
-                }).sort((a, b) => {
-                    return new Date(a.start_date) - new Date(b.start_date);
-                });
+                    return t.start_date && new Date(t.start_date) > now;
+                }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
-                setLiveEvents(live.slice(0, 2));
-                setUpcomingEvents(upcoming.slice(0, 2));
+                setLiveList(live.slice(0, 2));
+                setUpcomingList(upcoming.slice(0, 2));
             })
-            .catch((err) => console.error("Gagal memuat tournament:", err));
+            .catch((err) => console.error("Gagal memuat turnamen database:", err));
+
     }, []);
 
     const handleNewsClick = (id) => {
@@ -171,21 +191,17 @@ export default function Dashboard() {
                 </div>
 
                 <div className="sidebar-column">
-
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Upcoming Matches</h3>
                         <div className="matches-container">
-                            {upcomingMatches.length > 0 ? (
-                                upcomingMatches.map((match, idx) => {
-                                    const teamA = match.id_team_a || "TEAM A";
-                                    const teamB = match.id_team_b || "TEAM B";
-                                    const matchSchedule = match.jadwal;
-
-                                    const accentColor = "#ff4654";
+                            {matchesList.length > 0 ? (
+                                matchesList.map((match, idx) => {
+                                    const teamA = teamsMap[match.id_team_a] || match.id_team_a || "TBD";
+                                    const teamB = teamsMap[match.id_team_b] || match.id_team_b || "TBD";
 
                                     let displayTime = "";
-                                    if (matchSchedule) {
-                                        const d = new Date(matchSchedule);
+                                    if (match.jadwal) {
+                                        const d = new Date(match.jadwal);
                                         displayTime = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
                                     }
 
@@ -193,20 +209,20 @@ export default function Dashboard() {
                                         <div
                                             key={match.id_match || idx}
                                             className="match-card"
-                                            style={{ "--accent-color": accentColor }}
+                                            style={{ "--accent-color": "#ff4654" }}
                                         >
                                             <div className="match-teams">
                                                 <span>{teamA}</span>
-                                                <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
+                                                <span style={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 'bold' }}>-</span>
                                                 <span>{teamB}</span>
-                                                <small style={{ fontSize: '10px', color: '#64748b' }}>({match.match_format || 'BO3'})</small>
+                                                <small style={{ fontSize: '10px', color: '#64748b', fontWeight: '500' }}>({match.match_format || 'BO3 Series'})</small>
                                             </div>
                                             {displayTime && <div className="match-time">{displayTime}</div>}
                                         </div>
                                     );
                                 })
                             ) : (
-                                <p className="no-news-info" style={{ padding: '4px' }}>Tidak ada jadwal tanding terdekat.</p>
+                                <p className="no-news-info">Tidak ada jadwal tanding terdekat.</p>
                             )}
                         </div>
                     </div>
@@ -214,9 +230,9 @@ export default function Dashboard() {
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Live Event</h3>
                         <div className="events-container">
-                            {liveEvents.length > 0 ? (
-                                liveEvents.map((event, idx) => {
-                                    const color = getTournamentColor(event.nama_turnamen);
+                            {liveList.length > 0 ? (
+                                liveList.map((event, idx) => {
+                                    const color = getTournamentBranding(event.nama_turnamen);
                                     const start = new Date(event.start_date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
                                     const end = new Date(event.end_date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
 
@@ -224,15 +240,23 @@ export default function Dashboard() {
                                         <div
                                             key={event.id_tournament || idx}
                                             className="live-event-card"
-                                            style={{ borderLeft: `5px solid ${color}` }} // Penerapan warna Poin 3
+                                            style={{ borderLeft: `5px solid ${color}` }}
                                         >
-                                            <div className="event-name">{event.nama_turnamen}</div>
-                                            <div className="event-date">⏳ {start} - {end}</div>
+                                            {event.logo_url && (
+                                                <img
+                                                    src={event.logo_url.startsWith('http') ? event.logo_url : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${event.logo_url}`}
+                                                    alt="logo" className="event-logo-img"
+                                                />
+                                            )}
+                                            <div className="event-info-block">
+                                                <div className="event-name">{event.nama_turnamen}</div>
+                                                <div className="event-date">⏳ {start} - {end}</div>
+                                            </div>
                                         </div>
                                     );
                                 })
                             ) : (
-                                <p className="no-news-info" style={{ padding: '4px' }}>Belum ada event live hari ini.</p>
+                                <p className="no-news-info">Belum ada event live hari ini.</p>
                             )}
                         </div>
                     </div>
@@ -240,13 +264,11 @@ export default function Dashboard() {
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Upcoming Event</h3>
                         <div className="events-container">
-                            {upcomingEvents.length > 0 ? (
-                                upcomingEvents.map((event, idx) => {
-                                    const color = getTournamentColor(event.nama_turnamen);
+                            {upcomingList.length > 0 ? (
+                                upcomingList.map((event, idx) => {
+                                    const color = getTournamentBranding(event.nama_turnamen);
                                     const startDateFormatted = new Date(event.start_date).toLocaleDateString('id-ID', {
-                                        weekday: 'long',
-                                        day: 'numeric',
-                                        month: 'short'
+                                        weekday: 'long', day: 'numeric', month: 'short'
                                     });
 
                                     return (
@@ -255,13 +277,21 @@ export default function Dashboard() {
                                             className="upcoming-event-card"
                                             style={{ borderLeft: `5px solid ${color}` }}
                                         >
-                                            <div className="event-name">{event.nama_turnamen}</div>
-                                            <div className="event-date">📅 Mulai: {startDateFormatted}</div>
+                                            {event.logo_url && (
+                                                <img
+                                                    src={event.logo_url.startsWith('http') ? event.logo_url : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${event.logo_url}`}
+                                                    alt="logo" className="event-logo-img"
+                                                />
+                                            )}
+                                            <div className="event-info-block">
+                                                <div className="event-name">{event.nama_turnamen}</div>
+                                                <div className="event-date">📅 Mulai: {startDateFormatted}</div>
+                                            </div>
                                         </div>
                                     );
                                 })
                             ) : (
-                                <p className="no-news-info" style={{ padding: '4px' }}>Tidak ada turnamen mendatang.</p>
+                                <p className="no-news-info">Tidak ada turnamen mendatang.</p>
                             )}
                         </div>
                     </div>
