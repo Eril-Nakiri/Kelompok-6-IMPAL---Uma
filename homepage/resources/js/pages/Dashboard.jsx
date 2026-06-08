@@ -86,19 +86,17 @@ export default function Dashboard() {
                 setTournamentsMap(tMap);
 
                 const now = new Date();
-                // Filter Live Event
                 const live = arr.filter(t => {
                     const start = new Date(t.start_date || t.created_at);
                     const end = new Date(t.end_date || now);
                     return start <= now && end >= now;
                 });
-                // Filter Upcoming Event
                 const upcoming = arr.filter(t => {
                     return t.start_date && new Date(t.start_date) > now;
                 }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
                 setLiveList(live.slice(0, 2));
-                setUpcomingList(upcoming.slice(0, 2));
+                setUpcomingList(upcoming);
             })
             .catch((err) => console.error("Gagal memuat turnamenmap:", err));
 
