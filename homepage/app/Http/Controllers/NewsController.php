@@ -34,4 +34,19 @@ class NewsController extends Controller
             ], 500);
         }
     }
+
+    public function getNewsDetail($id)
+    {
+        try {
+            $news = DB::table('news')->where('id_news', $id)->first();
+
+            if (!$news) {
+                return response()->json(['status' => 'error', 'message' => 'Berita tidak ditemukan'], 404);
+            }
+
+            return response()->json(['status' => 'success', 'data' => $news], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
 }

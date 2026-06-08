@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import '../../css/Dashboard.css';
 
 export default function Dashboard() {
+    const navigate = useNavigate();
     const [backendStatus, setBackendStatus] = useState("Connecting to Laravel API...");
     const [isApiReady, setIsApiReady] = useState(false);
 
@@ -38,11 +40,18 @@ export default function Dashboard() {
             .then((resData) => {
                 if (resData.status === 'success') {
                     setFeaturedNews(resData.data.featured);
-                    setRegularNews(resData.data.regular || []);
+                    const filteredRegular = (resData.data.regular || []).filter(
+                        (news) => news.id_news !== (resData.data.featured?.id_news || 0)
+                    );
+                    setRegularNews(filteredRegular);
                 }
             })
             .catch((err) => console.error("Gagal mengambil berita:", err));
     }, []);
+
+    const handleNewsClick = (id) => {
+        navigate(`/news/${id}`);
+    };
 
     return (
         <div className="dashboard-page">
@@ -53,94 +62,92 @@ export default function Dashboard() {
             </div>
 
             <div className="dashboard-content-wrapper">
-
                 <div className="center-column">
-                    <h2 className="main-section-title">Berita Terbaru</h2>
+                    <h2 className="dashboard-section-title">Berita Terbaru</h2>
 
                     {featuredNews ? (
-                        <div className="featured-news-card">
-                            {featuredNews.thumbnail_url && (
-                                <div className="featured-thumbnail-container">
-                                    <img
-                                        src={
-                                            featuredNews.thumbnail_url.startsWith('http')
-                                                ? featuredNews.thumbnail_url
-                                                : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${featuredNews.thumbnail_url}`
-                                        }
-                                        alt={featuredNews.judul}
-                                        className="featured-thumbnail-img"
-                                    />
-                                </div>
-                            )}
-
-                            <div className="featured-news-details">
-                                <span className="featured-badge">🔥 BERITA UTAMA</span>
-                                <h1 className="featured-news-title">{featuredNews.judul}</h1>
-                                <div className="featured-news-meta">
-                                    By {featuredNews.publisher || 'Admin'} • {new Date(featuredNews.tanggal_post || featuredNews.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        <div
+                            className="dashboard-hero-banner"
+                            style={{
+                                backgroundImage: `url('${featuredNews.thumbnail_url || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200"}')`,
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => handleNewsClick(featuredNews.id_news)}
+                        >
+                            <div className="hero-badge">FEATURED</div>
+                            <div className="hero-banner-title">
+                                {featuredNews.judul}
+                                <div className="hero-meta">
+                                    By {featuredNews.publisher} • {new Date(featuredNews.tanggal).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="no-news-info">Tidak ada berita utama saat ini.</div>
+                        <div className="dashboard-hero-banner" style={{ background: '#2b2b40', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#94a3b8' }}>
+                            <p>Belum ada berita utama (featured) yang disetel true.</p>
+                        </div>
                     )}
 
-                    <div className="regular-news-section">
-                        <h3 className="sub-section-title">Berita Lainnya</h3>
-                        <div className="regular-news-list">
+                    <div style={{ marginTop: '10px' }}>
+                        <h3 className="dashboard-section-title">LATEST UPDATES</h3>
+                        <div className="news-feed-list">
                             {regularNews.length > 0 ? (
                                 regularNews.map((news) => (
-                                    <div key={news.id_news || news.id} className="regular-news-item">
-                                        <span className="news-date">
-                                            {new Date(news.tanggal_post || news.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                                        </span>
-                                        <h4 className="regular-news-title">{news.judul}</h4>
+                                    <div
+                                        key={news.id_news}
+                                        className="news-item"
+                                        onClick={() => handleNewsClick(news.id_news)}
+                                    >
+                                        <div>
+                                            <div className="news-title">{news.judul}</div>
+                                            <div className="news-meta">
+                                                {news.publisher} • {new Date(news.tanggal).toLocaleDateString('id-ID', { dateStyle: 'long' })}
+                                            </div>
+                                        </div>
+                                        <div className="news-comments">
+                                            ➔ Baca
+                                        </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="no-news-info">Tidak ada berita reguler saat ini.</div>
+                                <p style={{ color: '#94a3b8', fontStyle: 'italic', padding: '10px' }}>Belum ada berita reguler saat ini.</p>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <div className="sidebar-column">
+                <div className="right-column">
                     <div className="sidebar-widget">
-                        <h3 className="sidebar-section-title">Upcoming Matches</h3>
-                        <div className="matches-container">
-                            {upcomingMatches.map((match) => (
-                                <div
-                                    key={match.id}
-                                    className="match-card"
-                                    style={{ "--accent-color": match.accent }}
-                                >
-                                    <div className="match-teams">
-                                        <span>{match.team1}</span>
-                                        <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
-                                        <span>{match.team2}</span>
-                                    </div>
-                                    {match.time && <div className="match-time">{match.time}</div>}
+                        <h3 className="sidebar-section-title">Matches</h3>
+                        {upcomingMatches.map((match) => (
+                            <div
+                                key={match.id}
+                                className="match-card"
+                                style={{ "--accent-color": match.accent }}
+                            >
+                                <div className="match-teams">
+                                    <span>{match.team1}</span>
+                                    <span style={{ color: "#cbd5e1", fontSize: "0.85rem" }}>-</span>
+                                    <span>{match.team2}</span>
                                 </div>
-                            ))}
-                        </div>
+                                {match.time && <div className="match-time">{match.time}</div>}
+                            </div>
+                        ))}
                     </div>
 
                     <div className="sidebar-widget">
                         <h3 className="sidebar-section-title">Live Event</h3>
-                        <div className="events-container">
-                            {liveEvents.map((event) => (
-                                <div
-                                    key={event.id}
-                                    className="live-event-card"
-                                    style={{ borderLeft: `4px solid ${event.color}` }}
-                                >
-                                    <div className="event-name">{event.name}</div>
-                                    <div className="event-date">{event.date}</div>
-                                </div>
-                            ))}
-                        </div>
+                        {liveEvents.map((event) => (
+                            <div
+                                key={event.id}
+                                className="live-event-card"
+                                style={{ borderLeftColor: event.color }}
+                            >
+                                <div className="event-name">{event.name}</div>
+                                <div className="event-date">{event.date}</div>
+                            </div>
+                        ))}
                     </div>
-
                 </div>
 
             </div>

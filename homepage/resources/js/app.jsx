@@ -47,6 +47,11 @@ function App() {
                     } />
 
                 <Route
+                    path="/news/:id" element={
+                        <ProtectedRoute><NewsPage /></ProtectedRoute>
+                    } />
+
+                <Route
                     path="/matches" element={
                         <ProtectedRoute><MatchesPage /></ProtectedRoute>
                     } />
