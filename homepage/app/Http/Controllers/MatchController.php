@@ -129,8 +129,8 @@ class MatchController extends Controller
             $teamA = DB::table('teams')->where('id_team', $match->id_team_a)->first();
             $teamB = DB::table('teams')->where('id_team', $match->id_team_b)->first();
 
-            $playersA = $teamA ? DB::table('players')->where('id_team', $teamA->id_team)->get() : [];
-            $playersB = $teamB ? DB::table('players')->where('id_team', $teamB->id_team)->get() : [];
+            $playersA = $teamA ? DB::table('players')->where('id_teams', $teamA->id_team)->get() : [];
+            $playersB = $teamB ? DB::table('players')->where('id_teams', $teamB->id_team)->get() : [];
 
             $stats = DB::table('player_map_stats')->where('id_match', $id)->get();
             $maps = DB::table('match_maps')->where('id_match', $id)->get();

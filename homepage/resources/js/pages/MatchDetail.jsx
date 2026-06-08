@@ -52,17 +52,16 @@ export default function MatchDetail() {
                     <div className="md-player-cell">
                         <img
                             src={resolveMediaUrl(player.photo_url)}
-                            alt={player.nama_player}
+                            alt={player.nama}
                             className="md-player-photo"
                             onError={(e) => { e.target.src = "https://via.placeholder.com/36" }}
                         />
                         <div>
-                            <span className="md-player-name">{player.nama_player}</span>
+                            <span className="md-player-name">{player.nama}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                                {player.flag_url && (
-                                    <img src={resolveMediaUrl(player.flag_url)} alt="flag" className="md-flag-icon" />
-                                )}
-                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>{teamName}</span>
+                                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                    {player.country ? `🎌 ${player.country}` : '🏳️ TBA'} • {teamName}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -115,6 +114,7 @@ export default function MatchDetail() {
                 </div>
 
                 <div className="md-stats-section">
+
                     <div className="md-filter-row">
                         <button className={`md-filter-btn ${activeMapFilter === 'ALL' ? 'active' : ''}`} onClick={() => setActiveMapFilter('ALL')}>ALL MAPS</button>
                         <button className="md-filter-btn" disabled>MAP 1 (TBA)</button>
