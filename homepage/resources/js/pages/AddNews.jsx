@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import '../../css/Forum.css';
+import AdminLayout from '../components/AdminLayout';
 
 export default function AddNews() {
     const navigate = useNavigate();
@@ -9,12 +8,14 @@ export default function AddNews() {
     const [judul, setJudul] = useState('');
     const [isiBerita, setIsiBerita] = useState('');
     const [publisher, setPublisher] = useState('Admin VLR');
-    const [tanggal, setTanggal] = useState(new Date().toISOString().split('T')[0]); // Default hari ini
+    const [tanggal, setTanggal] = useState(new Date().toISOString().split('T')[0]);
     const [thumbnailUrl, setThumbnailUrl] = useState('');
     const [isFeatured, setIsFeatured] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         try {
             const res = await fetch('/api/admin/news', {
@@ -44,92 +45,94 @@ export default function AddNews() {
         } catch (error) {
             console.error(error);
             alert("Terjadi kesalahan sistem saat menghubungi backend.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div style={{ backgroundColor: '#1e1e2f', minHeight: '100vh' }}>
-            <Navbar />
+        <AdminLayout>
+            <header className="db-header">
+                <div className="header-title">
+                    <h1>Tambah News Baru</h1>
+                    <p>Masukkan informasi berita terbaru untuk ditampilkan di dashboard portal.</p>
+                </div>
+            </header>
 
-            <div style={{ paddingTop: '100px', paddingBottom: '50px' }}>
-                <div className="mr-container">
-                    <header className="mr-header">
-                        <h2>Tambah News Baru</h2>
-                        <p className="sub-text">Masukkan informasi berita terbaru untuk ditampilkan di dashboard.</p>
-                    </header>
+            <div className="db-body">
+                <div className="panel-box" style={{ maxWidth: '800px' }}>
+                    <form onSubmit={handleSubmit}>
 
-                    <form className="mr-form-card" style={{ marginTop: '24px' }} onSubmit={handleSubmit}>
-
-                        <div className="forum-form-group">
+                        <div className="form-group">
                             <label>Judul Berita</label>
                             <input
-                                type="text" className="forum-input" required
+                                type="text" required
                                 value={judul} onChange={(e) => setJudul(e.target.value)}
                                 placeholder="Masukkan judul..."
                             />
                         </div>
 
                         <div style={{ display: 'flex', gap: '20px' }}>
-                            <div className="forum-form-group" style={{ flex: 1 }}>
+                            <div className="form-group" style={{ flex: 1 }}>
                                 <label>Nama Publisher</label>
                                 <input
-                                    type="text" className="forum-input" required
+                                    type="text" required
                                     value={publisher} onChange={(e) => setPublisher(e.target.value)}
                                 />
                             </div>
 
-                            <div className="forum-form-group" style={{ flex: 1 }}>
+                            <div className="form-group" style={{ flex: 1 }}>
                                 <label>Tanggal Terbit</label>
                                 <input
-                                    type="date" className="forum-input" required
+                                    type="date" required
                                     value={tanggal} onChange={(e) => setTanggal(e.target.value)}
                                 />
                             </div>
                         </div>
 
-                        <div className="forum-form-group">
+                        <div className="form-group">
                             <label>Thumbnail URL (Tautan Gambar)</label>
                             <input
-                                type="url" className="forum-input"
+                                type="url"
                                 value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)}
                                 placeholder="Contoh: https://images.unsplash.com/foto.jpg"
                             />
                         </div>
 
-                        <div className="forum-form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#0F172A', padding: '12px 14px', borderRadius: '8px', border: '1px solid #334155' }}>
                             <input
                                 type="checkbox"
                                 id="featuredCheck"
                                 checked={isFeatured}
                                 onChange={(e) => setIsFeatured(e.target.checked)}
-                                style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                                style={{ width: '20px', height: '20px', cursor: 'pointer', margin: 0 }}
                             />
-                            <label htmlFor="featuredCheck" style={{ margin: 0, cursor: 'pointer', color: '#10B981' }}>
+                            <label htmlFor="featuredCheck" style={{ margin: 0, cursor: 'pointer', color: '#10B981', fontSize: '14px' }}>
                                 ⭐ Jadikan sebagai Featured News (Berita Utama Thumbnail Besar)
                             </label>
                         </div>
 
-                        <div className="forum-form-group">
+                        <div className="form-group">
                             <label>Isi Lengkap Berita</label>
                             <textarea
-                                className="forum-textarea" rows="10" required
+                                rows="10" required
                                 value={isiBerita} onChange={(e) => setIsiBerita(e.target.value)}
                                 placeholder="Tulis paragraf berita di sini..."
                             />
                         </div>
 
-                        <div className="forum-btn-group" style={{ marginTop: '30px' }}>
-                            <button type="button" className="forum-btn forum-btn-secondary" onClick={() => navigate('/admin/news')}>
+                        <div className="modal-actions" style={{ borderTop: '1px solid #334155', paddingTop: '20px', marginTop: '30px' }}>
+                            <button type="button" className="btn-secondary" onClick={() => navigate('/admin/news')}>
                                 Batal
                             </button>
-                            <button type="submit" className="forum-btn forum-btn-primary">
-                                🚀 Terbitkan Berita
+                            <button type="submit" className="action-btn" disabled={isLoading}>
+                                {isLoading ? 'Menyimpan...' : '🚀 Terbitkan Berita'}
                             </button>
                         </div>
 
                     </form>
                 </div>
             </div>
-        </div>
+        </AdminLayout>
     );
 }

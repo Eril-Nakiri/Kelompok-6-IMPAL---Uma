@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../css/DashboardAdmin.css';
+import AdminLayout from '../components/AdminLayout';
 
 export default function DashboardAdmin() {
     const navigate = useNavigate();
-
-    const [user, setUser] = useState({ username: 'Loading...', email: 'Loading...' });
 
     const [tournaments, setTournaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,24 +16,6 @@ export default function DashboardAdmin() {
         penyelenggara: ''
     });
 
-    const fetchUser = () => {
-        try {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                const parsedUser = JSON.parse(storedUser);
-                setUser({
-                    username: parsedUser.username,
-                    email: parsedUser.email
-                });
-            } else {
-                navigate('/login');
-            }
-        } catch (error) {
-            console.error("Gagal membaca data user dari penyimpanan:", error);
-            setUser({ username: 'Error', email: 'Data rusak' });
-        }
-    };
-
     const fetchTournaments = async () => {
         try {
             const response = await fetch('/api/tournament');
@@ -47,7 +27,6 @@ export default function DashboardAdmin() {
     };
 
     useEffect(() => {
-        fetchUser();
         fetchTournaments();
     }, []);
 
@@ -63,10 +42,7 @@ export default function DashboardAdmin() {
         try {
             const response = await fetch('/api/tournament', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
@@ -110,16 +86,13 @@ export default function DashboardAdmin() {
 
     const handleDeleteTournament = async () => {
         const isConfirm = window.confirm(`⚠️ Yakin ingin menghapus turnamen ${selectedTournament.nama_turnamen}? Semua match di dalamnya mungkin akan ikut terhapus!`);
-
         if (!isConfirm) return;
 
         setIsLoading(true);
         try {
             const response = await fetch(`/api/tournament/${selectedTournament.id_tournament}`, {
                 method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
 
             if (response.ok) {
@@ -138,168 +111,82 @@ export default function DashboardAdmin() {
         }
     };
 
-    const handleLogout = () => {
-        const confirmLogout = window.confirm("Apakah Anda yakin ingin keluar dari META Portal?");
-        if (!confirmLogout) return;
-
-        localStorage.removeItem('user');
-        navigate('/login');
-    };
-
-    const handleMenuClick = (path) => {
-        navigate(path);
-    };
-
-    const menuItems = [
-        { name: 'Dashboard Overview', icon: '📊', path: '/dashboard-admin', active: true },
-        { name: 'Manage News', icon: '📰', path: '/admin/news', active: false }
-    ];
-
     return (
-        <div className="db-container">
-            <aside className="db-sidebar">
-                <div>
-                    <div className="sidebar-brand">
-                        <span className="brand-icon">⚔️</span>
-                        <span>META Portal</span>
-                    </div>
-                    <nav className="sidebar-menu">
-                        {menuItems.map((item, index) => (
-                            <button
-                                key={index}
-                                className={`menu-btn ${item.active ? 'active' : ''}`}
-                                onClick={() => handleMenuClick(item.path)}
-                            >
-                                <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                                {item.name}
-                            </button>
-                        ))}
-                    </nav>
+        <AdminLayout>
+            <header className="db-header">
+                <div className="header-title">
+                    <h1>Dashboard Overview</h1>
+                    <p>Silakan pilih turnamen yang tersedia atau buat turnamen baru untuk memulai pengaturan data.</p>
                 </div>
-
-                <div className="sidebar-profile">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div className="profile-avatar">
-                            {user.username && user.username !== 'Loading...' ? user.username.substring(0, 2).toUpperCase() : '??'}
-                        </div>
-                        <div>
-                            <p style={{ fontSize: '14px', fontWeight: '600', margin: 0, color: '#FFF' }}>{user.username}</p>
-                            <p style={{ fontSize: '12px', color: '#10B981', margin: '2px 0 0 0', fontWeight: '500' }}>{user.email}</p>
-                        </div>
-                    </div>
-                    <button className="logout-btn" title="Keluar" onClick={handleLogout}>🚪 Logout</button>
+                <div className="header-actions">
+                    <button className="action-btn" onClick={() => setIsModalOpen(true)}>＋ Tambah Turnamen Baru</button>
                 </div>
-            </aside>
+            </header>
 
-            <main className="db-main">
-                <header className="db-header">
-                    <div className="header-title">
-                        <h1>Dashboard Overview</h1>
-                        <p>Silakan pilih turnamen yang tersedia atau buat turnamen baru untuk memulai pengaturan data.</p>
-                    </div>
-                    <div className="header-actions">
-                        <button className="action-btn" onClick={() => setIsModalOpen(true)}>＋ Tambah Turnamen Baru</button>
-                    </div>
-                </header>
-
-                <div className="db-body">
-                    <div className="panel-grid" style={{ gridTemplateColumns: '1fr' }}>
-                        <div className="panel-box">
-                            <div className="panel-header">
-                                <div>
-                                    <h3>Daftar Turnamen Aktif</h3>
-                                    <p>Menampilkan seluruh data dari tabel database tournaments.</p>
-                                </div>
+            <div className="db-body">
+                <div className="panel-grid" style={{ gridTemplateColumns: '1fr' }}>
+                    <div className="panel-box">
+                        <div className="panel-header">
+                            <div>
+                                <h3>Daftar Turnamen Aktif</h3>
+                                <p>Menampilkan seluruh data dari tabel database tournaments.</p>
                             </div>
+                        </div>
 
-                            <div className="table-responsive">
-                                <table className="custom-table">
-                                    <thead>
+                        <div className="table-responsive">
+                            <table className="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: '15%' }}>ID Tournament</th>
+                                        <th style={{ width: '45%' }}>Nama Turnamen</th>
+                                        <th style={{ width: '25%' }}>Penyelenggara</th>
+                                        <th style={{ textAlign: 'right', width: '15%' }}>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tournaments.length === 0 ? (
                                         <tr>
-                                            <th style={{ width: '15%' }}>ID Tournament</th>
-                                            <th style={{ width: '45%' }}>Nama Turnamen</th>
-                                            <th style={{ width: '25%' }}>Penyelenggara</th>
-                                            <th style={{ textAlign: 'right', width: '15%' }}>Aksi</th>
+                                            <td colSpan="4" style={{ textAlign: 'center', color: '#64748B', padding: '32px 0' }}>
+                                                Belum ada data turnamen di database. Silakan tambah baru!
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {tournaments.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="4" style={{ textAlign: 'center', color: '#64748B', padding: '32px 0' }}>
-                                                    Belum ada data turnamen di database. Silakan tambah baru!
+                                    ) : (
+                                        tournaments.map((tournament) => (
+                                            <tr key={tournament.id_tournament}>
+                                                <td style={{ fontWeight: 'bold', color: '#10B981' }}>#{tournament.id_tournament}</td>
+                                                <td><div style={{ fontWeight: '600', color: '#FFF' }}>{tournament.nama_turnamen}</div></td>
+                                                <td style={{ color: '#CBD5E1' }}>{tournament.penyelenggara}</td>
+                                                <td style={{ textAlign: 'right' }}>
+                                                    <button className="manage-btn" onClick={() => handleSelectTournament(tournament)}>
+                                                        ➔ Pilih Turnamen
+                                                    </button>
                                                 </td>
                                             </tr>
-                                        ) : (
-                                            tournaments.map((tournament) => (
-                                                <tr key={tournament.id_tournament}>
-                                                    <td style={{ fontWeight: 'bold', color: '#10B981' }}>
-                                                        #{tournament.id_tournament}
-                                                    </td>
-                                                    <td>
-                                                        <div style={{ fontWeight: '600', color: '#FFF' }}>
-                                                            {tournament.nama_turnamen}
-                                                        </div>
-                                                    </td>
-                                                    <td style={{ color: '#CBD5E1' }}>
-                                                        {tournament.penyelenggara}
-                                                    </td>
-                                                    <td style={{ textAlign: 'right' }}>
-                                                        <button
-                                                            className="manage-btn"
-                                                            onClick={() => handleSelectTournament(tournament)}
-                                                        >
-                                                            ➔ Pilih Turnamen
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h3>Buat Turnamen Baru</h3>
-                        <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '-8px', marginBottom: '20px' }}>
-                            Data ini akan langsung dimasukkan ke dalam tabel "tournaments" Anda.
-                        </p>
-
                         <form onSubmit={handleFormSubmit}>
                             <div className="form-group">
                                 <label>Nama Turnamen</label>
-                                <input
-                                    type="text"
-                                    name="nama_turnamen"
-                                    value={formData.nama_turnamen}
-                                    onChange={handleInputChange}
-                                    placeholder="Contoh: VCT Champions 2026"
-                                    required
-                                />
+                                <input type="text" name="nama_turnamen" value={formData.nama_turnamen} onChange={handleInputChange} required />
                             </div>
-
                             <div className="form-group">
                                 <label>Nama Penyelenggara</label>
-                                <input
-                                    type="text"
-                                    name="penyelenggara"
-                                    value={formData.penyelenggara}
-                                    onChange={handleInputChange}
-                                    placeholder="Contoh: Riot Games"
-                                    required
-                                />
+                                <input type="text" name="penyelenggara" value={formData.penyelenggara} onChange={handleInputChange} required />
                             </div>
-
                             <div className="modal-actions">
                                 <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Batal</button>
-                                <button type="submit" className="action-btn" disabled={isLoading}>
-                                    {isLoading ? 'Menyimpan...' : 'Simpan ke Database'}
-                                </button>
+                                <button type="submit" className="action-btn" disabled={isLoading}>{isLoading ? 'Menyimpan...' : 'Simpan ke Database'}</button>
                             </div>
                         </form>
                     </div>
@@ -312,45 +199,19 @@ export default function DashboardAdmin() {
                         <div style={{ fontSize: '36px', marginBottom: '12px' }}>⚙️</div>
                         <h3 style={{ marginBottom: '6px' }}>Pengaturan Turnamen</h3>
                         <p style={{ fontSize: '14px', color: '#CBD5E1', marginBottom: '24px' }}>
-                            Anda memilih <strong style={{ color: '#10B981' }}>{selectedTournament.nama_turnamen}</strong>.<br />
-                            Silakan pilih aksi yang ingin Anda lakukan:
+                            Anda memilih <strong style={{ color: '#10B981' }}>{selectedTournament.nama_turnamen}</strong>.
                         </p>
-
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <button
-                                className="action-btn"
-                                style={{ width: '100%', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-                                onClick={() => handleNavigateToModule('Input Match')}
-                            > Input Match (Jadwal)
-                            </button>
-
-                            <button
-                                className="action-btn"
-                                style={{ width: '100%', padding: '14px', backgroundColor: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-                                onClick={() => handleNavigateToModule('Input Matches Result')}
-                            > Input Matches Result (Hasil Skor)
-                            </button>
-
-                            <button
-                                className="action-btn"
-                                style={{ width: '100%', padding: '14px', backgroundColor: '#EF4444', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-                                onClick={handleDeleteTournament}
-                            > Hapus Turnamen
-                            </button>
+                            <button className="action-btn" onClick={() => handleNavigateToModule('Input Match')}>Input Match (Jadwal)</button>
+                            <button className="action-btn" style={{ backgroundColor: '#3B82F6' }} onClick={() => handleNavigateToModule('Input Matches Result')}>Input Matches Result</button>
+                            <button className="action-btn delete-btn" onClick={handleDeleteTournament}>Hapus Turnamen</button>
                         </div>
-
                         <div style={{ marginTop: '20px', borderTop: '1px solid #334155', paddingTop: '16px' }}>
-                            <button
-                                className="btn-secondary"
-                                style={{ width: '100%' }}
-                                onClick={() => setIsChoiceModalOpen(false)}
-                            >
-                                Kembali ke Overview
-                            </button>
+                            <button className="btn-secondary" style={{ width: '100%' }} onClick={() => setIsChoiceModalOpen(false)}>Kembali</button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </AdminLayout>
     );
 }

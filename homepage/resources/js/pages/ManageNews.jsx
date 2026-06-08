@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import '../../css/Forum.css';
+import AdminLayout from '../components/AdminLayout';
 
 export default function ManageNews() {
     const navigate = useNavigate();
@@ -29,7 +28,7 @@ export default function ManageNews() {
         try {
             const res = await fetch(`/api/admin/news/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                alert("Berita berhasil dihapus!");
+                alert("🗑️ Berita berhasil dihapus!");
                 fetchNews();
             }
         } catch (err) {
@@ -38,56 +37,65 @@ export default function ManageNews() {
     };
 
     return (
-        <div style={{ backgroundColor: '#1e1e2f', minHeight: '100vh' }}>
-            <Navbar />
+        <AdminLayout>
+            <header className="db-header">
+                <div className="header-title">
+                    <h1>Manage News</h1>
+                    <p>Kelola daftar berita, tambah, edit, atau hapus konten berita portal.</p>
+                </div>
+                <div className="header-actions">
+                    <button className="action-btn" onClick={() => navigate('/admin/news/add')}>
+                        ＋ Tambah News Baru
+                    </button>
+                </div>
+            </header>
 
-            <div style={{ paddingTop: '100px', paddingBottom: '50px' }}>
-                <div className="mr-container">
-                    <header className="mr-header forum-header-flex">
-                        <div className="mr-title-area">
-                            <h2>Manage News (Admin)</h2>
-                            <p className="sub-text">Kelola daftar berita, tambah, edit, atau hapus konten.</p>
+            <div className="db-body">
+                <div className="panel-box">
+                    <div className="panel-header">
+                        <div>
+                            <h3>Daftar Berita Aktif</h3>
+                            <p>Menampilkan seluruh data dari tabel database news.</p>
                         </div>
-                        <button
-                            className="forum-btn forum-btn-success"
-                            onClick={() => navigate('/admin/news/add')}
-                        >
-                            ➕ Tambah News Baru
-                        </button>
-                    </header>
+                    </div>
 
-                    <div className="mr-form-card" style={{ marginTop: '24px' }}>
-                        {newsList.length > 0 ? (
-                            <table className="forum-table">
-                                <thead>
+                    <div className="table-responsive">
+                        <table className="custom-table">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: '40%' }}>Judul Berita</th>
+                                    <th style={{ width: '20%' }}>Publisher</th>
+                                    <th style={{ width: '15%' }}>Tanggal</th>
+                                    <th style={{ width: '10%' }}>Featured?</th>
+                                    <th style={{ textAlign: 'right', width: '15%' }}>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {newsList.length === 0 ? (
                                     <tr>
-                                        <th>Judul Berita</th>
-                                        <th>Publisher</th>
-                                        <th>Tanggal</th>
-                                        <th>Featured?</th>
-                                        <th style={{ textAlign: 'center' }}>Aksi</th>
+                                        <td colSpan="5" style={{ textAlign: 'center', color: '#64748B', padding: '32px 0' }}>
+                                            Belum ada data berita di database. Silakan tambah baru!
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {newsList.map(news => (
+                                ) : (
+                                    newsList.map(news => (
                                         <tr key={news.id_news}>
-                                            <td className="thread-title-cell">{news.judul}</td>
-                                            <td style={{ color: '#94a3b8' }}>{news.publisher}</td>
-                                            <td className="thread-date-cell">{new Date(news.tanggal).toLocaleDateString('id-ID')}</td>
-                                            <td style={{ color: news.featured ? '#10B981' : '#94a3b8', fontWeight: 'bold' }}>
+                                            <td style={{ fontWeight: '600', color: '#FFF' }}>{news.judul}</td>
+                                            <td style={{ color: '#CBD5E1' }}>{news.publisher}</td>
+                                            <td style={{ color: '#CBD5E1' }}>{new Date(news.tanggal).toLocaleDateString('id-ID')}</td>
+                                            <td style={{ color: news.featured ? '#10B981' : '#64748B', fontWeight: 'bold' }}>
                                                 {news.featured ? '⭐ Yes' : 'No'}
                                             </td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                <div className="forum-btn-group" style={{ justifyContent: 'center' }}>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                                                     <button
-                                                        className="forum-btn forum-btn-primary"
+                                                        className="manage-btn"
                                                         onClick={() => alert("Halaman edit segera menyusul! 😎")}
                                                     >
                                                         ✏️ Edit
                                                     </button>
                                                     <button
-                                                        className="forum-btn forum-btn-secondary"
-                                                        style={{ backgroundColor: '#EF4444' }}
+                                                        className="manage-btn delete"
                                                         onClick={() => handleDelete(news.id_news)}
                                                     >
                                                         🗑️ Hapus
@@ -95,15 +103,13 @@ export default function ManageNews() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <p className="forum-empty-state">Belum ada berita di database.</p>
-                        )}
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
+        </AdminLayout>
     );
 }
