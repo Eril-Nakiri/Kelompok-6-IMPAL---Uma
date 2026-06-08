@@ -11,23 +11,12 @@ export default function Dashboard() {
     const [featuredNews, setFeaturedNews] = useState(null);
     const [regularNews, setRegularNews] = useState([]);
 
-    const upcomingMatches = [
-        { id: 1, team1: "BLG", team2: "TL", time: "5m", accent: "#a855f7" },
-        { id: 2, team1: "PRX", team2: "T1", time: "55m", accent: "#ef4444" },
-        { id: 3, team1: "C9", team2: "SEN", time: "1hour 25m", accent: "#3b82f6" },
-        { id: 4, team1: "VIT", team2: "NRG", accent: "#a855f7" },
-    ];
-
-    const liveEvents = [
-        { id: 1, name: "VCT Pacific Stage 1", date: "April 15 - May 12", color: "#ef4444" },
-        { id: 2, name: "VCT Americas Stage 1", date: "April 16 - May 13", color: "#3b82f6" },
-    ];
-
     const [matchesList, setMatchesList] = useState([]);
     const [liveList, setLiveList] = useState([]);
     const [upcomingList, setUpcomingList] = useState([]);
 
-    const [teamsMap, setTeamsMap] = useState({});
+    const [teamLogosMap, setTeamLogosMap] = useState({});
+    const [tournamentsMap, setTournamentsMap] = useState({});
 
     const getTournamentBranding = (name) => {
         if (!name) return "#64748b";
@@ -41,6 +30,12 @@ export default function Dashboard() {
         if (lower.includes("vct emea stage 1 2026")) return "#facc15";
 
         return "#10b981";
+    };
+
+    const resolveMediaUrl = (url) => {
+        if (!url) return "https://via.placeholder.com/32";
+        if (url.startsWith('http')) return url;
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${url}`;
     };
 
     useEffect(() => {
@@ -72,13 +67,40 @@ export default function Dashboard() {
             .then((res) => res.json())
             .then((resData) => {
                 const arr = Array.isArray(resData) ? resData : (resData.data || []);
-                const map = {};
+                const logMap = {};
                 arr.forEach(team => {
-                    map[team.id_team] = team.singkatan || team.nama_tim;
+                    logMap[team.id_team] = team.logo_url;
                 });
-                setTeamsMap(map);
+                setTeamLogosMap(logMap);
             })
-            .catch((err) => console.error("Gagal memuat kamus singkatan tim:", err));
+            .catch((err) => console.error("Gagal memuat logomap:", err));
+
+        fetch("/api/tournament")
+            .then((res) => res.json())
+            .then((resData) => {
+                const arr = Array.isArray(resData) ? resData : (resData.data || []);
+                const tMap = {};
+                arr.forEach(t => {
+                    tMap[t.id_tournament] = t.nama_turnamen;
+                });
+                setTournamentsMap(tMap);
+
+                const now = new Date();
+                // Filter Live Event
+                const live = arr.filter(t => {
+                    const start = new Date(t.start_date || t.created_at);
+                    const end = new Date(t.end_date || now);
+                    return start <= now && end >= now;
+                });
+                // Filter Upcoming Event
+                const upcoming = arr.filter(t => {
+                    return t.start_date && new Date(t.start_date) > now;
+                }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+                setLiveList(live.slice(0, 2));
+                setUpcomingList(upcoming.slice(0, 2));
+            })
+            .catch((err) => console.error("Gagal memuat turnamenmap:", err));
 
         fetch("/api/matches")
             .then((res) => res.json())
@@ -92,28 +114,7 @@ export default function Dashboard() {
 
                 setMatchesList(filtered.slice(0, 4));
             })
-            .catch((err) => console.error("Gagal memuat matches database:", err));
-
-        fetch("/api/tournament")
-            .then((res) => res.json())
-            .then((resData) => {
-                const arr = Array.isArray(resData) ? resData : (resData.data || []);
-                const now = new Date();
-
-                const live = arr.filter(t => {
-                    const start = new Date(t.start_date || t.created_at);
-                    const end = new Date(t.end_date || now);
-                    return start <= now && end >= now;
-                });
-
-                const upcoming = arr.filter(t => {
-                    return t.start_date && new Date(t.start_date) > now;
-                }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-
-                setLiveList(live.slice(0, 2));
-                setUpcomingList(upcoming.slice(0, 2));
-            })
-            .catch((err) => console.error("Gagal memuat turnamen database:", err));
+            .catch((err) => console.error("Gagal memuat matches:", err));
 
     }, []);
 
@@ -143,11 +144,7 @@ export default function Dashboard() {
                             {featuredNews.thumbnail_url && (
                                 <div className="featured-thumbnail-container">
                                     <img
-                                        src={
-                                            featuredNews.thumbnail_url.startsWith('http')
-                                                ? featuredNews.thumbnail_url
-                                                : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${featuredNews.thumbnail_url}`
-                                        }
+                                        src={resolveMediaUrl(featuredNews.thumbnail_url)}
                                         alt={featuredNews.judul}
                                         className="featured-thumbnail-img"
                                     />
@@ -196,8 +193,11 @@ export default function Dashboard() {
                         <div className="matches-container">
                             {matchesList.length > 0 ? (
                                 matchesList.map((match, idx) => {
-                                    const teamA = teamsMap[match.id_team_a] || match.id_team_a || "TBD";
-                                    const teamB = teamsMap[match.id_team_b] || match.id_team_b || "TBD";
+                                    const logoA = resolveMediaUrl(teamLogosMap[match.id_team_a]);
+                                    const logoB = resolveMediaUrl(teamLogosMap[match.id_team_b]);
+
+                                    const parentTournamentName = tournamentsMap[match.id_tournament] || "";
+                                    const matchBorderColor = getTournamentBranding(parentTournamentName);
 
                                     let displayTime = "";
                                     if (match.jadwal) {
@@ -209,15 +209,18 @@ export default function Dashboard() {
                                         <div
                                             key={match.id_match || idx}
                                             className="match-card"
-                                            style={{ "--accent-color": "#ff4654" }}
+                                            style={{ borderLeft: `5px solid ${matchBorderColor}` }}
                                         >
-                                            <div className="match-teams">
-                                                <span>{teamA}</span>
-                                                <span style={{ color: "#64748b", fontSize: "0.85rem", fontWeight: 'bold' }}>-</span>
-                                                <span>{teamB}</span>
-                                                <small style={{ fontSize: '10px', color: '#64748b', fontWeight: '500' }}>({match.match_format || 'BO3 Series'})</small>
+                                            <div className="match-teams-logos">
+                                                <img src={logoA} alt="Team A" className="match-team-logo-img" title={`Team ID: ${match.id_team_a}`} />
+                                                <span className="match-vs-text">vs</span>
+                                                <img src={logoB} alt="Team B" className="match-team-logo-img" title={`Team ID: ${match.id_team_b}`} />
                                             </div>
-                                            {displayTime && <div className="match-time">{displayTime}</div>}
+
+                                            <div className="match-info-block">
+                                                <div className="match-format-text">{match.match_format || 'BO3 Series'}</div>
+                                                {displayTime && <div className="match-time-text">{displayTime}</div>}
+                                            </div>
                                         </div>
                                     );
                                 })
@@ -244,7 +247,7 @@ export default function Dashboard() {
                                         >
                                             {event.logo_url && (
                                                 <img
-                                                    src={event.logo_url.startsWith('http') ? event.logo_url : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${event.logo_url}`}
+                                                    src={resolveMediaUrl(event.logo_url)}
                                                     alt="logo" className="event-logo-img"
                                                 />
                                             )}
@@ -279,7 +282,7 @@ export default function Dashboard() {
                                         >
                                             {event.logo_url && (
                                                 <img
-                                                    src={event.logo_url.startsWith('http') ? event.logo_url : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${event.logo_url}`}
+                                                    src={resolveMediaUrl(event.logo_url)}
                                                     alt="logo" className="event-logo-img"
                                                 />
                                             )}
