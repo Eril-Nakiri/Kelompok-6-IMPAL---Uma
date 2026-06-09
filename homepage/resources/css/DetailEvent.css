@@ -80,6 +80,37 @@
     padding-left: 10px;
 }
 
+.de-tab-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.de-tab-btn {
+    background-color: #1e1e2f;
+    color: #94a3b8;
+    border: 1px solid #3a3a5a;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.de-tab-btn:hover {
+    background-color: #34344e;
+    color: white;
+}
+
+.de-tab-btn.active {
+    background-color: #ff4654;
+    color: white;
+    border-color: #ff4654;
+}
+
 .de-image-wrapper {
     width: 100%;
     border-radius: 8px;
@@ -87,10 +118,13 @@
     border: 1px solid #3a3a5a;
     background-color: #1e1e2f;
     padding: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .de-playoffs-img {
     width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
     object-fit: contain;

@@ -10,10 +10,12 @@ export default function DetailEvent() {
     const [eventData, setEventData] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [activeStageTab, setActiveStageTab] = useState('SWISS');
+
     const resolveMediaUrl = (url) => {
         if (!url) return "https://via.placeholder.com/40";
         if (url.startsWith('http')) return url;
-        return `${import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app"}/${url}`;
+        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${url}`;
     };
 
     useEffect(() => {
@@ -64,13 +66,36 @@ export default function DetailEvent() {
                 </div>
 
                 <div className="de-section-box">
-                    <h3 className="de-section-title">Stage Playoffs & Brackets Diagram</h3>
+                    <h3 className="de-section-title">Tournament Brackets & Stage Progress</h3>
+                    <div className="de-tab-row">
+                        <button
+                            className={`de-tab-btn ${activeStageTab === 'SWISS' ? 'active' : ''}`}
+                            onClick={() => setActiveStageTab('SWISS')}
+                        >
+                            🇨🇭 Swiss Stage
+                        </button>
+                        <button
+                            className={`de-tab-btn ${activeStageTab === 'PLAYOFF' ? 'active' : ''}`}
+                            onClick={() => setActiveStageTab('PLAYOFF')}
+                        >
+                            🏆 Playoffs Bracket
+                        </button>
+                    </div>
+
                     <div className="de-image-wrapper">
-                        <img
-                            src="https://i.ibb.co.com/CKfnq7cj/Playoffs.png"
-                            alt="Playoffs Brackets"
-                            className="de-playoffs-img"
-                        />
+                        {activeStageTab === 'SWISS' ? (
+                            <img
+                                src="https://i.ibb.co.com/tMTdzyLL/Swiss-Stage.png"
+                                alt="Swiss Stage Progress"
+                                className="de-playoffs-img"
+                            />
+                        ) : (
+                            <img
+                                src="https://i.ibb.co.com/CKfnq7cj/Playoffs.png"
+                                alt="Playoffs Brackets Diagram"
+                                className="de-playoffs-img"
+                            />
+                        )}
                     </div>
                 </div>
 
