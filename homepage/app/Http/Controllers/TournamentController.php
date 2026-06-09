@@ -95,12 +95,11 @@ class TournamentController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         try {
             $tournament = Tournament::findOrFail($id);
 
-            //bisa opsional untuk hapus turnament otomatis hapus match yang ada
             $tournament->matches()->delete();
 
             $tournament->delete();
@@ -115,6 +114,40 @@ class TournamentController extends Controller
                 'status' => 'error',
                 'message' => 'Gagal menghapus database: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function getTournamentDetail(int $id)
+    {
+        try {
+            $tournament = DB::table('tournaments')->where('id_tournament', $id)->first();
+            if (!$tournament) {
+                return response()->json(['status' => 'error', 'message' => 'Turnamen tidak ditemukan'], 404);
+            }
+
+            $matches = DB::table('matches')->where('id_tournament', $id)->get();
+
+            $teamIds = [];
+            foreach ($matches as $match) {
+                if ($match->id_team_a) $teamIds[] = $match->id_team_a;
+                if ($match->id_team_b) $teamIds[] = $match->id_team_b;
+            }
+            $uniqueTeamIds = array_unique($teamIds);
+
+            $teams = [];
+            if (!empty($uniqueTeamIds)) {
+                $teams = DB::table('teams')->whereIn('id_team', $uniqueTeamIds)->get();
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'tournament' => $tournament,
+                    'teams' => $teams
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 }

@@ -49,6 +49,7 @@ Route::post('/matches/update-series', [MatchController::class, 'updateSeriesScor
 Route::post('/tournament', [TournamentController::class, 'store']);
 Route::get('/tournament', [TournamentController::class, 'index']);
 Route::delete('/tournament/{id}', [App\Http\Controllers\TournamentController::class, 'destroy']);
+Route::get('/tournament/{id}', [TournamentController::class, 'getTournamentDetail']);
 
 // Admin Team & Agent
 Route::get('/teams', [TeamController::class, 'index']);

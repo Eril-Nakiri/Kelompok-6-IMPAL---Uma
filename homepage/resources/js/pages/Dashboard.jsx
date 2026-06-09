@@ -245,7 +245,11 @@ export default function Dashboard() {
                                         <div
                                             key={event.id_tournament || idx}
                                             className="live-event-card"
-                                            style={{ borderLeft: `5px solid ${color}` }}
+                                            style={{
+                                                borderLeft: `5px solid ${color}`,
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => navigate(`/tournament/${event.id_tournament}`)}
                                         >
                                             {event.logo_url && (
                                                 <img
