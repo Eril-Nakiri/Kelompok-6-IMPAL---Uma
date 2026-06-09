@@ -13,7 +13,7 @@ export default function DetailEvent() {
     const resolveMediaUrl = (url) => {
         if (!url) return "https://via.placeholder.com/40";
         if (url.startsWith('http')) return url;
-        return `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${url}`;
+        return `${import.meta.env.VITE_API_URL || "https://kelompok6uma-impal.up.railway.app"}/${url}`;
     };
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function DetailEvent() {
 
             <div className="de-container">
                 <button className="de-back-btn" onClick={() => navigate('/dashboard')}>
-                    布局 🔙 Kembali ke Dashboard
+                    🔙 Kembali ke Dashboard
                 </button>
 
                 <div className="de-header-card">
