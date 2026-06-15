@@ -1,0 +1,88 @@
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (5,1,'Lotus',1,'Neon',16,18,5,210,0.95,24,3,4,2),
+	 (5,1,'Lotus',2,'Raze',18,19,3,230,0.98,26,4,5,4),
+	 (5,1,'Lotus',3,'Jett',14,18,2,190,0.85,28,2,4,1),
+	 (5,1,'Lotus',4,'Fade',12,16,8,165,0.88,20,1,1,15),
+	 (5,1,'Lotus',5,'Omen',10,15,7,140,0.80,18,0,1,11),
+	 (5,1,'Lotus',51,'Cypher',18,14,6,225,1.15,25,2,1,21),
+	 (5,1,'Lotus',52,'Jett',24,13,4,295,1.48,31,6,2,1),
+	 (5,1,'Lotus',53,'Killjoy',15,14,5,200,1.05,22,1,2,23),
+	 (5,1,'Lotus',54,'Breach',14,15,12,180,1.02,19,1,1,14),
+	 (5,1,'Lotus',55,'Omen',15,14,8,190,1.08,21,2,1,11);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (5,2,'Sunset',1,'Neon',20,14,8,240,1.25,25,3,1,2),
+	 (5,2,'Sunset',2,'Raze',19,15,4,225,1.18,29,4,2,4),
+	 (5,2,'Sunset',3,'Jett',25,12,4,310,1.58,33,6,1,1),
+	 (5,2,'Sunset',4,'Breach',15,11,14,195,1.15,22,1,0,14),
+	 (5,2,'Sunset',5,'Omen',13,11,11,170,1.08,20,1,1,11),
+	 (5,2,'Sunset',51,'Cypher',13,19,5,175,0.82,24,0,3,21),
+	 (5,2,'Sunset',52,'Jett',16,20,3,200,0.90,28,3,5,1),
+	 (5,2,'Sunset',53,'Gekko',14,18,4,185,0.88,21,1,2,19),
+	 (5,2,'Sunset',54,'Breach',11,18,7,150,0.78,18,0,2,14),
+	 (5,2,'Sunset',55,'Omen',11,18,4,155,0.80,20,1,3,11);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (5,3,'Bind',1,'Gekko',18,15,13,215,1.18,23,2,1,19),
+	 (5,3,'Bind',2,'Raze',21,17,5,245,1.22,28,4,3,4),
+	 (5,3,'Bind',3,'Jett',22,15,6,255,1.28,30,5,2,1),
+	 (5,3,'Bind',4,'Skye',17,14,12,190,1.12,21,1,1,17),
+	 (5,3,'Bind',5,'Brimstone',14,14,13,175,1.05,20,1,0,9),
+	 (5,3,'Bind',51,'Viper',15,17,9,190,0.95,26,1,1,12),
+	 (5,3,'Bind',52,'Jett',19,18,5,220,1.10,29,4,4,1),
+	 (5,3,'Bind',53,'Deadlock',16,18,5,195,0.98,23,1,2,22),
+	 (5,3,'Bind',54,'Skye',13,18,9,160,0.88,21,1,2,17),
+	 (5,3,'Bind',55,'Brimstone',14,18,6,170,0.92,22,2,2,9);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (3,1,'Split',31,'Skye',16,14,10,210,1.15,24,2,1,17),
+	 (3,1,'Split',32,'Raze',22,16,5,260,1.30,28,5,3,4),
+	 (3,1,'Split',33,'Omen',14,12,8,185,1.05,20,1,1,11),
+	 (3,1,'Split',34,'Jett',19,15,3,230,1.22,30,4,4,1),
+	 (3,1,'Split',35,'Cypher',15,13,6,195,1.10,22,2,0,21),
+	 (3,1,'Split',46,'Viper',14,16,7,180,0.95,25,1,2,12),
+	 (3,1,'Split',47,'Breach',12,17,9,160,0.88,18,1,3,14),
+	 (3,1,'Split',48,'Raze',18,18,4,215,1.05,26,3,4,4),
+	 (3,1,'Split',49,'Jett',17,18,2,205,0.98,28,4,2,1),
+	 (3,1,'Split',50,'Omen',9,17,6,145,0.75,15,0,1,11);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (3,2,'Ascent',31,'KAY/O',14,18,12,190,0.95,22,1,3,16),
+	 (3,2,'Ascent',32,'Jett',18,20,4,220,1.05,25,4,5,1),
+	 (3,2,'Ascent',33,'Omen',13,16,9,175,0.90,19,0,1,11),
+	 (3,2,'Ascent',34,'Killjoy',15,17,5,200,1.02,24,2,2,23),
+	 (3,2,'Ascent',35,'Sova',16,15,8,210,1.10,21,1,1,18),
+	 (3,2,'Ascent',46,'Cypher',20,14,6,245,1.25,30,3,1,21),
+	 (3,2,'Ascent',47,'Sova',15,16,11,195,1.08,20,1,2,18),
+	 (3,2,'Ascent',48,'KAY/O',17,17,9,215,1.12,24,2,3,16),
+	 (3,2,'Ascent',49,'Jett',24,15,3,285,1.45,32,6,2,1),
+	 (3,2,'Ascent',50,'Omen',10,14,10,155,0.92,18,0,0,11);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (3,3,'Breeze',31,'Skye',10,15,5,160,0.85,18,0,2,17),
+	 (3,3,'Breeze',32,'Jett',14,17,2,200,0.98,22,3,4,1),
+	 (3,3,'Breeze',33,'Viper',9,14,6,150,0.80,15,1,1,12),
+	 (3,3,'Breeze',34,'Cypher',11,15,3,175,0.88,20,1,2,21),
+	 (3,3,'Breeze',35,'Sova',12,14,4,185,0.95,19,1,1,18),
+	 (3,3,'Breeze',46,'Viper',16,10,8,230,1.35,28,2,0,12),
+	 (3,3,'Breeze',47,'Sova',14,11,9,205,1.18,22,1,1,18),
+	 (3,3,'Breeze',48,'KAY/O',15,12,10,215,1.20,25,2,2,16),
+	 (3,3,'Breeze',49,'Jett',21,12,4,275,1.48,35,5,1,1),
+	 (3,3,'Breeze',50,'Cypher',9,11,5,140,0.90,16,0,0,21);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (6,1,'Haven',36,'Jett',11,16,2,170,0.82,20,2,4,1),
+	 (6,1,'Haven',37,'Killjoy',9,15,3,145,0.75,18,0,2,23),
+	 (6,1,'Haven',38,'Breach',8,16,6,135,0.70,15,1,3,14),
+	 (6,1,'Haven',39,'Sova',12,14,4,180,0.95,22,1,1,18),
+	 (6,1,'Haven',40,'Omen',7,15,5,120,0.65,12,0,2,11),
+	 (6,1,'Haven',46,'Cypher',18,8,6,250,1.45,32,3,0,21),
+	 (6,1,'Haven',47,'Breach',14,10,12,210,1.25,24,1,1,14),
+	 (6,1,'Haven',48,'Sova',13,9,10,195,1.18,21,2,0,18),
+	 (6,1,'Haven',49,'Jett',22,11,3,290,1.55,34,6,2,1),
+	 (6,1,'Haven',50,'Omen',9,9,9,145,1.05,18,0,1,11);
+INSERT INTO public.player_map_stats (id_match,map_number,map_name,id_player,agent_used,kills,deaths,assists,acs,rating,hs_percentage,first_kills,first_deaths,id_agent) VALUES
+	 (6,2,'Icebox',36,'Jett',15,17,3,210,0.98,25,3,4,1),
+	 (6,2,'Icebox',37,'Killjoy',12,15,4,180,0.88,20,1,2,23),
+	 (6,2,'Icebox',38,'Viper',10,16,5,155,0.82,18,0,2,12),
+	 (6,2,'Icebox',39,'Sova',14,15,6,195,1.02,22,2,1,18),
+	 (6,2,'Icebox',40,'Sage',9,14,8,140,0.78,16,0,0,24),
+	 (6,2,'Icebox',46,'Viper',16,11,7,235,1.30,28,2,1,12),
+	 (6,2,'Icebox',47,'Killjoy',13,10,4,185,1.15,22,1,1,23),
+	 (6,2,'Icebox',48,'Sova',15,13,8,205,1.18,24,1,0,18),
+	 (6,2,'Icebox',49,'Jett',24,14,5,310,1.62,36,5,3,1),
+	 (6,2,'Icebox',50,'Sage',9,12,12,150,1.08,15,0,1,24);
