@@ -211,9 +211,11 @@ export default function MatchDetail() {
                                         : "VS";
                                 }
 
-                                const currentMapData = (matchData.maps || []).find(
-                                    m => m.map_name === activeMapFilter
+                                const matchingMaps = (matchData.maps || []).filter(
+                                    m => m.map_name && m.map_name.toString().trim().toLowerCase() === activeMapFilter.toString().trim().toLowerCase()
                                 );
+
+                                const currentMapData = matchingMaps.find(m => m.team_a_score !== null) || matchingMaps[0];
 
                                 if (currentMapData && currentMapData.team_a_score !== null) {
                                     return `${currentMapData.team_a_score} : ${currentMapData.team_b_score}`;
