@@ -194,7 +194,7 @@ export default function MatchDetail() {
 
                 <div className="md-header-card">
                     <div className="md-tournament-name">
-                        🏆 {tournament?.nama_turnamen || "VALORANT Champions Tour 2026"}
+                        {tournament?.nama_turnamen || "VALORANT Champions Tour 2026"}
                     </div>
 
                     <div className="md-vs-row">
@@ -204,10 +204,27 @@ export default function MatchDetail() {
                         </div>
 
                         <div className="md-vs-circle">
-                            {match?.skor_akhir_a !== null && new Date(match?.jadwal) < new Date()
-                                ? `${match?.skor_akhir_a} : ${match?.skor_akhir_b}`
-                                : "VS"
-                            }
+                            {(() => {
+                                if (match?.jadwal && new Date(match.jadwal) > new Date()) {
+                                    return "VS";
+                                }
+
+                                if (activeMapFilter === 'ALL') {
+                                    return match?.skor_akhir_a !== null
+                                        ? `${match.skor_akhir_a} : ${match.skor_akhir_b}`
+                                        : "VS";
+                                }
+
+                                const currentMapData = (matchData.maps || []).find(
+                                    m => m.map_name === activeMapFilter
+                                );
+
+                                if (currentMapData && currentMapData.team_a_score !== null) {
+                                    return `${currentMapData.team_a_score} : ${currentMapData.team_b_score}`;
+                                }
+
+                                return "- : -";
+                            })()}
                         </div>
 
                         <div className="md-team-block">
