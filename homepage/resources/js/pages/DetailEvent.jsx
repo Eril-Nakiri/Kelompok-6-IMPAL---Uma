@@ -109,7 +109,7 @@ export default function DetailEvent() {
                                     className="de-team-card"
                                     onClick={() => {
                                         if (team.id_team) {
-                                            navigate(`/teams/${team.id_team}`);
+                                            navigate(`/team/${team.id_team}`);
                                         }
                                     }}
                                     style={{
