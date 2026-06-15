@@ -189,7 +189,7 @@ export default function MatchDetail() {
 
             <div className="md-container">
                 <button className="back-portal-btn" onClick={() => navigate('/matches')}>
-                    🔙 Kembali ke Menu Matches
+                    Kembali ke Menu Matches
                 </button>
 
                 <div className="md-header-card">
@@ -232,7 +232,7 @@ export default function MatchDetail() {
                     <div className="md-match-meta">
                         <span style={{ fontWeight: 'bold', color: '#fff' }}>{match?.match_format || 'BO3'} Series</span>
                         {" • "}
-                        <span>📅 {match?.jadwal ? new Date(match.jadwal).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }) + " WIB" : "Jadwal TBA"}</span>
+                        <span>{match?.jadwal ? new Date(match.jadwal).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }) + " WIB" : "Jadwal TBA"}</span>
                     </div>
                 </div>
 

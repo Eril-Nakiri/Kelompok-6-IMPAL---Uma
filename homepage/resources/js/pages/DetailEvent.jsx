@@ -104,7 +104,21 @@ export default function DetailEvent() {
                     <div className="de-teams-grid">
                         {teams && teams.length > 0 ? (
                             teams.map((team, idx) => (
-                                <div key={team.id_team || idx} className="de-team-card">
+                                <div
+                                    key={team.id_team || idx}
+                                    className="de-team-card"
+                                    onClick={() => {
+                                        if (team.id_team) {
+                                            navigate(`/teams/${team.id_team}`);
+                                        }
+                                    }}
+                                    style={{
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease-in-out'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff4654'}
+                                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#3a3a5a'}
+                                >
                                     <img
                                         src={resolveMediaUrl(team.logo_url)}
                                         alt="T-Logo"
