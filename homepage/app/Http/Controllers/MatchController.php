@@ -45,21 +45,6 @@ class MatchController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'id_tournament' => 'required|integer', 'id_team_a' => 'required|integer',
-            'id_team_b' => 'required|integer|different:id_team_a', 'match_format' => 'required|string',
-            'jadwal' => 'required|date', 'skor_akhir_a' => 'nullable|integer', 'skor_akhir_b' => 'nullable|integer'
-        ]);
-        try {
-            $match = GameMatch::create($request->all());
-            return response()->json(['status' => 'success', 'message' => 'Jadwal berhasil dibuat!', 'data' => $match], 201);
-        } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Gagal input database: ' . $e->getMessage()], 500);
-        }
-    }
-
     public function updateSeriesScore(Request $request)
     {
         $request->validate(['id_match' => 'required|integer', 'scoreA' => 'required|integer', 'scoreB' => 'required|integer']);
@@ -84,13 +69,33 @@ class MatchController extends Controller
         try {
             $mapNumber = (int) filter_var($request->current_map, FILTER_SANITIZE_NUMBER_INT);
 
-            DB::table('match_maps')->updateOrInsert(
-                ['id_match' => $request->id_match, 'map_number' => $mapNumber],
-                ['map_name' => $request->game_data['mapName'], 'team_a_score' => $request->game_data['mapScoreA'], 'team_b_score' => $request->game_data['mapScoreB']]
-            );
+            $matchMap = DB::table('match_maps')
+                ->where('id_match', $request->id_match)
+                ->where('map_number', $mapNumber)
+                ->first();
+
+            if ($matchMap) {
+                DB::table('match_maps')->where('id_match_map', $matchMap->id_match_map)->update([
+                    'map_name' => $request->game_data['mapName'],
+                    'team_a_score' => $request->game_data['mapScoreA'],
+                    'team_b_score' => $request->game_data['mapScoreB']
+                ]);
+            } else {
+                $maxMapId = DB::table('match_maps')->max('id_match_map') ?? 0;
+                DB::table('match_maps')->insert([
+                    'id_match_map' => $maxMapId + 1,
+                    'id_match' => $request->id_match,
+                    'map_number' => $mapNumber,
+                    'map_name' => $request->game_data['mapName'],
+                    'team_a_score' => $request->game_data['mapScoreA'],
+                    'team_b_score' => $request->game_data['mapScoreB']
+                ]);
+            }
 
             $teams = ['teamA', 'teamB'];
             $agentsMap = DB::table('agents')->pluck('nama_agent', 'id_agent');
+
+            $currentMaxStatId = DB::table('player_map_stats')->max('id_stat') ?? 0;
 
             foreach ($teams as $team) {
                 if (isset($request->player_stats[$team])) {
@@ -99,15 +104,39 @@ class MatchController extends Controller
                             $idAgent = !empty($player['agent']) ? (int) $player['agent'] : null;
                             $agentUsed = $idAgent && isset($agentsMap[$idAgent]) ? $agentsMap[$idAgent] : null;
 
-                            DB::table('player_map_stats')->updateOrInsert(
-                                ['id_match' => $request->id_match, 'map_number' => $mapNumber, 'id_player' => (int) $player['id_player']],
-                                [
-                                    'map_name' => $request->game_data['mapName'], 'id_agent' => $idAgent, 'agent_used' => $agentUsed,
-                                    'kills' => $player['kills'] ?: 0, 'deaths' => $player['deaths'] ?: 0, 'assists' => $player['assists'] ?: 0,
-                                    'acs' => $player['acs'] ?: 0, 'rating' => $player['rating'] ?: 0, 'hs_percentage' => $player['hs'] ?: 0,
-                                    'first_kills' => $player['fk'] ?: 0, 'first_deaths' => $player['fd'] ?: 0,
-                                ]
-                            );
+                            $statExists = DB::table('player_map_stats')
+                                ->where('id_match', $request->id_match)
+                                ->where('map_number', $mapNumber)
+                                ->where('id_player', (int) $player['id_player'])
+                                ->first();
+
+                            $updateData = [
+                                'map_name' => $request->game_data['mapName'],
+                                'id_agent' => $idAgent,
+                                'agent_used' => $agentUsed,
+                                'kills' => $player['kills'] ?: 0,
+                                'deaths' => $player['deaths'] ?: 0,
+                                'assists' => $player['assists'] ?: 0,
+                                'acs' => $player['acs'] ?: 0,
+                                'rating' => $player['rating'] ?: 0,
+                                'hs_percentage' => $player['hs'] ?: 0,
+                                'first_kills' => $player['fk'] ?: 0,
+                                'first_deaths' => $player['fd'] ?: 0,
+                            ];
+
+                            if ($statExists) {
+                                DB::table('player_map_stats')
+                                    ->where('id_stat', $statExists->id_stat)
+                                    ->update($updateData);
+                            } else {
+                                $currentMaxStatId++;
+                                DB::table('player_map_stats')->insert(array_merge([
+                                    'id_stat' => $currentMaxStatId,
+                                    'id_match' => $request->id_match,
+                                    'map_number' => $mapNumber,
+                                    'id_player' => (int) $player['id_player']
+                                ], $updateData));
+                            }
                         }
                     }
                 }
