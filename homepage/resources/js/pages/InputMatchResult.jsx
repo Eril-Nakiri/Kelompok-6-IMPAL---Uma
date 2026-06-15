@@ -141,7 +141,7 @@ export default function InputMatchResult() {
 
         const payload = {
             id_match: selectedMatch.id_match || selectedMatch.id,
-            current_map: extractedMapNumber,
+            current_map: activeMap,
             game_data: gameData,
             player_stats: { teamA: teamAStats, teamB: teamBStats }
         };
