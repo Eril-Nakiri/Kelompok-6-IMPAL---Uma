@@ -31,7 +31,9 @@ class MatchController extends Controller
                         ), '[]'::json)
                         FROM match_maps mm WHERE mm.id_match = m.id_match
                     ) as maps")
-                ])->get();
+                ])
+                ->orderBy('m.jadwal', 'asc')
+                ->get();
 
             $matches = collect($matches)->map(function ($match) {
                 if (isset($match->maps) && is_string($match->maps)) $match->maps = json_decode($match->maps);
@@ -116,7 +118,7 @@ class MatchController extends Controller
         }
     }
 
-    public function getMatchDetail($id)
+    public function getMatchDetail(int $id)
     {
         try {
             $match = DB::table('matches')->where('id_match', $id)->first();
@@ -152,7 +154,7 @@ class MatchController extends Controller
                     'countries' => $countries
                 ]
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
