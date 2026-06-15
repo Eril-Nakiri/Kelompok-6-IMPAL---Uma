@@ -205,10 +205,6 @@ export default function MatchDetail() {
 
                         <div className="md-vs-circle">
                             {(() => {
-                                if (match?.jadwal && new Date(match.jadwal) > new Date()) {
-                                    return "VS";
-                                }
-
                                 if (activeMapFilter === 'ALL') {
                                     return match?.skor_akhir_a !== null
                                         ? `${match.skor_akhir_a} : ${match.skor_akhir_b}`
