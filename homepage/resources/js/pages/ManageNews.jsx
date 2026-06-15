@@ -87,7 +87,7 @@ export default function ManageNews() {
                                             <td style={{ color: '#CBD5E1' }}>{new Date(news.tanggal).toLocaleDateString('id-ID')}</td>
 
                                             <td style={{ color: news.featured ? '#10B981' : '#64748B', fontWeight: 'bold' }}>
-                                                {news.featured ? '⭐ Yes' : 'No'}
+                                                {news.featured ? 'Yes' : 'No'}
                                             </td>
                                             <td style={{ textAlign: 'right' }}>
                                                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>

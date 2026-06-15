@@ -135,12 +135,12 @@ export default function EditNews() {
                                 style={{ width: '18px', height: '18px', margin: '0', padding: '0', cursor: 'pointer' }}
                             />
                             <label htmlFor="featuredCheck" style={{ marginLeft: '10px', cursor: 'pointer', color: '#10B981', fontSize: '14px', fontWeight: 'bold', marginBottom: '0' }}>
-                                ⭐ Jadikan sebagai Featured News (Muncul Besar di Dashboard)
+                                Jadikan sebagai Featured News (Muncul Besar di Dashboard)
                             </label>
                         </div>
 
                         <div style={{ backgroundColor: '#1E293B', padding: '12px 16px', borderRadius: '6px', marginBottom: '20px', borderLeft: '4px solid #3B82F6', fontSize: '13px', color: '#CBD5E1', lineHeight: '1.6' }}>
-                            <strong>💡 Info Upload Gambar:</strong><br />
+                            <strong>Info Upload Gambar:</strong><br />
                             Untuk upload gambar, silahkan upload ke ImgBB.com terlebih dahulu untuk mendapatkan link format gambar (contoh : <em style={{ color: '#94A3B8' }}>https://i.ibb.co.com/f7V4C45/IMG-20240530-164327-1.png</em>).<br />
                             Berikut adalah link menuju website tersebut : <a href="https://id.imgbb.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#38BDF8', textDecoration: 'none', fontWeight: 'bold' }}>https://id.imgbb.com/</a>
                         </div>

@@ -199,7 +199,7 @@ export default function InputMatch() {
                                     border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer'
                                 }}
                             >
-                                🔙 Kembali
+                                Kembali
                             </button>
                             <button
                                 type="submit"
@@ -209,7 +209,7 @@ export default function InputMatch() {
                                     border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: isLoading ? 'not-allowed' : 'pointer'
                                 }}
                             >
-                                {isLoading ? 'Menyimpan...' : '💾 Simpan Jadwal'}
+                                {isLoading ? 'Menyimpan...' : 'Simpan Jadwal'}
                             </button>
                         </div>
                     </form>

@@ -88,7 +88,7 @@ export default function MatchesPage() {
                                 >
                                     <div>
                                         <div style={{ fontSize: '12px', color: '#10b981', fontWeight: 'bold', marginBottom: '6px' }}>
-                                            🏆 {tournament?.nama_turnamen || "Tournament VCT"}
+                                            {tournament?.nama_turnamen || "Tournament VCT"}
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -108,7 +108,7 @@ export default function MatchesPage() {
                                     <div style={{ textAlign: 'right', fontSize: '13px', color: '#94a3b8' }}>
                                         <div>{match.match_format || 'BO3'} Series</div>
                                         <div style={{ marginTop: '4px', color: 'white', fontWeight: '600' }}>
-                                            🕒 {new Date(match.jadwal).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })} WIB
+                                            {new Date(match.jadwal).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })} WIB
                                         </div>
                                     </div>
                                 </div>
