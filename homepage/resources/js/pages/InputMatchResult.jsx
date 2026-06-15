@@ -50,7 +50,10 @@ export default function InputMatchResult() {
                 const response = await fetch('/api/matches');
                 const data = await response.json();
                 const allMatches = Array.isArray(data) ? data : (data.data || []);
-                const filteredMatches = allMatches.filter(m => m.id_tournament === tournamentTerpilih.id_tournament || m.id_tournament === tournamentTerpilih.id);
+                const filteredMatches = allMatches.filter(m =>
+                    String(m.id_tournament) === String(tournamentTerpilih.id_tournament) ||
+                    String(m.id_tournament) === String(tournamentTerpilih.id)
+                );
                 setExistingMatches(filteredMatches);
 
                 const resAgents = await fetch('/api/agents');

@@ -50,7 +50,7 @@ class MatchController extends Controller
         $request->validate([
             'id_tournament' => 'required|integer', 'id_team_a' => 'required|integer',
             'id_team_b' => 'required|integer|different:id_team_a', 'match_format' => 'required|string',
-            'jadwal' => 'required|date', 'skor_akhir_a' => 'required|integer', 'skor_akhir_b' => 'required|integer'
+            'jadwal' => 'required|date', 'skor_akhir_a' => 'nullable|integer', 'skor_akhir_b' => 'nullable|integer'
         ]);
         try {
             $match = GameMatch::create($request->all());
