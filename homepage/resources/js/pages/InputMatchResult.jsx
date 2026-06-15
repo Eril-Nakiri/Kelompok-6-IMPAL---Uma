@@ -137,9 +137,11 @@ export default function InputMatchResult() {
 
     const handleSubmitMapResult = async (e) => {
         e.preventDefault();
+        const extractedMapNumber = parseInt(activeMap.replace('Map ', ''));
+
         const payload = {
             id_match: selectedMatch.id_match || selectedMatch.id,
-            current_map: activeMap,
+            current_map: extractedMapNumber,
             game_data: gameData,
             player_stats: { teamA: teamAStats, teamB: teamBStats }
         };
@@ -152,7 +154,7 @@ export default function InputMatchResult() {
             });
             const result = await response.json();
             if (response.ok || result.status === 'success') {
-                alert(`🎉 Data Statistik untuk ${activeMap} berhasil direkam ke database!`);
+                alert(`Data Statistik untuk ${activeMap} berhasil direkam ke database!`);
             } else {
                 alert(`Gagal menyimpan data map: ${result.message}`);
             }
