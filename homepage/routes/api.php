@@ -62,6 +62,7 @@ Route::post('/forum/threads', [ForumController::class, 'storeThread']);
 Route::get('/forum/threads/{id}', [ForumController::class, 'getThreadDetail']);
 Route::post('/forum/threads/{id}/replies', [ForumController::class, 'storeReply']);
 Route::delete('/forum/threads/{id}', [ForumController::class, 'destroyThread']);
+Route::delete('/forum/replies/{id}', [ForumController::class, 'destroyReply']);
 
 // News
 Route::get('/news', [NewsController::class, 'getDashboardNews']);

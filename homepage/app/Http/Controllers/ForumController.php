@@ -135,4 +135,28 @@ class ForumController extends Controller
             return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
         }
     }
+
+    public function destroyReply(Request $request, int $id)
+    {
+        try {
+            $id_user = $request->input('id_user');
+            $id_role = $request->input('id_role');
+
+            $reply = DB::table('forum_replies')->where('id_reply', $id)->first();
+
+            if (!$reply) {
+                return response()->json(['status' => 'error', 'message' => 'Balasan tidak ditemukan'], 404);
+            }
+
+            if ($id_role != 1 && $reply->id_user != $id_user) {
+                return response()->json(['status' => 'error', 'message' => 'Dilarang! Anda tidak berhak menghapus balasan ini.'], 403);
+            }
+
+            DB::table('forum_replies')->where('id_reply', $id)->delete();
+
+            return response()->json(['status' => 'success', 'message' => 'Balasan berhasil dihapus!'], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
+        }
+    }
 }
