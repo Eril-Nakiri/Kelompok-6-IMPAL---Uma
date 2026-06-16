@@ -65,4 +65,38 @@ class UserController extends Controller
             "user" => $user
         ]);
     }
+
+    public function index()
+    {
+        try {
+            $users = \Illuminate\Support\Facades\DB::table('users')
+                ->leftJoin('roles', 'users.id_role', '=', 'roles.id_role')
+                ->select('users.id_user', 'users.username', 'users.email', 'roles.role_name as role')
+                ->orderBy('users.id_user', 'asc')
+                ->get();
+
+            return response()->json(['status' => 'success', 'data' => $users], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Gagal mengambil data user: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(int $id)
+    {
+        try {
+            if ($id == 1) {
+                return response()->json(['status' => 'error', 'message' => 'Dilarang menghapus Super Admin!'], 403);
+            }
+
+            $deleted = \Illuminate\Support\Facades\DB::table('users')->where('id_user', $id)->delete();
+
+            if ($deleted) {
+                return response()->json(['status' => 'success', 'message' => 'Akun berhasil dihapus!'], 200);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'Akun tidak ditemukan.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Gagal menghapus akun: ' . $e->getMessage()], 500);
+        }
+    }
 }

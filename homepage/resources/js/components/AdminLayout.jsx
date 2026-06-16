@@ -40,6 +40,7 @@ export default function AdminLayout({ children }) {
     const menuItems = [
         { name: 'Dashboard Overview', icon: '📊', path: '/dashboard-admin', active: location.pathname === '/dashboard-admin' },
         { name: 'Manage News', icon: '📰', path: '/admin/news', active: location.pathname.includes('/admin/news') },
+        { name: 'Kelola Akun', icon: '👥', path: '/admin/users', active: location.pathname.includes('/admin/users') },
     ];
 
     return (

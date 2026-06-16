@@ -24,6 +24,7 @@ import InputMatch from "./pages/InputMatch.jsx";
 import ManageNews from "./pages/ManageNews.jsx";
 import AddNews from "./pages/AddNews.jsx";
 import EditNews from "./pages/EditNews.jsx";
+import ManageUsers from "./pages/ManageUsers.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -126,6 +127,11 @@ function App() {
                     path="/admin/news/edit/:id" element={
                         <ProtectedRoute allowedRoles={[1]}><EditNews /></ProtectedRoute>
                     } />
+
+                <Route
+                path="/admin/users" element={
+                    <ProtectedRoute allowedRoles={[1]}><ManageUsers /></ProtectedRoute>
+                } />
 
                 <Route
                     path="/tournament/:id" element={
