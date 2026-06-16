@@ -109,4 +109,30 @@ class ForumController extends Controller
             return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
         }
     }
+
+    public function destroyThread(Request $request, int $id)
+    {
+        try {
+            $id_user = $request->input('id_user');
+            $id_role = $request->input('id_role');
+
+            $thread = DB::table('forum_threads')->where('id_thread', $id)->first();
+
+            if (!$thread) {
+                return response()->json(['status' => 'error', 'message' => 'Diskusi tidak ditemukan'], 404);
+            }
+
+            if ($id_role != 1 && $thread->id_user != $id_user) {
+                return response()->json(['status' => 'error', 'message' => 'Dilarang! Anda tidak berhak menghapus diskusi ini.'], 403);
+            }
+
+            DB::table('forum_replies')->where('id_thread', $id)->delete();
+
+            DB::table('forum_threads')->where('id_thread', $id)->delete();
+
+            return response()->json(['status' => 'success', 'message' => 'Diskusi beserta balasannya berhasil dihapus!'], 200);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'DB Error: ' . $e->getMessage()], 500);
+        }
+    }
 }

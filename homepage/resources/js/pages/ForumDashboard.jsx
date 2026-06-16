@@ -7,6 +7,11 @@ export default function ForumDashboard() {
     const navigate = useNavigate();
     const [threads, setThreads] = useState([]);
 
+    const userString = localStorage.getItem("user");
+    const currentUser = userString ? JSON.parse(userString) : null;
+    const currentUserId = currentUser ? parseInt(currentUser.id_user) : null;
+    const isAdmin = currentUser && parseInt(currentUser.id_role) === 1;
+
     useEffect(() => {
         const fetchThreads = async () => {
             try {
@@ -27,6 +32,33 @@ export default function ForumDashboard() {
             dateStyle: 'medium',
             timeStyle: 'short'
         });
+    };
+
+    const handleDeleteThread = async (id_thread) => {
+        if (!window.confirm("Apakah Anda yakin ingin menghapus diskusi ini beserta seluruh balasannya?")) return;
+
+        try {
+            const res = await fetch(`/api/forum/threads/${id_thread}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_user: currentUserId,
+                    id_role: currentUser?.id_role
+                })
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                alert("Diskusi berhasil dihapus!");
+                setThreads(threads.filter(t => t.id_thread !== id_thread));
+            } else {
+                alert(`Gagal menghapus: ${result.message}`);
+            }
+        } catch (err) {
+            alert("Terjadi kesalahan saat menghubungi server");
+        }
     };
 
     return (
@@ -60,25 +92,40 @@ export default function ForumDashboard() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {threads.map(thread => (
-                                        <tr key={thread.id_thread}>
-                                            <td className="thread-title-cell">
-                                                <strong>{thread.title}</strong>
-                                            </td>
-                                            <td className="thread-author-cell" style={{ color: '#00E1D9' }}>
-                                                👤 {thread.username || `User ${thread.id_user}`}
-                                            </td>
-                                            <td className="thread-date-cell">{formatDate(thread.created_at)}</td>
-                                            <td style={{ textAlign: 'right' }}>
-                                                <button
-                                                    className="forum-btn forum-btn-primary"
-                                                    onClick={() => navigate(`/forum/thread/${thread.id_thread}`)}
-                                                >
-                                                    Lihat Diskusi ➔
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {threads.map(thread => {
+                                        const canDelete = isAdmin || (currentUserId === parseInt(thread.id_user));
+
+                                        return (
+                                            <tr key={thread.id_thread}>
+                                                <td className="thread-title-cell">
+                                                    <strong>{thread.title}</strong>
+                                                </td>
+                                                <td className="thread-author-cell" style={{ color: '#00E1D9' }}>
+                                                    👤 {thread.username || `User ${thread.id_user}`}
+                                                </td>
+                                                <td className="thread-date-cell">{formatDate(thread.created_at)}</td>
+
+                                                <td style={{ textAlign: 'right', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                    <button
+                                                        className="forum-btn forum-btn-primary"
+                                                        onClick={() => navigate(`/forum/thread/${thread.id_thread}`)}
+                                                    >
+                                                        Lihat Diskusi ➔
+                                                    </button>
+
+                                                    {canDelete && (
+                                                        <button
+                                                            className="forum-btn"
+                                                            style={{ backgroundColor: '#ff4654', color: 'white' }}
+                                                            onClick={() => handleDeleteThread(thread.id_thread)}
+                                                        >
+                                                            🗑️ Hapus
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         ) : (
