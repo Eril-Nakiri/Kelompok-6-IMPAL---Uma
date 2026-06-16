@@ -71,7 +71,7 @@ export default function MatchDetail() {
 
             const filteredStats = activeMapFilter === 'ALL'
                 ? playerAllStats
-                : playerAllStats.filter(s => s.map_name === activeMapFilter);
+                : playerAllStats.filter(s => s.map_name && s.map_name.toString().trim().toLowerCase() === activeMapFilter.toString().trim().toLowerCase());
 
             if (filteredStats.length === 0) {
                 return {
