@@ -5,6 +5,9 @@ export default function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const [isAdding, setIsAdding] = useState(false);
+    const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+
     const userString = localStorage.getItem("user");
     const currentUser = userString ? JSON.parse(userString) : null;
     const currentUserId = currentUser ? parseInt(currentUser.id_user) : null;
@@ -28,12 +31,34 @@ export default function ManageUsers() {
         fetchUsers();
     }, []);
 
+    const handleAddAdmin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/admin/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                alert('🎉 ' + result.message);
+                setIsAdding(false);
+                setFormData({ username: '', email: '', password: '' });
+                fetchUsers();
+            } else {
+                alert(`Gagal: ${result.message || 'Cek kembali data Anda (Mungkin Email sudah dipakai).'}`);
+            }
+        } catch (error) {
+            alert('Gagal terhubung ke server saat membuat admin.');
+        }
+    };
+
     const handleDeleteUser = async (id, username) => {
         if (id === 1) {
             alert('Anda tidak diizinkan menghapus Super Admin!');
             return;
         }
-
         if (id === currentUserId) {
             alert('Anda tidak bisa menghapus akun Anda sendiri saat sedang login!');
             return;
@@ -47,11 +72,9 @@ export default function ManageUsers() {
                 method: 'DELETE',
                 headers: { 'Accept': 'application/json' }
             });
-
             const result = await response.json();
 
             if (response.ok && result.status === 'success') {
-                alert('🗑️ Akun berhasil dihapus permanen!');
                 setUsers(users.filter(u => u.id_user !== id));
             } else {
                 alert(`Gagal: ${result.message}`);
@@ -66,9 +89,12 @@ export default function ManageUsers() {
             <header className="db-header">
                 <div className="header-title">
                     <h1>Kelola Akun Pengguna</h1>
-                    <p>Melihat dan menghapus pengguna yang terdaftar di dalam sistem portal.</p>
+                    <p>Melihat, menambah, dan menghapus pengguna di dalam sistem portal.</p>
                 </div>
-                <div className="header-actions">
+                <div className="header-actions" style={{ display: 'flex', gap: '10px' }}>
+                    <button className="action-btn" style={{ background: '#10B981' }} onClick={() => setIsAdding(!isAdding)}>
+                        {isAdding ? 'Batal' : 'Tambah Admin'}
+                    </button>
                     <button className="action-btn" onClick={fetchUsers} disabled={isLoading}>
                         {isLoading ? 'Memuat...' : 'Refresh Data'}
                     </button>
@@ -76,6 +102,37 @@ export default function ManageUsers() {
             </header>
 
             <div className="db-body">
+
+                {isAdding && (
+                    <div className="panel-box" style={{ marginBottom: '24px', borderLeft: '4px solid #10B981' }}>
+                        <div className="panel-header">
+                            <h3>Rekrut Admin Baru</h3>
+                        </div>
+                        <div style={{ padding: '20px' }}>
+                            <form onSubmit={handleAddAdmin} style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                <input
+                                    type="text" placeholder="Username Baru" required
+                                    value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})}
+                                    style={{ padding: '10px', borderRadius: '6px', border: '1px solid #334155', background: '#0f172a', color: 'white', flex: 1, minWidth: '200px' }}
+                                />
+                                <input
+                                    type="email" placeholder="Alamat Email" required
+                                    value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
+                                    style={{ padding: '10px', borderRadius: '6px', border: '1px solid #334155', background: '#0f172a', color: 'white', flex: 1, minWidth: '200px' }}
+                                />
+                                <input
+                                    type="password" placeholder="Password (Min. 6 Karakter)" required minLength="6"
+                                    value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
+                                    style={{ padding: '10px', borderRadius: '6px', border: '1px solid #334155', background: '#0f172a', color: 'white', flex: 1, minWidth: '200px' }}
+                                />
+                                <button type="submit" className="action-btn" style={{ background: '#10B981', padding: '10px 20px' }}>
+                                    Simpan & Rekrut Admin
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
                 <div className="panel-box">
                     <div className="panel-header">
                         <div>
@@ -122,7 +179,7 @@ export default function ManageUsers() {
                                                         style={{ padding: '6px 12px', fontSize: '13px' }}
                                                         onClick={() => handleDeleteUser(user.id_user, user.username)}
                                                     >
-                                                        🗑️ Hapus Akun
+                                                        Hapus Akun
                                                     </button>
                                                 ) : (
                                                     <span style={{ color: '#64748b', fontSize: '12px', fontStyle: 'italic' }}>Protected</span>

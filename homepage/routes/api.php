@@ -77,3 +77,4 @@ Route::put('/admin/news/{id}', [NewsController::class, 'update']);
 //Admin User management
 Route::get('/admin/users', [UserController::class, 'index']);
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+Route::post('/admin/users', [UserController::class, 'storeAdmin']);

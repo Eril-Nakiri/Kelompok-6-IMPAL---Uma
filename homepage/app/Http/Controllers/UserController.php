@@ -99,4 +99,29 @@ class UserController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Gagal menghapus akun: ' . $e->getMessage()], 500);
         }
     }
+
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+
+        try {
+            $lastUser = \Illuminate\Support\Facades\DB::table('users')->max('id_user') ?? 0;
+
+            \Illuminate\Support\Facades\DB::table('users')->insert([
+                'id_user' => $lastUser + 1,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'id_role' => 1,
+            ]);
+
+            return response()->json(['status' => 'success', 'message' => 'Admin baru berhasil direkrut!'], 201);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Gagal membuat admin: ' . $e->getMessage()], 500);
+        }
+    }
 }
