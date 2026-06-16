@@ -11,6 +11,11 @@ export default function ThreadDetail() {
     const [replies, setReplies] = useState([]);
     const [replyContent, setReplyContent] = useState('');
 
+    const userString = localStorage.getItem("user");
+    const currentUser = userString ? JSON.parse(userString) : null;
+    const currentUserId = currentUser ? parseInt(currentUser.id_user || currentUser.id || 1) : null;
+    const isAdmin = currentUser && parseInt(currentUser.id_role) === 1;
+
     useEffect(() => {
         fetchThreadData();
     }, [id]);
@@ -31,17 +36,6 @@ export default function ThreadDetail() {
     const handleReplySubmit = async (e) => {
         e.preventDefault();
 
-        let finalUserId = 1;
-        try {
-            const userStr = localStorage.getItem('user');
-            if (userStr) {
-                const userData = JSON.parse(userStr);
-                finalUserId = parseInt(userData.id_user || userData.id || 1);
-            }
-        } catch (error) {
-            console.error("Gagal memproses data user dari LocalStorage:", error);
-        }
-
         try {
             const res = await fetch(`/api/forum/threads/${id}/replies`, {
                 method: 'POST',
@@ -51,30 +45,46 @@ export default function ThreadDetail() {
                 },
                 body: JSON.stringify({
                     content: replyContent,
-                    id_user: finalUserId
+                    id_user: currentUserId || 1
                 })
             });
 
-            const rawText = await res.text();
-            let result;
-
-            try {
-                result = JSON.parse(rawText);
-            } catch (parseError) {
-                alert(`🚨 SERVER ERROR!\nLaravel mengembalikan error berikut:\n\n${rawText.substring(0, 300)}...`);
-                return;
-            }
-
+            const result = await res.json();
             if (res.ok && result.status === 'success') {
-                alert('✅ Balasan berhasil dikirim!');
+                alert('Balasan berhasil dikirim!');
                 setReplyContent('');
                 fetchThreadData();
             } else {
                 alert(`Gagal mengirim balasan:\n${result.message || 'Terjadi kesalahan'}`);
             }
         } catch (error) {
-            console.error("Error Fetch:", error);
             alert("Gagal terhubung ke server backend.");
+        }
+    };
+
+    const handleDeleteReply = async (id_reply) => {
+        if (!window.confirm("Apakah Anda yakin ingin menghapus balasan Anda ini?")) return;
+
+        try {
+            const res = await fetch(`/api/forum/replies/${id_reply}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_user: currentUserId,
+                    id_role: currentUser?.id_role
+                })
+            });
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                setReplies(replies.filter(r => r.id_reply !== id_reply));
+            } else {
+                alert(`Gagal menghapus: ${result.message}`);
+            }
+        } catch (err) {
+            alert("Terjadi kesalahan saat menghubungi server");
         }
     };
 
@@ -100,7 +110,7 @@ export default function ThreadDetail() {
                                 👤 Diposting oleh: {thread.username || `User ${thread.id_user}`}
                             </span>
                             <span className="thread-meta-text">
-                                🕒 {new Date(thread.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                                {new Date(thread.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
                             </span>
                         </div>
                         <div className="thread-content-text" style={{ whiteSpace: 'pre-wrap' }}>
@@ -111,21 +121,41 @@ export default function ThreadDetail() {
                     <h3 className="reply-section-title">Balasan ({replies.length})</h3>
 
                     {replies.length > 0 ? (
-                        replies.map((reply, idx) => (
-                            <div key={idx} className="mr-form-card thread-reply-card" style={{ padding: '20px', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                    <span className="thread-meta-text" style={{ color: '#00A3FF', fontWeight: 'bold' }}>
-                                        ↳ 👤 {reply.username || `User ${reply.id_user}`} membalas:
-                                    </span>
-                                    <span className="thread-meta-text" style={{ fontSize: '12px' }}>
-                                        {new Date(reply.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
-                                    </span>
+                        replies.map((reply, idx) => {
+                            const canDeleteReply = isAdmin || (currentUserId === parseInt(reply.id_user));
+
+                            return (
+                                <div key={idx} className="mr-form-card thread-reply-card" style={{ padding: '20px', marginBottom: '16px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', alignItems: 'center' }}>
+                                        <span className="thread-meta-text" style={{ color: '#00A3FF', fontWeight: 'bold' }}>
+                                            ↳ 👤 {reply.username || `User ${reply.id_user}`} membalas:
+                                        </span>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <span className="thread-meta-text" style={{ fontSize: '12px' }}>
+                                                {new Date(reply.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                                            </span>
+
+                                            {canDeleteReply && (
+                                                <button
+                                                    onClick={() => handleDeleteReply(reply.id_reply)}
+                                                    style={{
+                                                        background: '#ff4654', color: 'white', border: 'none',
+                                                        padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px'
+                                                    }}
+                                                    title="Hapus balasan ini"
+                                                >
+                                                    🗑️
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="thread-reply-content" style={{ whiteSpace: 'pre-wrap', color: '#e2e8f0' }}>
+                                        {reply.content}
+                                    </div>
                                 </div>
-                                <div className="thread-reply-content" style={{ whiteSpace: 'pre-wrap', color: '#e2e8f0' }}>
-                                    {reply.content}
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <p className="forum-empty-state" style={{ padding: '0', textAlign: 'left', marginBottom: '24px' }}>
                             Belum ada balasan. Jadilah yang pertama membalas!
